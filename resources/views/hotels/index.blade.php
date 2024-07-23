@@ -16,9 +16,16 @@
             <div class="row">
                 <div class="col-12">
                     <div class="clearfix mb-5">
+
                         @if(auth()->check() && auth()->user()->can('create-hotel'))
                         <button type="button" class="btn btn-primary float-right" data-toggle="modal" data-target="#addFromPopup"><i class="fas fa-plus"></i> Add Hotel</button>
                         @endif
+
+
+                        @if(auth()->check() && auth()->user()->can('add-hotel-category'))
+                        <a href="{{ route('administrator_hotel_category_create') }}" class="btn btn-primary float-right mr-3"><i class="fas fa-plus"></i> Add Hotel Category</a>
+                        @endif
+
                     </div>
                     <div class="callout callout-info">
                         <div class="row">

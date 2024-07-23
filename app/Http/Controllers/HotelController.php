@@ -275,7 +275,7 @@ class HotelController extends Controller
 
     public function store_hotel_category(Request $request)
     {
-        $check = $this->check($request, 'create-hotel-category', 'ajax');
+        $check = $this->check($request, 'view-hotel-category', 'ajax');
         if ($check) {
             if ($request->isMethod('post')) {
                 $input = $request->all();

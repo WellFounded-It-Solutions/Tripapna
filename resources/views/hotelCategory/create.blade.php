@@ -14,16 +14,27 @@
     <section class="content">
         <div class="container-fluid">
             <div class="row">
+
                 <div class="col-12">
-                    <div class="clearfix mb-5">
-                        @if(auth()->check() && auth()->user()->can('add-hotel-category'))
-                        <button type="button" class="btn btn-primary float-right" data-toggle="modal" data-target="#addFromPopup"><i class="fas fa-plus"></i> Add Hotel</button>
-                        @endif
-                    </div>
+                    <form method="post" action="{{ route('administrator_hotel_category_store') }}" class="row callout callout-success form-horizontal ajax_form ">
+                        {{csrf_field()}}
+                        <div class="col-6">
+
+                            <div class="form-group m-0">
+                                <input type="text" name="title" class="form-control" id="title" placeholder="Enter category">
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <button type="submit" class="btn btn-primary">Add Category</button>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="col-12">
                     <div class="callout callout-info">
                         <div class="row">
                             <div class="col-3">
-                                <input type="text" class="form-control" placeholder="Search by keyword" id="title">
+                                <input type="text" class="form-control" placeholder="Search by keyword" id="search">
                             </div>
                             <div class="col-3">
 
@@ -63,12 +74,16 @@
 </div>
 
 <script>
+    function createdCallback() {
+        getList();
+    }
+
     $(document).ready(function() {
         getList();
     });
 
     function getList() {
-        var name = $('#title').val();
+        var name = $('#search').val();
         var end = $('#hidden_end_date').val();
         $.ajax({
             url: baseUrl + "hotel_category_list?title=" + name,
