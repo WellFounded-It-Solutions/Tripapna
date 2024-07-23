@@ -1,11 +1,14 @@
 <?php
+
 namespace App\Http\Controllers;
+
 use App\Models\Hotel;
 use App\Models\hotelImages;
 use App\Models\HotelCategory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Validator;
+
 class HotelController extends Controller
 {
     private function check($request, $module, $response_type)
@@ -25,7 +28,7 @@ class HotelController extends Controller
         if ($check) {
             $page_name = 'Hotels';
             $hotel_category = HotelCategory::where('status', 'Active')->get();
-            return view('hotels.index', compact('page_name','hotel_category'));
+            return view('hotels.index', compact('page_name', 'hotel_category'));
         }
     }
     public function get_list(Request $request)
@@ -36,8 +39,8 @@ class HotelController extends Controller
                 if ($request->title != '') {
                     $records = Hotel::where(function ($query) {
                         $keyword = $_GET['title'];
-                        $query->where('name', 'like', '%'.$keyword.'%')
-                        ->orWhere('location', 'like', '%'.$keyword.'%');
+                        $query->where('name', 'like', '%' . $keyword . '%')
+                            ->orWhere('location', 'like', '%' . $keyword . '%');
                     })->paginate(15);
                 } else {
                     $records = Hotel::paginate(15);
@@ -55,7 +58,7 @@ class HotelController extends Controller
         $check = $this->check($request, 'edit-hotel', 'ajax');
         if ($check) {
             $record = Hotel::where(['id' => $id])->first();
-            if (! empty($record)) {
+            if (!empty($record)) {
                 $response['success'] = true;
                 $response['data'] = $record->toarray();
             } else {
@@ -91,23 +94,21 @@ class HotelController extends Controller
                     $validation_array['amount'] = 'required';
                 }
                 $validator = Validator::make($request->all(), $validation_array);
-                if (! $validator->fails()) {
+                if (!$validator->fails()) {
                     try {
                         $input['password'] = bcrypt($input['password']);
                         unset($input['confirmed']);
                         unset($input['filenames']);
                         $input['owner_id'] = Auth::user()->id;
-                        $imageName = time().'.'.$request->logo->extension();
+                        $imageName = time() . '.' . $request->logo->extension();
                         $request->logo->move(public_path('logo'), $imageName);
                         $input['logo'] = $imageName;
-                      //  pr($input); die;
+                        //  pr($input); die;
                         $user = Hotel::create($input);
-                        if($request->hasfile('filenames'))
-                        {
-                            foreach($request->file('filenames') as $file)
-                            {
-                                $name = time().rand(1,50).'.'.$file->extension();
-                                $file->move(public_path('hotelimages'), $name);  
+                        if ($request->hasfile('filenames')) {
+                            foreach ($request->file('filenames') as $file) {
+                                $name = time() . rand(1, 50) . '.' . $file->extension();
+                                $file->move(public_path('hotelimages'), $name);
                                 $create = array();
                                 $create['hotel_id'] = $user->id;
                                 $create['images'] = $name;
@@ -126,7 +127,7 @@ class HotelController extends Controller
                     $response['success'] = false;
                     $html = "<ol type='1'>";
                     foreach ($validator->errors()->toarray() as $value) {
-                        $html .= '<li>'.$value['0'].'</li>';
+                        $html .= '<li>' . $value['0'] . '</li>';
                     }
                     $html .= '</ol>';
                     $response['message'] = $html;
@@ -147,25 +148,25 @@ class HotelController extends Controller
                 $update = $request->all();
                 $validation_array = [
                     'name' => 'required',
-                     'hotel_category' => 'required',
+                    'hotel_category' => 'required',
                     'location' => 'required',
                     'lat' => 'required',
                     'long' => 'required',
                     'email' => 'required|email:rfc,dns|unique:users,email',
-                  //  'password' => 'required|min:8',
+                    //  'password' => 'required|min:8',
                     'mobile' => 'required|regex:/^([0-9\s\-\+\(\)]*)$/|min:10',
                 ];
                 if ($update['type'] == 'c') {
                     $validation_array['amount'] = 'required';
                 }
-                if ($request->hasFile('logo') ) {
-                     $validation_array['logo'] = 'required|image|mimes:jpeg,png,jpg|max:2048';
+                if ($request->hasFile('logo')) {
+                    $validation_array['logo'] = 'required|image|mimes:jpeg,png,jpg|max:2048';
                 }
                 if ($request->has('password') && !empty($request->input('password'))) {
-                     $validation_array['password'] = 'required|min:8';
+                    $validation_array['password'] = 'required|min:8';
                 }
                 $validator = Validator::make($request->all(), $validation_array);
-                if (! $validator->fails()) {
+                if (!$validator->fails()) {
                     unset($update['_token']);
                     unset($update['confirmed']);
                     unset($update['filenames']);
@@ -173,25 +174,23 @@ class HotelController extends Controller
                     if ($request->has('password') && !empty($request->input('password'))) {
                         $update['password'] = bcrypt($update['password']);
                     }
-                    if ($request->hasFile('logo') ) {
-                        $imageName = time().'.'.$request->logo->extension();
+                    if ($request->hasFile('logo')) {
+                        $imageName = time() . '.' . $request->logo->extension();
                         $request->logo->move(public_path('logo'), $imageName);
                         $update['logo'] = $imageName;
                     }
                     $user = Hotel::where('id', $update['id'])->update($update);
-                    if($request->hasfile('filenames'))
-                        {
-                            hotelImages::where('hotel_id',$update['id'])->delete();
-                            foreach($request->file('filenames') as $file)
-                            {
-                                $name = time().rand(1,50).'.'.$file->extension();
-                                $file->move(public_path('hotelimages'), $name);  
-                                $create = array();
-                                $create['hotel_id'] = $update['id'];
-                                $create['images'] = $name;
-                                hotelImages::create($create);
-                            }
+                    if ($request->hasfile('filenames')) {
+                        hotelImages::where('hotel_id', $update['id'])->delete();
+                        foreach ($request->file('filenames') as $file) {
+                            $name = time() . rand(1, 50) . '.' . $file->extension();
+                            $file->move(public_path('hotelimages'), $name);
+                            $create = array();
+                            $create['hotel_id'] = $update['id'];
+                            $create['images'] = $name;
+                            hotelImages::create($create);
                         }
+                    }
                     $response['success'] = true;
                     $response['message'] = 'Records Updated SuccessFully';
                     $response['callBackFunction'] = 'updatedCallback';
@@ -199,7 +198,7 @@ class HotelController extends Controller
                     $response['success'] = false;
                     $html = "<ol type='1'>";
                     foreach ($validator->errors()->toarray() as $value) {
-                        $html .= '<li>'.$value['0'].'</li>';
+                        $html .= '<li>' . $value['0'] . '</li>';
                     }
                     $html .= '</ol>';
                     $response['message'] = $html;
@@ -255,6 +254,85 @@ class HotelController extends Controller
     }
     public function unlink($image)
     {
-        unlink($_SERVER['DOCUMENT_ROOT'].'/'.$this->destination_image_path.$image);
+        unlink($_SERVER['DOCUMENT_ROOT'] . '/' . $this->destination_image_path . $image);
     }
+
+    public function create_hotel_category(Request $request)
+    {
+
+        $check = $this->check($request, 'view-hotel-category', 'view');
+        if ($check) {
+
+            $page_name = 'Hotel Categories';
+            return view('hotelCategory.create' , compact('page_name'));
+        } else {
+            $response['success'] = false;
+            $response['message'] = "You don't have permission";
+        }
+        return response()->json($response);
+        exit;
+    }
+
+    public function store_hotel_category(Request $request)
+    {
+        $check = $this->check($request, 'create-hotel-category', 'ajax');
+        if ($check) {
+            if ($request->isMethod('post')) {
+                $input = $request->all();
+                $validation_array = [
+                    'title' => 'required'
+                ];
+                $validator = Validator::make($request->all(), $validation_array);
+                if (!$validator->fails()) {
+                    HotelCategory::create($input);
+                    $response['success'] = true;
+                    $response['message'] = 'Records Created SuccessFully';
+                    $response['callBackFunction'] = 'createdCallback';
+                } else {
+                    $response['success'] = false;
+                    $html = "<ol type='1'>";
+                    foreach ($validator->errors()->toarray() as $value) {
+                        $html .= '<li>' . $value['0'] . '</li>';
+                    }
+                    $html .= '</ol>';
+                    $response['message'] = $html;
+                }
+                return response()->json($response);
+                exit;
+            }
+        } else {
+            $response['success'] = false;
+            $response['message'] = "You don't have permission";
+        }
+        return response()->json($response);
+        exit;
+    }
+
+    public function get_hotel_category_list(Request $request)
+    {
+        $check = $this->check($request, 'view-hotel-category', 'ajax');
+        if ($check) {
+            if ($request->ajax()) {
+                if ($request->title != '') {
+                    $records = HotelCategory::where(function ($query) {
+                        $keyword = $_GET['title'];
+                        $query->where('title', 'like', '%' . $keyword . '%');
+                    })->paginate(15);
+                } else {
+                    $records = HotelCategory::paginate(15);
+                }
+                $response['success'] = true;
+                $response['html'] = view('hotelCategory.list', ['records' => $records])->render();
+                $response['pagination'] = view('admin.pagination', ['page' => $records])->render();
+                return response()->json($response);
+                exit;
+            }
+        } else {
+            $response['success'] = false;
+            $response['message'] = "You don't have permission";
+        }
+        return response()->json($response);
+        exit;
+    }
+
 }
