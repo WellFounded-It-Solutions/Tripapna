@@ -78,6 +78,25 @@
         getList();
     }
 
+    function changeSatus(id, status) {
+        $.ajax({
+            url: baseUrl + "hotel_category_status",
+            type: 'post',
+            dataType: 'json',
+            data: {
+                id: id,
+                status: status,
+                _token: "{{ csrf_token() }}"
+            },
+            success: function(json) {
+                getList();
+            },
+            error: function(xhr, ajaxOptions, thrownError) {
+                console.log(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+            }
+        });
+    }
+
     $(document).ready(function() {
         getList();
     });

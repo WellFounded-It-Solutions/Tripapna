@@ -264,7 +264,7 @@ class HotelController extends Controller
         if ($check) {
 
             $page_name = 'Hotel Categories';
-            return view('hotelCategory.create' , compact('page_name'));
+            return view('hotelCategory.create', compact('page_name'));
         } else {
             $response['success'] = false;
             $response['message'] = "You don't have permission";
@@ -275,7 +275,7 @@ class HotelController extends Controller
 
     public function store_hotel_category(Request $request)
     {
-        $check = $this->check($request, 'view-hotel-category', 'ajax');
+        $check = $this->check($request, 'add-hotel-category', 'ajax');
         if ($check) {
             if ($request->isMethod('post')) {
                 $input = $request->all();
@@ -335,4 +335,21 @@ class HotelController extends Controller
         exit;
     }
 
+    public function change_hotel_category_status(Request $request)
+    {
+        $check = $this->check($request, 'add-hotel-category', 'ajax');
+        if ($check) {
+            $id = $request->id;
+            $status = $request->status;
+            $update['status'] = $status;
+            $user = HotelCategory::where('id', $id)->update($update);
+            $response['success'] = true;
+            $response['message'] = 'Status Changed SuccessFully';
+        } else {
+            $response['success'] = false;
+            $response['message'] = "You don't have permission";
+        }
+        return response()->json($response);
+        exit;
+    }
 }

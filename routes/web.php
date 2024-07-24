@@ -62,6 +62,7 @@ Route::group(['middleware' => 'role:admin'], function () {
     Route::get('/administrator/hotel_category_create',[HotelController::class, 'create_hotel_category'])->name('administrator_hotel_category_create');
     Route::post('/administrator/hotel_category_store',[HotelController::class, 'store_hotel_category'])->name('administrator_hotel_category_store');
     Route::get('/administrator/hotel_category_list',[HotelController::class, 'get_hotel_category_list'])->name('administrator_hotel_category_list');
+    Route::post('/administrator/hotel_category_status',[HotelController::class, 'change_hotel_category_status'])->name('administrator_hotel_category_status');
 
     Route::get('/administrator/categories', [CategoryController::class, 'index'])->name('administrator_categories');
     Route::get('/administrator/categorieslist', [CategoryController::class, 'get_list'])->name('administrator_categories_list');
