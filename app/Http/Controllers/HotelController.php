@@ -352,4 +352,58 @@ class HotelController extends Controller
         return response()->json($response);
         exit;
     }
+
+    public function get_hotel_category_by_id(Request $request, $id)
+    {
+        $check = $this->check($request, 'edit-hotel-category', 'ajax');
+        if ($check) {
+            $record = HotelCategory::where(['id' => $id])->first();
+            if (!empty($record)) {
+                $response['success'] = true;
+                $response['data'] = $record->toarray();
+            } else {
+                $response['success'] = false;
+            }
+        } else {
+            $response['success'] = false;
+            $response['message'] = "You don't have permission";
+        }
+        return response()->json($response);
+        exit;
+    }
+
+    public function update_hotel_category(Request $request, )
+    {
+        $check = $this->check($request, 'edit-hotel-category', 'ajax');
+        if ($check) {
+            if ($request->isMethod('post')) {
+                $input = $request->all();
+                $validation_array = [
+                    'title' => 'required'
+                ];
+                $validator = Validator::make($request->all(), $validation_array);
+                if (!$validator->fails()) {
+                    HotelCategory::where('id', $input['id'])->update(['title' => $input['title']]);
+                    $response['success'] = true;
+                    $response['message'] = 'Records Updated SuccessFully';
+                    $response['callBackFunction'] = 'updatedCallback';
+                } else {
+                    $response['success'] = false;
+                    $html = "<ol type='1'>";
+                    foreach ($validator->errors()->toarray() as $value) {
+                        $html .= '<li>' . $value['0'] . '</li>';
+                    }
+                    $html .= '</ol>';
+                    $response['message'] = $html;
+                }
+                return response()->json($response);
+                exit;
+            }
+        } else {
+            $response['success'] = false;
+            $response['message'] = "You don't have permission";
+        }
+        return response()->json($response);
+        exit;
+    }
 }

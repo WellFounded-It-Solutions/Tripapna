@@ -30,9 +30,9 @@ if (($records->count() > 0)) {
 			<button type="button" class="btn btn-block btn-primary btn-sm" data-toggle="tooltip" data-placement="bottom" title="Edit" onClick="editRecord(<?php echo $value->id ?>)"><i class="fas fa-pencil-alt"></i></button>
 		 </li>
 		 &nbsp;
-		<li>
+		<!-- <li>
 			<button type="button" class="btn btn-block btn-danger btn-sm" data-toggle="tooltip" data-placement="bottom" title="Delete" onClick="deleteRecord(<?php echo $value->id ?>)"><i class="far fa-trash-alt"></i></button>
-		</li>
+		</li> -->
 	</ul></td>
 </tr>
 <?php }} else {?>

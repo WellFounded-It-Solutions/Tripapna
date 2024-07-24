@@ -16,7 +16,7 @@
             <div class="row">
 
                 <div class="col-12">
-                    <form method="post" action="{{ route('administrator_hotel_category_store') }}" class="row callout callout-success form-horizontal ajax_form ">
+                    <form method="post" action="{{route(Auth::user()->roles['0']->params.'_hotel_category_store') }}" class="row callout callout-success form-horizontal ajax_form ">
                         {{csrf_field()}}
                         <div class="col-6">
 
@@ -73,9 +73,68 @@
     </section>
 </div>
 
+<!-- Edit Modal -->
+<div class="modal fade" id="editFromPopup" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document ">
+        <form class="modal-content form-horizontal ajax_form" action="{{route(Auth::user()->roles['0']->params.'_hotel_category_update') }}" method="post">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Edit</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true ">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                {{csrf_field()}}
+                <input type="hidden" name="id" id="_id">
+                <div class="form-group m-0">
+                    <input type="text" name="title" class="form-control" id="utitle" placeholder="Enter category">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="submit" class="btn btn-primary">Update</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+
 <script>
     function createdCallback() {
         getList();
+    }
+
+    function updatedCallback() {
+        setTimeout(function() {
+            $('#editFromPopup').modal('hide');
+        }, 1000);
+        getList();
+    }
+
+    function editRecord(id) {
+        $.ajax({
+            url: baseUrl + "hotel_category_get_record_by_id/" + id,
+            type: 'get',
+            dataType: 'json',
+            beforeSend: function() {},
+            complete: function() {},
+            success: function(json) {
+                if (json.success) {
+                    $('#utitle').val(json.data.title);
+                    $('#_id').val(json.data.id);
+                    $('#editFromPopup').modal('show');
+                } else {
+                    Swal.fire(
+                        'Warning!',
+                        json.message,
+                        'error'
+                    )
+                }
+            },
+            error: function(xhr, ajaxOptions, thrownError) {
+                console.log(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+            }
+        });
     }
 
     function changeSatus(id, status) {
