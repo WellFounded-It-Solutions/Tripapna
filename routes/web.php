@@ -5,6 +5,7 @@ use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\CouponController;
 use App\Http\Controllers\Admin\CustomerController;
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\ModuleController;
 use App\Http\Controllers\Admin\multiplePackageController;
 use App\Http\Controllers\Admin\PermissionController;
 use App\Http\Controllers\Admin\singlePackageController;
@@ -36,6 +37,15 @@ Route::get('/administrator/logout', [AdminController::class, 'logout'])->name('l
 Route::group(['middleware' => 'role:admin'], function () {
     Route::match(['get'], 'administrator/profile', [AdminController::class, 'profile'])->name('administrator_profile');
     Route::match(['post'], 'administrator/update', [AdminController::class, 'update'])->name('administrator_profile_update');
+
+    Route::get('/administrator/modules', [ModuleController::class, 'index'])->name('administrator_modules');
+    Route::get('/administrator/moduleslist', [ModuleController::class, 'get_list'])->name('administrator_moduleslist');
+    Route::post('/administrator/modules/store', [ModuleController::class, 'store'])->name('administrator_modules_store');
+    // Route::get('/administrator/modules/get_record_by_id/{id}', [ModuleController::class, 'get_record_by_id'])->name('administrator_modules_get_record_by_id');
+    Route::post('/administrator/modules/change_status', [ModuleController::class, 'change_status'])->name('administrator_modules_change_status');
+    // Route::post('/administrator/modules/store', [ModuleController::class, 'store'])->name('administrator_modules_store');
+    // Route::post('/administrator/modules/update', [ModuleController::class, 'update'])->name('administrator_modules_update');
+    // Route::get('/administrator/modules/delete/{ids}', [ModuleController::class, 'destroy'])->name('administrator_modules_delete');
 
     Route::get('/administrator/permission', [PermissionController::class, 'index'])->name('administrator_permission');
     Route::get('/administrator/permissionlist', [PermissionController::class, 'get_list'])->name('administrator_permissionlist');

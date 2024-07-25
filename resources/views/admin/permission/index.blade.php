@@ -13,6 +13,14 @@
    </section>
    <section class="content">
       <div class="container-fluid">
+
+
+      <div class="row">
+        <div class="col-12">
+            <a class="btn btn-primary" href="{{ route(Auth::user()->roles['0']->params.'_modules') }}">Module Management</a>
+        </div>
+      </div>
+
          <div class="row">
             <div class="col-12">
                <div class="callout callout-info">
@@ -21,10 +29,10 @@
                         <input type="text" class="form-control" placeholder="Search by keyword" id="title">
                   </div>
                   <div class="col-3">
-                        
+
                   </div>
                   <div class="col-3">
-                        
+
                   </div>
                   <div class="col-3">
                         <button type="button" class="btn btn-info" onclick="getList()">Search</button>
@@ -45,7 +53,7 @@
                            </tr>
                         </thead>
                         <tbody class="customtable">
-                        
+
                         </tbody>
                      </table>
                     </div>
@@ -83,7 +91,7 @@
 
                     </tbody>
                     </table>
-                </div>    
+                </div>
                     </div>
                     <input type="hidden" name="id" id="userId">
                 <div class="border-top">
@@ -111,7 +119,7 @@ $(document).ready(function() {
             var page = $(this).attr('href').split('page=')[1];
             fetch_date(page);
         });
-    }); 
+    });
 
 function getList() {
         var name = $('#title').val();
@@ -134,7 +142,7 @@ function getList() {
                 console.log(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
             }
         });
-    } 
+    }
 
     function fetch_date(page) {
         var title = $('#title').val();
@@ -156,7 +164,7 @@ function getList() {
                 console.log(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
             }
         });
-    } 
+    }
 
 function getPermission(id) {
         $.ajax({
@@ -174,7 +182,7 @@ function getPermission(id) {
             console.log(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
         }
     });
-   
+
 }
 $(document).ajaxComplete(function() {
     $("[data-toggle='tooltip']").tooltip();
