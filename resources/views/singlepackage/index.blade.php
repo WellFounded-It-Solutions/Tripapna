@@ -87,9 +87,9 @@
                             <div class="col-sm-9">
                                 <select class="form-control" data-placeholder="Select a Category" name="hotel_id" id="h_id">
                                     <option value="">Select</option>
-                                    @foreach($hotelRecord as $val)    
+                                    @foreach($hotelRecord as $val)
                                         <option value="{{ $val->id }}">{{ ucfirst($val->name) }}</option>
-                                    @endforeach    
+                                    @endforeach
                                 </select>
                             </div>
                         </div>
@@ -98,9 +98,9 @@
                             <div class="col-sm-9">
                                 <select class="form-control" data-placeholder="Select a Category" name="category_id" id="category_id" onchange="getCoupon(this)">
                                     <option value="">Select</option>
-                                    @foreach($Categories as $val)    
+                                    @foreach($Categories as $val)
                                         <option value="{{ $val->id }}">{{ ucfirst($val->title) }}</option>
-                                    @endforeach    
+                                    @endforeach
                                 </select>
                             </div>
                         </div>
@@ -109,7 +109,7 @@
                             <div class="col-sm-9">
                                 <select class="select4 coupon_html" multiple data-placeholder="Select a Category" data-dropdown-css-class="select2-purple" style="width: 100%;" name="coupon[]" id="category_id">
                                     <option value=""></option>
-  
+
                                 </select>
                             </div>
                         </div>
@@ -220,9 +220,9 @@
                             <div class="col-sm-9">
                                 <select class="form-control" data-placeholder="Select a Category" name="hotel_id" id="uhotel_id">
                                     <option value="">Select</option>
-                                    @foreach($hotelRecord as $val)    
+                                    @foreach($hotelRecord as $val)
                                         <option value="{{ $val->id }}">{{ ucfirst($val->name) }}</option>
-                                    @endforeach    
+                                    @endforeach
                                 </select>
                             </div>
                         </div>
@@ -231,9 +231,9 @@
                             <div class="col-sm-9">
                                 <select class="form-control" data-placeholder="Select a Category" name="category_id" id="ucategory_id" onchange="getCoupon(this)">
                                     <option value="">Select</option>
-                                    @foreach($Categories as $val)    
+                                    @foreach($Categories as $val)
                                         <option value="{{ $val->id }}">{{ ucfirst($val->title) }}</option>
-                                    @endforeach    
+                                    @endforeach
                                 </select>
                             </div>
                         </div>
@@ -242,9 +242,9 @@
                             <div class="col-sm-9">
                                 <select class="select3 coupon_html" multiple data-placeholder="Select a Category" data-dropdown-css-class="select2-purple" style="width: 100%;" name="coupon[]" id="ucoupon_id">
                                 <option value=""></option>
-                                    @foreach($couponRecord as $val)    
+                                    @foreach($couponRecord as $val)
                                         <option value="{{ $val->id }}">{{ ucfirst($val->title) }}</option>
-                                    @endforeach    
+                                    @endforeach
                                 </select>
                             </div>
                         </div>
@@ -359,9 +359,9 @@
                             <div class="col-sm-9">
                                 <select class="form-control" data-placeholder="Select a Category" name="hotel_id" id="cuhotel_id">
                                     <option value="">Select</option>
-                                    @foreach($hotelRecord as $val)    
+                                    @foreach($hotelRecord as $val)
                                         <option value="{{ $val->id }}">{{ ucfirst($val->name) }}</option>
-                                    @endforeach    
+                                    @endforeach
                                 </select>
                             </div>
                         </div>
@@ -370,9 +370,9 @@
                             <div class="col-sm-9">
                                 <select class="form-control" data-placeholder="Select a Category" name="category_id" id="cucategory_id" onchange="getCoupon(this)">
                                     <option value="">Select</option>
-                                    @foreach($Categories as $val)    
+                                    @foreach($Categories as $val)
                                         <option value="{{ $val->id }}">{{ ucfirst($val->title) }}</option>
-                                    @endforeach    
+                                    @endforeach
                                 </select>
                             </div>
                         </div>
@@ -381,9 +381,9 @@
                             <div class="col-sm-9">
                                 <select class="select5 coupon_html" multiple data-placeholder="Select a Category" data-dropdown-css-class="select2-purple" style="width: 100%;" name="coupon[]" id="cucoupon">
                                     <option value=""></option>
-                                    @foreach($couponRecord as $val)    
+                                    @foreach($couponRecord as $val)
                                         <option value="{{ $val->id }}">{{ ucfirst($val->title) }}</option>
-                                    @endforeach    
+                                    @endforeach
                                 </select>
                             </div>
                         </div>
@@ -705,7 +705,7 @@
             complete: function() {},
             success: function(json) {
                 if (json.success) {
-                    $('.coupon_html').append(json.html);
+                    $('.coupon_html').html(json.html);
                 } else {
                     Swal.fire(
                         'Warning!',
