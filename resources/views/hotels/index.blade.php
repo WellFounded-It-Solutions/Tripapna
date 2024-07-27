@@ -173,8 +173,8 @@
                                 <div class="form-group">
 
                                     <div class="custom-file">
-                                        <input type="file" class="custom-file-input" id="customFile" name="logo">
-                                        <label class="custom-file-label" for="customFile">Choose file</label>
+                                        <input type="file" class="custom-file-input" id="customFile1" name="logo">
+                                        <label class="custom-file-label" for="customFile1">Choose file</label>
                                     </div>
                                 </div>
                             </div>
@@ -185,7 +185,7 @@
                                 <div class="form-group">
                                     <div class="custom-file">
                                         <input type="file" class="custom-file-input" id="filenames" name="filenames[]" multiple>
-                                        <label class="custom-file-label" for="customFile">Choose file</label>
+                                        <label class="custom-file-label" for="filenames">Choose file</label>
                                     </div>
                                 </div>
                             </div>
@@ -301,8 +301,8 @@
                                 <div class="form-group">
 
                                     <div class="custom-file">
-                                        <input type="file" class="custom-file-input" id="customFile" name="logo">
-                                        <label class="custom-file-label" for="customFile">Choose file</label>
+                                        <input type="file" class="custom-file-input" id="customFile2" name="logo">
+                                        <label class="custom-file-label" for="customFile2">Choose file</label>
                                     </div>
                                 </div>
                             </div>
@@ -312,8 +312,8 @@
                             <div class="col-sm-9">
                                 <div class="form-group">
                                     <div class="custom-file">
-                                        <input type="file" class="custom-file-input" id="filenames" name="filenames[]" multiple>
-                                        <label class="custom-file-label" for="customFile">Choose file</label>
+                                        <input type="file" class="custom-file-input" id="filenames2" name="filenames[]" multiple>
+                                        <label class="custom-file-label" for="filenames2">Choose file</label>
                                     </div>
                                 </div>
                             </div>
@@ -510,4 +510,5 @@
         }
     }
 </script>
+
 @endsection
