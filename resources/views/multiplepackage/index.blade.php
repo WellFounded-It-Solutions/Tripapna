@@ -89,21 +89,21 @@
                                 <div class="col-sm-9">
                                     <select class="form-control" data-placeholder="Select a Category" name="hotel_id[]" id="uhotel_id">
                                         <option value="">Select</option>
-                                        @foreach($hotelRecord as $val)    
+                                        @foreach($hotelRecord as $val)
                                             <option value="{{ $val->id }}">{{ ucfirst($val->name) }}</option>
-                                        @endforeach    
+                                        @endforeach
                                     </select>
                                 </div>
                             </div>
-                            
+
                             <div class="col-sm-3">
                                 <label for="fname" class="col-sm-3 text-right control-label col-form-label">Category</label>
                                 <div class="col-sm-9">
                                     <select class="form-control" data-placeholder="Select a Category" name="category_id[]" id="category_id" onchange="getCoupon(this,0)">
                                         <option value="">Select</option>
-                                        @foreach($Categories as $val)    
+                                        @foreach($Categories as $val)
                                             <option value="{{ $val->id }}">{{ ucfirst($val->title) }}</option>
-                                        @endforeach    
+                                        @endforeach
                                     </select>
                                 </div>
                             </div>
@@ -113,7 +113,7 @@
                                 <div class="col-sm-9">
                                     <select class="form-control coupon_html0"  data-placeholder="Select a Category" data-dropdown-css-class="select2-purple" style="width: 100%;" name="coupon[]" id="category_id">
                                         <option value="">Select</option>
-    
+
                                     </select>
                                 </div>
                             </div>
@@ -179,6 +179,13 @@
                             <label for="fname" class="col-sm-3 text-right control-label col-form-label">Description</label>
                             <div class="col-sm-9">
                                 <textarea rows="5" class="form-control" placeholder="Description" cols="70" name="description"></textarea>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="" class="col-sm-3 text-right control-label col-form-label">Image</label>
+                            <div class="col-sm-9 custom-file">
+                                <input type="file" class="custom-file-input" id="customFile" name="image">
+                                <label class="custom-file-label" for="customFile">Choose file</label>
                             </div>
                         </div>
                     </div>
@@ -277,6 +284,13 @@
                             <label for="fname" class="col-sm-3 text-right control-label col-form-label">Description</label>
                             <div class="col-sm-9">
                                 <textarea rows="5" class="form-control" placeholder="Terms and Conditions" cols="70" name="description" id="udescription"></textarea>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="fname" class="col-sm-3 text-right control-label col-form-label">Image</label>
+                            <div class="col-sm-9 custom-file">
+                                <input type="file" class="custom-file-input" id="customFile" name="image">
+                                <label class="custom-file-label" for="customFile">Choose file</label>
                             </div>
                         </div>
                     </div>
@@ -528,7 +542,7 @@
                     $('#utnc').val(json.data.term_conditions);
                     $('#udescription').val(json.data.description);
                     $('#uvalid_date').val(json.data.valid_date);
-                    $('#updateDiv').html(json.html);    
+                    $('#updateDiv').html(json.html);
                     $('#_id').val(json.data.id);
                     $('#editFromPopup').modal('show');
                 } else {
