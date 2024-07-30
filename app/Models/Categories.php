@@ -13,4 +13,9 @@ class Categories extends Model implements Auditable
     protected $guarded = [];
 
     protected $table = 'categories';
+
+    public function coupons()
+    {
+        return $this->hasMany(Coupon::class, 'category_id');
+    }
 }

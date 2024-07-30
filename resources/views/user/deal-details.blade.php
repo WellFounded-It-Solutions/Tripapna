@@ -602,7 +602,7 @@
                     </ul>
                 </div>
                 <div class="deals-details-desc">
-                    <p [innerHTML]="$productdata->description"></p>
+                    <p>{{$productdata->description}}</p>
                     <!-- <p><strong>1.</strong> Complimentary ground shipping within 1 to 7 business days<br>
                         <strong>2.</strong> In-store collection available within 1 to 7 business days<br>
                         <strong>3.</strong> Next-day and Express delivery options also available<br>
@@ -617,17 +617,23 @@
                     </ul> -->
                     <div class="cart-table table-responsive">
                         <h3>Package Includes ({{ isset($productdata->PackageItem) ? count($productdata->PackageItem) : 0 }})</h3>
+
+
                         <table class="table table-bordered">
-                            <!-- <th>Image</th> -->
-                            <!-- <th>Title</th>
-                            <th>Description</th> -->
+                            @foreach($couponCategories as $category)
+
+                            <tr>
+                                <td colspan="2"><strong> Category:- {{$category->title}}</strong></td>
+                            </tr>
+
                             @foreach($productdata->PackageItem as $item)
+                            @if($item->category_id == $category->id)
                             <tr>
                                 <td> <img src="{{asset($item->coupondata->image)}}" alt="image"></td>
                                 <td>
                                     <div>
                                         <h6>{{$item->coupondata->title}}</h6>
-                                        <p >
+                                        <p>
                                             {{$item->coupondata->description}}
                                         </p>
                                         <p class="coupon-desc-second">
@@ -641,6 +647,9 @@
 
 
                             </tr>
+                            @endif
+                            @endforeach
+
                             @endforeach
 
                         </table>

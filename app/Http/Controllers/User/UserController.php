@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\User;
 
+use App\Models\Categories;
 use App\Models\Coupon;
 use App\Models\Hotel;
 use App\Models\HotelCategory;
@@ -76,13 +77,19 @@ class UserController extends Controller
         $productdata->amount = " " . number_format($productdata->amount);
         $productdata->discount = $productdata->discount . " % Off";
         $productdata->rating = 4;
+
+
+        $couponCategories = $productdata->PackageItem->pluck('category_id')->toArray();
+        $couponCategories = array_unique($couponCategories);
+        $couponCategories = Categories::whereIn('id', $couponCategories)->get();
+
+
         foreach ($productdata->PackageItem as $key => $value) {
             $value->coupondata = Coupon::where('id', $value->coupon_id)->first();
             $productdata->hotel = Hotel::select('location', 'mobile', 'lat', 'long', 'id')->where('id', $value->hotel_id)->with('images')->first();
         }
 
-
-        return view('user.deal-details', compact('productdata'));
+        return view('user.deal-details', compact('productdata' , 'couponCategories'));
     }
 
 
