@@ -44,6 +44,8 @@ class AdminController extends Controller
                         $response['redirectURL'] = $webpath.'/manager/dashboard';
                     } elseif ($user->hasRole('agent')) {
                         $response['redirectURL'] = $webpath.'/agent/dashboard';
+                    }elseif($user->hasRole('user')){
+                        $response['redirectURL'] = $webpath.'/hoteladmin/dashboard';
                     }
                 } else {
                     $response['success'] = false;

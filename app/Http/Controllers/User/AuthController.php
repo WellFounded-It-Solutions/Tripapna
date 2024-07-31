@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\User;
 
 use App\Models\Customer;
 use App\Models\Order;
@@ -9,70 +9,52 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Validator;
 use Illuminate\Support\Facades\DB;
+
 class AuthController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('auth:api', ['except' => ['login', 'refresh', 'logout', 'register']]);
+    }
+    public function login()
+    {
+        return view('user.login');
     }
 
-    /**
-     * Get a JWT via given credentials.
-     *
-     * @return Response
-     */
-    public function login(Request $request)
+    public function login_post(Request $request)
     {
-        $this->validate($request, [
-            'email' => 'required|email',
-            'password' => 'required',
-        ],
-        [ 
-        'email.required' => 'email is required', 
-        'password.required' => 'password is required',
-        'email.email' => 'please enter valid email'
-        ]
-    );
+        $request->validate(
+            [
+                'email' => 'required|email',
+                'password' => 'required',
+            ]
+        );
 
         $credentials = $request->only(['email', 'password']);
 
-        if (! $token = Auth::attempt($credentials)) {
-            $response['data'] = null;
-            $response['message'] = 'Unauthorized';
-            $response['success'] = false;
 
-            return response()->json($response, 401);
+        if (Auth::guard('customer')->attempt($credentials)) {
+            return redirect()->back()->with('success', 'Login successfully');
+        } else {
+            return redirect(route('custmor_login'))->with('error', 'Invalid credentials');
         }
-        $response['data'] = $this->respondWithToken($token);
-        $response['message'] = '';
-        $response['success'] = true;
-
-        return response()->json($response);
     }
 
-    public function register(Request $request)
+    public function register()
     {
-        $validator = Validator::make($request->all(), 
+        return view('user.auth.register');
+    }
+
+    public function register_post(Request $request)
+    {
+        $request->validate(
             [
                 'name' => 'required',
                 'email' => 'required|email|unique:customers,email',
                 'mobile' => 'required|numeric|unique:customers,mobile',
                 'password' => 'required',
                 'c_password' => 'required|same:password',
-            ],
-            [ 
-                'name.required' => 'email is required', 
-                'email.required' => 'email is required', 
-                'email.unique' => 'email is already register', 
-                'mobile.required' => 'mobile is required', 
-                'mobile.unique' => 'mobile is already register', 
-                'password.required' => 'password is required',
-                'c_password.required' => 'password is required'
             ]
         );
-        if ($validator->fails()) {
-            return response()->json(['error' => $validator->errors()], 401);
-        }
         $input = $request->all();
         $input['password'] = Hash::make($input['password']);
         unset($input['c_password']);
@@ -86,10 +68,10 @@ class AuthController extends Controller
     public function update_profile(Request $request)
     {
         $input = $request->all();
-       // pr($input);
+        // pr($input);
         $validation_array = [
             'name' => 'required',
-           // 'email' => 'required',
+            // 'email' => 'required',
             'mobile' => 'required|regex:/^([0-9\s\-\+\(\)]*)$/|min:10',
         ];
         if ($input['new_password'] != '') {
@@ -97,15 +79,15 @@ class AuthController extends Controller
             $validation_array['new_password'] = 'required:min:8';
             $validation_array['new_confirm_password'] = 'same:new_password';
         }
-        $validator = Validator::make($request->all(), $validation_array,[ 
-                'current_password.required' => 'current password is required', 
-                'new_confirm_password.required' => 'new password  is required', 
-            ]);
-        if (! $validator->fails()) {
-          //  echo $_SERVER['DOCUMENT_ROOT']; die;
+        $validator = Validator::make($request->all(), $validation_array, [
+            'current_password.required' => 'current password is required',
+            'new_confirm_password.required' => 'new password  is required',
+        ]);
+        if (!$validator->fails()) {
+            //  echo $_SERVER['DOCUMENT_ROOT']; die;
             if ($input['new_password'] != '') {
                 $auth = Auth::user();
-                if (! Hash::check($input['current_password'], $auth->password)) {
+                if (!Hash::check($input['current_password'], $auth->password)) {
                     $response['data'] = null;
                     $response['message'] = 'Your current password not correct'; //add logic here
                     $response['success'] = false;
@@ -114,14 +96,14 @@ class AuthController extends Controller
                     exit;
                 } else {
                     $update['name'] = $input['name'];
-                   // $update['email'] = $input['email'];
+                    // $update['email'] = $input['email'];
                     $update['mobile'] = $input['mobile'];
                     $update['password'] = Hash::make($input['new_password']);
                     if ($request->hasFile('image')) {
-                        $imageName = time().'.'.$request->image->extension();
-                        $request->image->move($_SERVER["DOCUMENT_ROOT"]."/public/upload", $imageName);
+                        $imageName = time() . '.' . $request->image->extension();
+                        $request->image->move($_SERVER["DOCUMENT_ROOT"] . "/public/upload", $imageName);
                         $update['image'] = $imageName;
-                    } 
+                    }
                     $affrow = Customer::where('id', $auth->id)->update($update);
                     if ($affrow) {
                         auth()->logout();
@@ -131,13 +113,13 @@ class AuthController extends Controller
                 }
             } else {
                 $update['name'] = $input['name'];
-              //  $update['email'] = $input['email'];
+                //  $update['email'] = $input['email'];
                 $update['mobile'] = $input['mobile'];
-                    if ($request->hasFile('image')) {
-                        $imageName = time().'.'.$request->image->extension();
-                        $re = $request->image->move($_SERVER["DOCUMENT_ROOT"]."/public/upload", $imageName);
-                        $update['image'] = $imageName;
-                    } 
+                if ($request->hasFile('image')) {
+                    $imageName = time() . '.' . $request->image->extension();
+                    $re = $request->image->move($_SERVER["DOCUMENT_ROOT"] . "/public/upload", $imageName);
+                    $update['image'] = $imageName;
+                }
                 $affrow = Customer::where('id', Auth::id())->update($update);
                 $update_user_Data = Customer::where('id', Auth::id())->first();
                 if ($affrow) {
@@ -159,32 +141,32 @@ class AuthController extends Controller
         $validation_array['current_password'] = 'required';
         $validation_array['new_password'] = 'required:min:8';
         $validation_array['new_confirm_password'] = 'same:new_password';
-        $validator = Validator::make($request->all(), $validation_array,[ 
-                'current_password.required' => 'current password is required', 
-                'new_password.required' => 'New password is required', 
-                'new_confirm_password.required' => 'new password  is required', 
-            ]);
-        if (! $validator->fails()) {
-                $auth = Auth::user();
-                if (! Hash::check($input['current_password'], $auth->password)) {
-                    $response['data'] = null;
-                    $response['message'] = 'Your current password not correct'; //add logic here
-                    $response['success'] = false;
+        $validator = Validator::make($request->all(), $validation_array, [
+            'current_password.required' => 'current password is required',
+            'new_password.required' => 'New password is required',
+            'new_confirm_password.required' => 'new password  is required',
+        ]);
+        if (!$validator->fails()) {
+            $auth = Auth::user();
+            if (!Hash::check($input['current_password'], $auth->password)) {
+                $response['data'] = null;
+                $response['message'] = 'Your current password not correct'; //add logic here
+                $response['success'] = false;
 
-                    return response()->json($response);
-                    exit;
-                } else {
-                    $update['name'] = $input['name'];
-                   // $update['email'] = $input['email'];
-                    $update['mobile'] = $input['mobile'];
-                    $update['password'] = Hash::make($input['new_password']);
-                    $affrow = Customer::where('id', $auth->id)->update($update);
-                    if ($affrow) {
-                        auth()->logout();
-                        $response['message'] = 'Your password  is updated successfully'; //add logic here
-                        $response['success'] = true;
-                    }
+                return response()->json($response);
+                exit;
+            } else {
+                $update['name'] = $input['name'];
+                // $update['email'] = $input['email'];
+                $update['mobile'] = $input['mobile'];
+                $update['password'] = Hash::make($input['new_password']);
+                $affrow = Customer::where('id', $auth->id)->update($update);
+                if ($affrow) {
+                    auth()->logout();
+                    $response['message'] = 'Your password  is updated successfully'; //add logic here
+                    $response['success'] = true;
                 }
+            }
         } else {
             return response()->json(['error' => $validator->errors()], 401);
         }
@@ -201,26 +183,26 @@ class AuthController extends Controller
     public function me()
     {
         $id = auth()->user()->id;
-$userdata = DB::table('tbl_orders')
-    ->select([
-        DB::raw('COUNT(*) AS count'),
-        DB::raw('SUM(amount) AS total'),
-    ])
-    ->where('user_id',$id)
-    ->where('type','package')
-    ->first();
-    $userdatac = DB::table('tbl_orders')
-    ->select([
-        DB::raw('COUNT(*) AS count'),
-        DB::raw('SUM(amount) AS total'),
-    ])
-    ->where('user_id',$id)
-    ->where('type','coupon')
-    ->first();
+        $userdata = DB::table('tbl_orders')
+            ->select([
+                DB::raw('COUNT(*) AS count'),
+                DB::raw('SUM(amount) AS total'),
+            ])
+            ->where('user_id', $id)
+            ->where('type', 'package')
+            ->first();
+        $userdatac = DB::table('tbl_orders')
+            ->select([
+                DB::raw('COUNT(*) AS count'),
+                DB::raw('SUM(amount) AS total'),
+            ])
+            ->where('user_id', $id)
+            ->where('type', 'coupon')
+            ->first();
 
-          auth()->user()->total_pakage = $userdata->count;
-          auth()->user()->amount = $userdata->total;
-          auth()->user()->coupon = $userdatac->count;
+        auth()->user()->total_pakage = $userdata->count;
+        auth()->user()->amount = $userdata->total;
+        auth()->user()->coupon = $userdatac->count;
         $response['data'] = auth()->user();
         $response['success'] = true;
         $response['message'] = '';

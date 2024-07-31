@@ -16,28 +16,6 @@ class UserController extends Controller
 {
     public function __construct()
     {
-        // $this->middleware('auth:api', ['except' => ['search', 'hotel_type', 'hotel_list', 'hotel_package', 'getCoupon', 'packages', 'packagesDetails']]);
-    }
-
-    public function login()
-    {
-        return view('user.login');
-    }
-
-    public function login_post(Request $request)
-    {
-
-        $request->validate([
-            'email' => 'required|email',
-            'password' => 'required'
-        ]);
-
-        if (Auth::guard('customer')->attempt(['email' => $request->email, 'password' => $request->password])) {
-
-            return redirect(route('home'));
-        } else {
-            return redirect(route('custmor_login'))->with('error', 'Invalid credentials');
-        }
     }
 
     public function index()

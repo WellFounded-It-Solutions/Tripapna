@@ -19,6 +19,7 @@ use App\Http\Controllers\Hotel\CouponRedeemController;
 use App\Http\Controllers\Hotel\HotelPermissionController;
 use App\Http\Controllers\Hotel\HotelUsersController;
 use App\Http\Controllers\HotelController;
+use App\Http\Controllers\User\AuthController;
 use App\Http\Controllers\User\UserController;
 
 Route::get('/clear-cache', function () {
@@ -394,8 +395,10 @@ Route::get("/all-stores", [UserController::class, 'allStores'])->name('allStores
 Route::get("/stores-details/{id}", [UserController::class, 'storeDetails'])->name('stores-details');
 Route::get("/deals-details/{id}", [UserController::class, 'dealDetails'])->name('deals-details');
 
-Route::get("/login", [UserController::class, 'login'])->name('custmor_login');
-Route::post("/login", [UserController::class, 'login_post'])->name('custmor_login_post');
+Route::get("/login", [AuthController::class, 'login'])->name('custmor_login');
+Route::post("/login", [AuthController::class, 'login_post'])->name('custmor_login_post');
+Route::get("/register", [AuthController::class, 'register'])->name('custmor_register');
+Route::post("/register", [AuthController::class, 'register_post'])->name('custmor_register_post');
 
 
 // /////////////////////
