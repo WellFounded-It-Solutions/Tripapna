@@ -374,35 +374,35 @@
                         @csrf
                         <div class="form-group">
                             <label>Username</label>
-                            <input type="text" formControlName="name" class="form-control">
+                            <input name="name" type="text" formControlName="name" class="form-control" value="{{ old('name') }}">
                             @error('name')
                             <div class="alert alert-danger">{{ $message }}</div>
                             @enderror
                         </div>
                         <div class="form-group">
                             <label>Email</label>
-                            <input type="email" formControlName="email" class="form-control">
+                            <input name="email" type="email" formControlName="email" class="form-control" value="{{ old('email') }}">
                             @error('email')
                             <div class="alert alert-danger">{{ $message }}</div>
                             @enderror
                         </div>
                         <div class="form-group">
                             <label>Mobile</label>
-                            <input type="number" formControlName="mobile" class="form-control">
+                            <input name="mobile" type="number" formControlName="mobile" class="form-control" value="{{ old('mobile') }}" >
                             @error('mobile')
                             <div class="alert alert-danger">{{ $message }}</div>
                             @enderror
                         </div>
                         <div class="form-group">
                             <label>Password</label>
-                            <input type="password" formControlName="password" class="form-control">
+                            <input name="password" type="password" formControlName="password" class="form-control" value="{{ old('password') }}">
                             @error('password')
                             <div class="alert alert-danger">{{ $message }}</div>
                             @enderror
                         </div>
                         <div class="form-group">
                             <label>Confirm Password</label>
-                            <input type="password" formControlName="c_password" class="form-control">
+                            <input name="c_password" type="password" formControlName="c_password" class="form-control" value="{{ old('c_password') }}">
                             @error('c_password')
                             <div class="alert alert-danger">{{ $message }}</div>
                             @enderror

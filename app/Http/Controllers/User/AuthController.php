@@ -58,11 +58,9 @@ class AuthController extends Controller
         $input = $request->all();
         $input['password'] = Hash::make($input['password']);
         unset($input['c_password']);
-        $user = Customer::create($input);
-        $success['token'] = Auth::attempt(['email' => request('email'), 'password' => request('password')]);
-        $success['name'] = $user->name;
+        Customer::create($input);
 
-        return response()->json(['success' => $success], 200);
+        return redirect(route('custmor_login'))->with('success', 'Register successfully');
     }
 
     public function update_profile(Request $request)
