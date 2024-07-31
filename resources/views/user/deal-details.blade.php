@@ -780,8 +780,13 @@
                         </div>
                         <div class="buy-now-btn">
                             <!-- <a *ngIf="logindetails==null" routerLink="/login" class="default-btn" style="cursor: pointer;">Buy Now</a> -->
-                            <!-- <a *ngIf="logindetails!=null ||logindetails!=undefined" (click)="AddtoCart()" style="cursor: pointer;"class="default-btn">Buy Now</a> -->
-                            <a (click)="AddtoCart()" style="cursor: pointer;" class="default-btn">Buy Now</a>
+                            <!-- <a *ngIf="logindetails!=null ||logindetails!=undefined" onclick="AddtoCart()" style="cursor: pointer;"class="default-btn">Buy Now</a> -->
+
+                            @if(Auth::check())
+                            <a onclick="AddtoCart()" style="cursor: pointer;" class="default-btn">Buy Now</a>
+                            @else
+                            <a href="{{route('custmor_login')}}" style="cursor: pointer;" class="default-btn">Buy Now</a>
+                            @endif
 
 
                             <span><i class='bx bx-cart bx-flashing'></i> 247+ bought</span>

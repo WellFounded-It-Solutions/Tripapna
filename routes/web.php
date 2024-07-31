@@ -394,6 +394,10 @@ Route::get("/all-stores", [UserController::class, 'allStores'])->name('allStores
 Route::get("/stores-details/{id}", [UserController::class, 'storeDetails'])->name('stores-details');
 Route::get("/deals-details/{id}", [UserController::class, 'dealDetails'])->name('deals-details');
 
+Route::get("/login", [UserController::class, 'login'])->name('custmor_login');
+Route::post("/login", [UserController::class, 'login_post'])->name('custmor_login_post');
+
+
 // /////////////////////
 // Route::post('login', 'AuthController@login');
 // Route::post('logout', 'AuthController@logout');
