@@ -68,7 +68,7 @@ Route::group(['middleware' => 'role:admin'], function () {
     Route::get('/administrator/hotels/change_status/{id}/{status}', [HotelController::class, 'change_status'])->name('administrator_hotels_change_status');
     Route::post('/administrator/hotel/store', [HotelController::class, 'store'])->name('administrator_hotel_store');
     Route::post('/administrator/hotels/update', [HotelController::class, 'update'])->name('administrator_hotel_update');
-    Route::get('/administrator/hotels/delete/{ids}', [HotelController::class, 'destroy'])->name('administrator_hotel_delete');
+    // Route::get('/administrator/hotels/delete/{ids}', [HotelController::class, 'destroy'])->name('administrator_hotel_delete');
 
     Route::get('/administrator/hotel_category_create',[HotelController::class, 'create_hotel_category'])->name('administrator_hotel_category_create');
     Route::post('/administrator/hotel_category_store',[HotelController::class, 'store_hotel_category'])->name('administrator_hotel_category_store');
@@ -150,7 +150,7 @@ Route::group(['middleware' => 'role:subadmin'], function () {
     Route::get('/subadmin/hotels/change_status/{id}/{status}', [HotelController::class, 'change_status'])->name('subadmin_hotels_change_status');
     Route::post('/subadmin/hotel/store', [HotelController::class, 'store'])->name('subadmin_hotel_store');
     Route::post('/subadmin/hotels/update', [HotelController::class, 'update'])->name('subadmin_hotel_update');
-    Route::get('/subadmin/hotels/delete/{ids}', [HotelController::class, 'destroy'])->name('subadmin_hotel_delete');
+    // Route::get('/subadmin/hotels/delete/{ids}', [HotelController::class, 'destroy'])->name('subadmin_hotel_delete');
 
     Route::get('/subadmin/categories', [CategoryController::class, 'index'])->name('subadmin_categories');
     Route::get('/subadmin/categorieslist', [CategoryController::class, 'get_list'])->name('subadmin_categories_list');
@@ -224,7 +224,7 @@ Route::group(['middleware' => 'role:manager'], function () {
     Route::get('/manager/hotels/change_status/{id}/{status}', [HotelController::class, 'change_status'])->name('manager_hotels_change_status');
     Route::post('/manager/hotel/store', [HotelController::class, 'store'])->name('manager_hotel_store');
     Route::post('/manager/hotels/update', [HotelController::class, 'update'])->name('manager_hotel_update');
-    Route::get('/manager/hotels/delete/{ids}', [HotelController::class, 'destroy'])->name('manager_hotel_delete');
+    // Route::get('/manager/hotels/delete/{ids}', [HotelController::class, 'destroy'])->name('manager_hotel_delete');
 
     Route::get('/manager/categories', [CategoryController::class, 'index'])->name('manager_categories');
     Route::get('/manager/categorieslist', [CategoryController::class, 'get_list'])->name('manager_categories_list');

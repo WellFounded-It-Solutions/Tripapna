@@ -4,17 +4,28 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Laravel\Scout\Searchable;
+use Illuminate\Foundation\Auth\User as Authenticatable;
 use OwenIt\Auditing\Auditable as AuditableTrait;
 use OwenIt\Auditing\Contracts\Auditable;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Notifications\Notifiable;
+use Laravel\Sanctum\HasApiTokens;
 
-class Customer extends Model implements Auditable
+class Customer extends Authenticatable implements Auditable
 {
-    use AuditableTrait,Searchable;
+    use AuditableTrait,Searchable,HasApiTokens, HasFactory;
 
     protected $guarded = [];
 
     protected $table = 'customers';
+    protected $fillable = [
+        'name',
+        'email',
+        'password',
+        'mobile',
+        'status',
 
+    ];
     public function toSearchableArray()
     {
         return [
