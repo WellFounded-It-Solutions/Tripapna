@@ -1,5 +1,6 @@
 @extends('layouts.admin_design')
 @section('content')
+@if(auth()->user()->hasRole('admin') || auth()->user()->hasRole('manager'))
 <!-- path -->
 <div class="container-fluid">
 	<div class="path">
@@ -90,4 +91,5 @@
 		</div>
 	</div>
 </div>
+@endif
 @endsection

@@ -372,7 +372,7 @@ class HotelController extends Controller
         exit;
     }
 
-    public function update_hotel_category(Request $request, )
+    public function update_hotel_category(Request $request)
     {
         $check = $this->check($request, 'edit-hotel-category', 'ajax');
         if ($check) {

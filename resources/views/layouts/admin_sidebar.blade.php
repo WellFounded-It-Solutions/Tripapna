@@ -66,7 +66,7 @@ if (auth()->check() && auth()->user()->hasRole('admin')) {
                 <img src="../../dist/img/user2-160x160.jpg" class="img-circle elevation-2" alt="User Image">
             </div>
             <div class="info">
-                <a href="#" class="d-block">Admin</a>
+                <a href="#" class="d-block">{{ Auth::user()->name }}</a>
             </div>
         </div>
         <nav class="mt-2">
@@ -89,16 +89,19 @@ if (auth()->check() && auth()->user()->hasRole('admin')) {
                     </a>
                 </li>
                 @endif
+                
                 <li class="nav-item @if( Route::is(Auth::user()->roles['0']->params.'_user') || Route::is(Auth::user()->roles['0']->params.'_customer') || Route::is(Auth::user()->roles['0']->params.'_hotel') ) menu-open @endif">
-                    <a href="#" class="nav-link @if( Route::is(Auth::user()->roles['0']->params.'_user') || Route::is(Auth::user()->roles['0']->params.'_customer') || Route::is(Auth::user()->roles['0']->params.'_hotel') ) active @endif">
+                @if(auth()->user()->hasRole('admin') )
+                <a href="#" class="nav-link @if( Route::is(Auth::user()->roles['0']->params.'_user') || Route::is(Auth::user()->roles['0']->params.'_customer') || Route::is(Auth::user()->roles['0']->params.'_hotel') ) active @endif">
                         <i class="fas fa-user-secret"></i>
                         <p>
                             &nbsp;&nbsp;&nbsp;&nbsp; Role Managment
                             <i class="right fas fa-angle-left"></i>
                         </p>
                     </a>
+                    @endif
                     <ul class="nav nav-treeview" @if( Route::is(Auth::user()->roles['0']->params.'_user') || Route::is(Auth::user()->roles['0']->params.'_customer') || Route::is(Auth::user()->roles['0']->params.'_hotel') ) style="display: block" @endif>
-                        @if(auth()->check() && auth()->user()->can('view-user'))
+                    @if(auth()->user()->hasRole('admin') )
                         <li class="nav-item">
                             <a href="<?php echo $UserUrl ?>" class="nav-link {{ Route::is(Auth::user()->roles['0']->params.'_user') ? 'active' : '' }}">
                                 <i class="nav-icon fas fa-users"></i>
@@ -108,17 +111,18 @@ if (auth()->check() && auth()->user()->hasRole('admin')) {
                             </a>
                         </li>
                         @endif
-                        @if(auth()->check() && auth()->user()->can('view-customer'))
+                        @if(auth()->user()->hasRole('admin') || auth()->user()->hasRole('manager'))
                         <li class="nav-item">
                             <a href="<?php echo $customerUrl; ?>" class="nav-link {{ Route::is(Auth::user()->roles['0']->params.'_customer') ? 'active' : '' }}">
                                 <i class="nav-icon fas fa-users"></i>
                                 <p>
                                     Customer
+                                    
                                 </p>
                             </a>
                         </li>
                         @endif
-                        @if(auth()->check() && auth()->user()->can('view-hotel'))
+                        @if(auth()->user()->hasRole('admin') || auth()->user()->hasRole('manager'))
                         <li class="nav-item">
                             <a href="<?php echo $hotelUrl ?>" class="nav-link {{ Route::is(Auth::user()->roles['0']->params.'_hotel') ? 'active' : '' }}">
                                 <i class="nav-icon fas fa-hotel"></i>
@@ -130,6 +134,7 @@ if (auth()->check() && auth()->user()->hasRole('admin')) {
                         @endif
                     </ul>
                 </li>
+                @if(auth()->user()->hasRole('admin') || auth()->user()->hasRole('manager')||auth()->user()->hasRole('agent'))
                 <li class="nav-item @if( Route::is(Auth::user()->roles['0']->params.'_categories') || Route::is(Auth::user()->roles['0']->params.'_coupons')  ) menu-is-opening menu-open @endif ">
                     <a href="#" class="nav-link @if( Route::is(Auth::user()->roles['0']->params.'_categories') || Route::is(Auth::user()->roles['0']->params.'_coupons')  ) active @endif">
                         <i class="fas fa-ad"></i>
@@ -149,7 +154,7 @@ if (auth()->check() && auth()->user()->hasRole('admin')) {
                             </a>
                         </li>
                         @endif
-                        @if(auth()->check() && auth()->user()->can('view-coupons'))
+                        @if(auth()->user()->hasRole('admin') || auth()->user()->hasRole('manager')||auth()->user()->hasRole('agent'))
                         <li class="nav-item">
                             <a href="<?php echo $couponUrl ?>" class="nav-link {{ Route::is(Auth::user()->roles['0']->params.'_coupons') ? 'active' : '' }}">
                                 <i class="fas fa-window-restore"></i>&nbsp;&nbsp;&nbsp;&nbsp;
@@ -161,6 +166,7 @@ if (auth()->check() && auth()->user()->hasRole('admin')) {
                         @endif
                     </ul>
                 </li>
+                @endif
                 <li class="nav-item @if( Route::is(Auth::user()->roles['0']->params.'_single_package') || Route::is(Auth::user()->roles['0']->params.'_multiple_package')  ) menu-is-opening menu-open @endif ">
                     <a href="#" class="nav-link @if( Route::is(Auth::user()->roles['0']->params.'_single_package') || Route::is(Auth::user()->roles['0']->params.'_multiple_package')  ) active @endif">
                         <i class="fas fa-people-carry nav-item"></i>
@@ -171,6 +177,8 @@ if (auth()->check() && auth()->user()->hasRole('admin')) {
                     </a>
                     <ul class="nav nav-treeview" @if( Route::is(Auth::user()->roles['0']->params.'_single_package') || Route::is(Auth::user()->roles['0']->params.'_multiple_package') ) style="display: block @endif ">
                         @if(auth()->check() && auth()->user()->can('view-single-package'))
+
+                        
                         <li class="nav-item">
                             <a href="<?php echo $singlePakcage ?>" class="nav-link {{ Route::is(Auth::user()->roles['0']->params.'_single_package') ? 'active' : '' }}">
                                 <i class="far fa-circle nav-icon"></i>
@@ -181,7 +189,7 @@ if (auth()->check() && auth()->user()->hasRole('admin')) {
                         </li>
                         @endif
                         @if(auth()->check() && auth()->user()->can('view-multiple-package'))
-                        <li class="nav-item">
+                         <li class="nav-item">
                             <a href="<?php echo $multiplePakcage ?>" class="nav-link {{ Route::is(Auth::user()->roles['0']->params.'_multiple_package') ? 'active' : '' }}">
                                 <i class="far fa-circle nav-icon"></i>
                                 <p>
@@ -192,7 +200,9 @@ if (auth()->check() && auth()->user()->hasRole('admin')) {
                         @endif
                     </ul>
                 </li>
+                
                 @if(auth()->check() && auth()->user()->can('view-orders'))
+
                 <li class="nav-item">
                     <a href="<?php echo $orderUrl ?>" class="nav-link {{ Route::is(Auth::user()->roles['0']->params.'_order') ? 'active' : '' }}">
                         <i class="fab fa-linode nav-icon"></i>
@@ -202,6 +212,7 @@ if (auth()->check() && auth()->user()->hasRole('admin')) {
                     </a>
                 </li>
                 @endif
+                
                 @if(auth()->check() && auth()->user()->can('view-profile'))
                 <li class="nav-item">
                     <a href="<?php echo $profileUrl ?>" class="nav-link {{ Route::is(Auth::user()->roles['0']->params.'_profile') ? 'active' : '' }}">

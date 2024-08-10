@@ -1,7 +1,7 @@
 @extends('layouts.admin_design')
 @section('title','Modul Managment')
 @section('content')
-
+@if(auth()->user()->hasRole(['admin','manager']))
 <div class="content-wrapper">
     <section class="content-header">
         <div class="container-fluid">
@@ -132,5 +132,6 @@
         });
     }
 </script>
+@endif
 
 @endsection
