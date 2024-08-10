@@ -22,20 +22,31 @@ class AuthController extends Controller
 
     public function login_post(Request $request)
     {
-        $request->validate(
-            [
-                'email' => 'required|email',
-                'password' => 'required',
-            ]
-        );
+        // $request->validate(
+        //     [
+        //         'email' => 'required|email',
+        //         'password' => 'required',
+        //     ]
+        // );
+
+        // $credentials = $request->only(['email', 'password']);
+        // if (Auth::guard('customer')->attempt($credentials)) {
+        //     return redirect()->back()->with('success', 'Login successfully');
+        // } else {
+        //     return redirect(route('custmor_login'))->with('error', 'Invalid credentials');
+        // }
+        $request->validate([
+            'email' => 'required|email',
+            'password' => 'required',
+        ]);
 
         $credentials = $request->only(['email', 'password']);
-
-
         if (Auth::guard('customer')->attempt($credentials)) {
-            return redirect()->back()->with('success', 'Login successfully');
+            // dd($credentials);
+            return redirect()->route('home')->with('success', 'Login successfully');
         } else {
-            return redirect(route('custmor_login'))->with('error', 'Invalid credentials');
+            dd("Failed");
+            return redirect()->route('custmor_login')->with('error', 'Invalid credentials');
         }
     }
 
