@@ -51,7 +51,7 @@ Route::group(['middleware' => 'role:admin'], function () {
     Route::get('/administrator/permission', [PermissionController::class, 'index'])->name('administrator_permission');
     Route::get('/administrator/permissionlist', [PermissionController::class, 'get_list'])->name('administrator_permissionlist');
     Route::get('/administrator/permission/getPermission/{id}', [PermissionController::class, 'getPermission'])->name('administrator_getPermission');
-    Route::post('/administrator/permission/permission', [PermissionController::class, 'permission'])->name('administrator_permission');
+    // Route::post('/administrator/permission/permission', [PermissionController::class, 'permission'])->name('administrator_permission');
 
     Route::get('/administrator/dashboard', [DashboardController::class, 'index'])->name('administrator_dashboard');
     Route::get('/administrator/users', [UsersController::class, 'index'])->name('administrator_user');
@@ -60,7 +60,7 @@ Route::group(['middleware' => 'role:admin'], function () {
     Route::get('/administrator/users/change_status/{id}/{status}', [UsersController::class, 'change_status'])->name('administrator_users_change_status');
     Route::post('/administrator/store', [UsersController::class, 'store'])->name('administrator_user_store');
     Route::post('/administrator/users/update', [UsersController::class, 'update'])->name('administrator_user_update');
-    Route::get('/administrator/users/delete/{id}', [UsersController::class, 'destroy'])->name('administrator_hotel_delete');
+    Route::get('/administrator/users/delete/{id}', [UsersController::class, 'destroy'])->name('administrator_user_delete');
 
     Route::get('/administrator/hotels', [HotelController::class, 'index'])->name('administrator_hotel');
     Route::get('/administrator/hotelslist', [HotelController::class, 'get_list'])->name('administrator_hotels_list');
@@ -140,7 +140,7 @@ Route::group(['middleware' => 'role:subadmin'], function () {
     Route::post('/subadmin/store', [UsersController::class, 'store'])->name('subadmin_user_store');
     Route::post('/subadmin/users/update', [UsersController::class, 'update'])->name('subadmin_user_update');
     Route::post('/subadmin/users/permission', [UsersController::class, 'permission'])->name('subadmin_user_permission');
-    Route::get('/subadmin/users/delete/{id}', [UsersController::class, 'destroy'])->name('subadmin_hotel_delete');
+    Route::get('/subadmin/users/delete/{id}', [UsersController::class, 'destroy'])->name('subadmin_user_delete');
     Route::get('/subadmin/users/getPermission/{id}', [UsersController::class, 'getPermission'])->name('subadmin_hotel_getPermission');
 
     Route::get('/subadmin/dashboard', [DashboardController::class, 'index'])->name('subadmin_dashboard');
@@ -214,7 +214,7 @@ Route::group(['middleware' => 'role:manager'], function () {
     Route::post('/manager/store', [UsersController::class, 'store'])->name('manager_user_store');
     Route::post('/manager/users/update', [UsersController::class, 'update'])->name('manager_user_update');
     Route::post('/manager/users/permission', [UsersController::class, 'permission'])->name('manager_user_permission');
-    Route::get('/manager/users/delete/{id}', [UsersController::class, 'destroy'])->name('manager_hotel_delete');
+    Route::get('/manager/users/delete/{id}', [UsersController::class, 'destroy'])->name('manager_user_delete');
     Route::get('/manager/users/getPermission/{id}', [UsersController::class, 'getPermission'])->name('manager_hotel_getPermission');
 
     Route::get('/manager/dashboard', [DashboardController::class, 'index'])->name('manager_dashboard');

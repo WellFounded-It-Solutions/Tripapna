@@ -1,1 +1,0 @@
-<?php echo e($page->links()); ?><?php /**PATH E:\client\tripapna\admin\resources\views/admin/pagination.blade.php ENDPATH**/ ?>
