@@ -465,6 +465,9 @@
                     <div class="pay-option">
                         <input type="radio" id="cash_on_delivery" name="cash_on_delivery" value="cash_on_delivery" checked>
                         <label for="cash_on_delivery">Cash on delivery</label>
+
+                        <input type="radio" id="paypal" name="paypal" value="paypal">
+                        <label for="paypal">Paypal</label>
                     </div>
                 </div>
                 <div class="col-lg-5 col-sm-5 col-md-5 text-end">
@@ -496,10 +499,26 @@
         if (!document.getElementById("accept_terms").checked) {
             alert("Please accept terms and conditions");
         }
+
+        let payment_method = "";
+
+        if (document.getElementById("cash_on_delivery").checked) {
+            payment_method = "cash_on_delivery";
+        } else if (document.getElementById("paypal").checked) {
+            payment_method = "paypal";
+        }
+
+        if (payment_method == "") {
+            alert("Please select payment method");
+        }
+
         $.ajax({
             type: "POST",
-            url: "{{route('placeOrder')}}",
-            data: $("#placeOrder").serialize(),
+            url: "{{route('orderPlace')}}",
+            data: {
+                "_token": "{{ csrf_token() }}",
+                "payment_method": payment_method
+            },
             success: function(response) {
                 if (response.status == 200) {
 

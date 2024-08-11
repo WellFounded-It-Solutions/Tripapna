@@ -22,6 +22,7 @@ use App\Http\Controllers\HotelController;
 use App\Http\Controllers\User\AuthController;
 use App\Http\Controllers\User\UserController;
 use App\Http\Controllers\User\CartController;
+use App\Http\Controllers\User\OrderController as UserOrderController;
 
 Route::get('/clear-cache', function () {
     Artisan::call('cache:clear');
@@ -404,7 +405,7 @@ Route::group(['middleware' => 'auth:customer'], function () {
     Route::get('/removeCart/{id}', [CartController::class, 'removeCart'])->name('removeCart');
 
 
-    // Route::post('orderPlace', 'OrderController@orderPlace');
+    Route::post('/orderPlace', [UserOrderController::class, 'orderPlace'])->name('orderPlace');
     // Route::get('myOrder', 'OrderController@myOrder');
     // Route::post('getorderbyid', 'OrderController@getorderbyid');
     // Route::post('orderDetails', 'OrderController@orderDetails');

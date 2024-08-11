@@ -1,5 +1,5 @@
 <?php
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\User;
 use App\Models\Cart;
 use App\Models\Coupon;
 use App\Models\Hotel;
@@ -18,7 +18,6 @@ class OrderController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('auth:api', ['except' => []]);
     }
     public function createOrder($amount = 0,$order=null,$email=null,$mobile=null)
     {
@@ -78,7 +77,6 @@ class OrderController extends Controller
         $message = '';
         $data = null;
         $validator = Validator::make($request->all(), [
-            'trans_id' => 'required',
             'payment_method' => 'required',
         ]);
         if ($validator->fails()) {
@@ -86,17 +84,17 @@ class OrderController extends Controller
         }
         try {
             $auth = Auth::user();
-            $cart = Cart::where('customer_id', $auth->id)->get();
+            $cart = Cart::where('customer_id', Auth::guard('customer')->user()->id)->get();
             $post_amount = 1;
-            // foreach($cart as $key => $value) 
+            // foreach($cart as $key => $value)
             // {
             //     $post_amount+=$value->amount;
             // }
             $amount = 0;
             $order['order_id'] = orderCode();
-            $order['user_id'] = $auth->id;
+            $order['user_id'] = Auth::guard('customer')->user()->id;
             $order['amount'] = $amount;
-            $order['trans_id'] = $request->input('trans_id');
+            $order['trans_id'] = "txn_" . rand(111111, 999999);
             $order['type'] = 'package';
             $order['user_name'] = $auth->name;
             $order['user_email'] = $auth->email;
@@ -107,7 +105,7 @@ class OrderController extends Controller
                 $response['success'] = true;
                 $response['payUrl'] = $return_response;
                 $phonepe_orders = new PhonePeOrders();
-                $phonepe_orders->customer_id = $auth->id;
+                $phonepe_orders->customer_id = Auth::guard('customer')->user()->id;
                 $phonepe_orders->amount = $post_amount;
                 $phonepe_orders->order_id = $order['order_id'];
                 $phonepe_orders->transaction_id = $order['trans_id'];
@@ -204,10 +202,10 @@ class OrderController extends Controller
                         }
                     }
                 } elseif ($value->type == 'coupon') {
-                  
+
                     $record = HotelCoupon::where('id', $value->coupon_id)->first();
                     // $order['order_id'] = orderCode();
-                    // $order['user_id'] = $auth->id;
+                    // $order['user_id'] = Auth::guard('customer')->user()->id;
                     // $order['amount'] = $amount;
                     // $order['order_log'] = json_encode($record->toarray());
                     // $order['trans_id'] = $request->input('trans_id');
@@ -236,7 +234,7 @@ class OrderController extends Controller
                         $orderItems['mobile_number'] = $auth->mobile;
                         $orderItems['type'] = 'Coupon';
                         $order_details_create = OrderDetails::create($orderItems);
-                        Cart::where('customer_id', $auth->id)->delete();
+                        Cart::where('customer_id', Auth::guard('customer')->user()->id)->delete();
                         $success = true;
                         $message = __('api.order.success');
                     } else {
@@ -245,7 +243,7 @@ class OrderController extends Controller
                     }
                 }
             }
-            Cart::where('customer_id', $auth->id)->delete();
+            Cart::where('customer_id', Auth::guard('customer')->user()->id)->delete();
             $success = true;
             $message = __('api.order.success');
             $update_order['amount'] = $amount;
@@ -267,17 +265,17 @@ class OrderController extends Controller
         try {
             $auth = Auth::user();
             if($request->input('type')!=""){
-            
-            // $records = Order::where('user_id', $auth->id)->where('type',$request->input('type'))->with(['orderDetails'])->get();
+
+            // $records = Order::where('user_id', Auth::guard('customer')->user()->id)->where('type',$request->input('type'))->with(['orderDetails'])->get();
             // }else{
-            //     $records = Order::where('user_id', $auth->id)->with(['orderDetails'])->get();
+            //     $records = Order::where('user_id', Auth::guard('customer')->user()->id)->with(['orderDetails'])->get();
             // }
-            
-              $records = Order::where('user_id', $auth->id)->where('type',$request->input('type'))->get();
+
+              $records = Order::where('user_id', Auth::guard('customer')->user()->id)->where('type',$request->input('type'))->get();
             }else{
-                $records = Order::where('user_id', $auth->id)->get();
+                $records = Order::where('user_id', Auth::guard('customer')->user()->id)->get();
             }
-            
+
             if ($records) {
                 $success = true;
                 $data = $records;
@@ -306,7 +304,7 @@ class OrderController extends Controller
             }
             try {
                 $auth = Auth::user();
-                $records = Order::where('user_id', $auth->id)->where('id',$request->input('id'))->with(['orderDetails'])->get();
+                $records = Order::where('user_id', Auth::guard('customer')->user()->id)->where('id',$request->input('id'))->with(['orderDetails'])->get();
                 if ($records) {
                     $success = true;
                     $data = $records;

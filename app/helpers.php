@@ -1,4 +1,5 @@
 <?php
+
 use App\Models\Coupon;
 use App\Models\OrderDetails;
 use App\Models\HotelCoupon;
@@ -11,6 +12,7 @@ use App\Models\HotelRolePermission;
 use Illuminate\Support\Facades\Auth;
 use App\Models\OrderPackageDetails;
 use App\Models\Categories;
+
 if (! function_exists('pr')) {
     function pr($arr)
     {
@@ -41,13 +43,13 @@ function get_roles($params)
 }
 function get_rolesHotel()
 {
-    return Hotelrole::where('id','2')->get();
+    return Hotelrole::where('id', '2')->get();
 }
 function checkPermission($rid, $pid)
 {
     return RolePermission::where('role_id', $rid)->where('permission_id', $pid)->count();
 }
-function checkPermissionforhotel($rid, $pid,$hotel_id)
+function checkPermissionforhotel($rid, $pid, $hotel_id)
 {
     return HotelRolePermission::where('role_id', $rid)->where('permission_id', $pid)->where('hotel_id', $hotel_id)->count();
 }
@@ -58,7 +60,7 @@ function couponCode()
         return 'COUPON0001';
     }
     $string = preg_replace("/[^0-9\.]/", '', $latest->custom_coupon_id);
-    return 'COUPON'.sprintf('%04d', $string + 1);
+    return 'COUPON' . sprintf('%04d', $string + 1);
 }
 function couponDetails($id)
 {
@@ -71,21 +73,21 @@ function couponHotelCode()
         return 'COUPONH0001';
     }
     $string = preg_replace("/[^0-9\.]/", '', $latest->custom_coupon_id);
-    return 'COUPONH'.sprintf('%04d', $string + 1);
+    return 'COUPONH' . sprintf('%04d', $string + 1);
 }
 function getPackageDetails($id)
 {
     return PackageItem::where('package_id', $id)->with(['hotel'])->first();
 }
-function getPackageDetailsWithCoupon($id,$hotelid = null)
+function getPackageDetailsWithCoupon($id, $hotelid = null)
 {
-   
-    if($hotelid==NULL) {
+
+    if ($hotelid == NULL) {
         return PackageItem::where('package_id', $id)->get();
-    }else{
-           //echo $id;
-         $hotelid = Auth::user()->id;
-        return PackageItem::where('package_id', $id)->where('hotel_id',$hotelid)->get();
+    } else {
+        //echo $id;
+        $hotelid = Auth::user()->id;
+        return PackageItem::where('package_id', $id)->where('hotel_id', $hotelid)->get();
     }
 }
 function getPackageDetailsmultiple($id)
@@ -105,30 +107,37 @@ function soldPackageCount($id)
     $hotelid = Auth::user()->id;
     return OrderPackageDetails::where('package_id', $id)->where('hotel_id', $hotelid)->count();
 }
-if (!function_exists('getOrders'))
-{
-    function getOrders($orderIds=null)
+if (!function_exists('getOrders')) {
+    function getOrders($orderIds = null)
     {
-        $order_id='';
-        $order_data = Order::where('id',$orderIds)->get();
-        $order_id = isset($data->order_id) ? $data->order_id:'';
+        $order_id = '';
+        $order_data = Order::where('id', $orderIds)->get();
+        $order_id = isset($data->order_id) ? $data->order_id : '';
         return $order_id;
     }
 }
-if (!function_exists('geSingleOrder'))
-{
-    function geSingleOrder($orderIds=null)
+if (!function_exists('geSingleOrder')) {
+    function geSingleOrder($orderIds = null)
     {
-        $user_name='';
-        $order_data = Order::where('id',$orderIds)->first();
+        $user_name = '';
+        $order_data = Order::where('id', $orderIds)->first();
         return $order_data;
     }
 }
-if (!function_exists('getCouponCategory'))
-{
-    function getCouponCategory($id=null)
+if (!function_exists('getCouponCategory')) {
+    function getCouponCategory($id = null)
     {
-        $order_data = Categories::where('id',$id)->first();
+        $order_data = Categories::where('id', $id)->first();
         return $order_data;
     }
+}
+function orderCode()
+{
+    $latest = Order::latest()->first();
+    if (! $latest) {
+        return 'TPORD0001';
+    }
+    $string = preg_replace("/[^0-9\.]/", '', $latest->order_id);
+
+    return 'TPORD' . sprintf('%04d', $string + 1);
 }
