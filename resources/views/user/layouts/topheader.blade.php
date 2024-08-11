@@ -276,7 +276,6 @@
     }
 </style>
 
-
 <div class="top-header-area">
     <div class="container-fluid container-fluid">
         <div class="row align-items-center">
@@ -322,10 +321,26 @@
                         <li class="nav-item"><a routerLink="/blog-grid"> Blog</a></li>
                         <li><a routerLink="/faq"><i class='bx bx-log-in'></i> FAQ</a></li>
                         <li><a routerLink="/contact"><i class='bx bx-phone-call'></i> Contact</a></li>
-                        <li *ngIf="user==undefined"><a routerLink="/login"><i class='bx bx-log-in'></i> Sign In</a></li>
-                        <li *ngIf="user==undefined"><a routerLink="/profile-authentication"><i class='bx bx-user'></i> Sign Up </a></li>
-                        <li *ngIf="user!=undefined"><a routerLink="/dashboard"><i class='bx bx-log-in'></i><span class="userName" id="userName"> Somendra</span></a></li>
-                        <li *ngIf="user!=undefined"><a href="javascript:void(0)" (click)="logout()"><i class='bx bx-log-in'></i> Logout</a></li>
+
+                        @if(auth()->guard('customer')->check())
+                        <li>
+                            <a href="/dashboard">
+                                <i class='bx bx-log-in'></i>
+                                <span class="userName" id="userName">{{ auth()->guard('customer')->user()->name }}</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/logout">
+                                <i class='bx bx-log-out'></i> Logout
+                            </a>
+                        </li>
+                        @endif
+
+                        @if(!auth()->guard('customer')->check())
+                        <li><a href="{{route('custmor_login')}}"><i class='bx bx-log-in'></i> Sign In</a></li>
+                        <li><a href="{{route('custmor_register')}}"><i class='bx bx-user'></i> Sign Up </a></li>
+                        @endif
+
                     </ul>
                 </div>
             </div>
