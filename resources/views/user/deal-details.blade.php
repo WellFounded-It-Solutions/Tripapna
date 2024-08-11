@@ -779,15 +779,12 @@
                             <!-- <span class="old-price">$330.00</span> -->
                         </div>
                         <div class="buy-now-btn">
-                            <!-- <a *ngIf="logindetails==null" routerLink="/login" class="default-btn" style="cursor: pointer;">Buy Now</a> -->
-                            <!-- <a *ngIf="logindetails!=null ||logindetails!=undefined" onclick="AddtoCart()" style="cursor: pointer;"class="default-btn">Buy Now</a> -->
 
-                            @if(Auth::check())
-                            <a onclick="AddtoCart()" style="cursor: pointer;" class="default-btn">Buy Now</a>
+                            @if(auth()->guard('customer')->check())
+                            <a onclick="AddtoCart({{$productdata->id}} )" style="cursor: pointer;" class="default-btn">Buy Now</a>
                             @else
                             <a href="{{route('custmor_login')}}" style="cursor: pointer;" class="default-btn">Buy Now</a>
                             @endif
-
 
                             <span><i class='bx bx-cart bx-flashing'></i> 247+ bought</span>
                         </div>
@@ -843,5 +840,27 @@
         </div>
     </div>
 </section>
+
+<script>
+
+    function AddtoCart(id) {
+
+        var _token = "{{ csrf_token() }}";
+        var coupon_id = id;
+        var quantity = 1;
+        $.ajax({
+            type: "POST",
+            url: "{{ route('addtocart') }}",
+            data: {coupon_id: coupon_id, qty: quantity, _token: _token , type:"package"},
+            success: function (data) {
+                window.location.href = "{{ route('viewCart') }}";
+            },
+            error: function (data) {
+                console.log('Error:', data);
+            }
+        });
+
+    }
+</script>
 
 @endsection
