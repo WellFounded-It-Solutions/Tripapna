@@ -57,7 +57,12 @@ class AuthController extends Controller
         return redirect(route('custmor_login'))->with('success', 'Register successfully');
     }
 
-    public function update_profile(Request $request)
+    public function update_profile()
+    {
+        return view('user.update_profile');
+    }
+
+    public function update_profile_post(Request $request)
     {
         $input = $request->all();
         // pr($input);

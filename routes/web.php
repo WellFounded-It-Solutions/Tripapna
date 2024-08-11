@@ -405,6 +405,8 @@ Route::group(['middleware' => 'auth:customer'], function () {
     Route::get('/removeCart/{id}', [CartController::class, 'removeCart'])->name('removeCart');
 
     Route::get("/dashboard", [AuthController::class, 'me'])->name('dashboard');
+    Route::get("/profile", [AuthController::class, 'update_profile'])->name('update_profile');
+    Route::post("/update-profile", [AuthController::class, 'update_profile_post'])->name('update_profile_post');
 
     Route::post('/orderPlace', [UserOrderController::class, 'orderPlace'])->name('orderPlace');
     // Route::get('myOrder', 'OrderController@myOrder');
