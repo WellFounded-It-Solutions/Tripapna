@@ -22,7 +22,7 @@
                             <div class="rating">
                                 <!-- <i class="Icon.icon}}" *ngFor="let Icon of Content.ratingStar"></i> -->
                                 <i class="bx bxs-star"></i><i class="bx bxs-star"></i><i class="bx bxs-star"></i><i class="bx bxs-star"></i>
-                                <span class="count">(Content.rating}})</span>
+                                <span class="count"></span>
                             </div>
                             <!-- <div class="status">
                             <span *ngIf="Content.trending"><i class='bx bx-trending-up'></i> Content.trending}}</span>
