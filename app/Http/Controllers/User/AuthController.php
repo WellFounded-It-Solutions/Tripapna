@@ -12,9 +12,7 @@ use Illuminate\Support\Facades\DB;
 
 class AuthController extends Controller
 {
-    public function __construct()
-    {
-    }
+    public function __construct() {}
     public function login()
     {
         return view('user.login');
@@ -197,11 +195,9 @@ class AuthController extends Controller
         auth()->user()->total_pakage = $userdata->count;
         auth()->user()->amount = $userdata->total;
         auth()->user()->coupon = $userdatac->count;
-        $response['data'] = auth()->user();
-        $response['success'] = true;
-        $response['message'] = '';
 
-        return response()->json($response, 200);
+
+        return view('user.dashboard', ['user' => auth()->user()]);
     }
 
     /**

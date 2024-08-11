@@ -404,6 +404,7 @@ Route::group(['middleware' => 'auth:customer'], function () {
     Route::post('addtocart', [CartController::class, 'addtocart'])->name('addtocart');
     Route::get('/removeCart/{id}', [CartController::class, 'removeCart'])->name('removeCart');
 
+    Route::get("/dashboard", [AuthController::class, 'me'])->name('dashboard');
 
     Route::post('/orderPlace', [UserOrderController::class, 'orderPlace'])->name('orderPlace');
     // Route::get('myOrder', 'OrderController@myOrder');
