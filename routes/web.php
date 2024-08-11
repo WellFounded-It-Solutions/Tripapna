@@ -21,6 +21,7 @@ use App\Http\Controllers\Hotel\HotelUsersController;
 use App\Http\Controllers\HotelController;
 use App\Http\Controllers\User\AuthController;
 use App\Http\Controllers\User\UserController;
+use App\Http\Controllers\User\CartController;
 
 Route::get('/clear-cache', function () {
     Artisan::call('cache:clear');
@@ -70,12 +71,12 @@ Route::group(['middleware' => 'role:admin'], function () {
     Route::post('/administrator/hotels/update', [HotelController::class, 'update'])->name('administrator_hotel_update');
     // Route::get('/administrator/hotels/delete/{ids}', [HotelController::class, 'destroy'])->name('administrator_hotel_delete');
 
-    Route::get('/administrator/hotel_category_create',[HotelController::class, 'create_hotel_category'])->name('administrator_hotel_category_create');
-    Route::post('/administrator/hotel_category_store',[HotelController::class, 'store_hotel_category'])->name('administrator_hotel_category_store');
-    Route::get('/administrator/hotel_category_list',[HotelController::class, 'get_hotel_category_list'])->name('administrator_hotel_category_list');
-    Route::post('/administrator/hotel_category_status',[HotelController::class, 'change_hotel_category_status'])->name('administrator_hotel_category_status');
-    Route::get('/administrator/hotel_category_get_record_by_id/{id}',[HotelController::class, 'get_hotel_category_by_id'])->name('administrator_hotel_category_get_record_by_id');
-    Route::post('/administrator/hotel_category_update',[HotelController::class, 'update_hotel_category'])->name('administrator_hotel_category_update');
+    Route::get('/administrator/hotel_category_create', [HotelController::class, 'create_hotel_category'])->name('administrator_hotel_category_create');
+    Route::post('/administrator/hotel_category_store', [HotelController::class, 'store_hotel_category'])->name('administrator_hotel_category_store');
+    Route::get('/administrator/hotel_category_list', [HotelController::class, 'get_hotel_category_list'])->name('administrator_hotel_category_list');
+    Route::post('/administrator/hotel_category_status', [HotelController::class, 'change_hotel_category_status'])->name('administrator_hotel_category_status');
+    Route::get('/administrator/hotel_category_get_record_by_id/{id}', [HotelController::class, 'get_hotel_category_by_id'])->name('administrator_hotel_category_get_record_by_id');
+    Route::post('/administrator/hotel_category_update', [HotelController::class, 'update_hotel_category'])->name('administrator_hotel_category_update');
     // Route::get('/administrator/hotel_category_delete/{ids}',[HotelController::class, 'destroy_hotel_category'])->name('administrator_hotel_category_delete');
 
     Route::get('/administrator/categories', [CategoryController::class, 'index'])->name('administrator_categories');
@@ -392,8 +393,26 @@ Route::group(['middleware' => 'auth:hotel'], function () {
 // USER ROUTES
 Route::get("/", [UserController::class, 'index'])->name('home');
 Route::get("/all-stores", [UserController::class, 'allStores'])->name('allStores');
+
 Route::get("/stores-details/{id}", [UserController::class, 'storeDetails'])->name('stores-details');
 Route::get("/deals-details/{id}", [UserController::class, 'dealDetails'])->name('deals-details');
+
+
+Route::group(['middleware' => 'auth:customer'], function () {
+    Route::get('/cart', [CartController::class, 'viewCart'])->name('viewCart');
+    Route::post('addtocart', [CartController::class, 'addtocart'])->name('addtocart');
+    Route::get('/removeCart/{id}', [CartController::class, 'removeCart'])->name('removeCart');
+
+
+    // Route::post('orderPlace', 'OrderController@orderPlace');
+    // Route::get('myOrder', 'OrderController@myOrder');
+    // Route::post('getorderbyid', 'OrderController@getorderbyid');
+    // Route::post('orderDetails', 'OrderController@orderDetails');
+    // Route::post('voucherDetails', 'OrderController@voucherDetails');
+    // Route::post('package_coupon', 'OrderController@package_coupon');
+});
+
+Route::get('/cart', [CartController::class, 'viewCart'])->name('viewCart');
 
 Route::get("/login", [AuthController::class, 'login'])->name('custmor_login');
 Route::post("/login", [AuthController::class, 'login_post'])->name('custmor_login_post');
@@ -402,14 +421,12 @@ Route::post("/register", [AuthController::class, 'register_post'])->name('custmo
 
 
 // /////////////////////
-// Route::post('login', 'AuthController@login');
-// Route::post('logout', 'AuthController@logout');
 // Route::post('refresh', 'AuthController@refresh');
 // Route::get('user-profile', 'AuthController@me');
 // Route::post('user-register', 'AuthController@register');
 // Route::post('update-profile', 'AuthController@update_profile');
 // Route::post('update-password', 'AuthController@update_password');
-// // Cart API
+// // // Cart API
 // Route::post('addtocart', 'CartController@addtocart');
 // Route::post('removeCart', 'CartController@removeCart');
 // Route::get('viewCart', 'CartController@viewCart');

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\User;
 
 use App\Models\Cart;
 use App\Models\HotelCoupon;
@@ -11,10 +11,7 @@ use Validator;
 
 class CartController extends Controller
 {
-    public function __construct()
-    {
-        $this->middleware('auth:api', ['except' => ['addtocart','removeCart','viewCart']]);
-    }
+    public function __construct() {}
 
     public function addtocart(Request $request)
     {
@@ -30,19 +27,19 @@ class CartController extends Controller
             return response()->json(['error' => $validator->errors()], 401);
         }
         try {
-                    $auth = Auth::user();
-                    $check_record = Cart::where('customer_id',$auth->id)->first();
-                    if($check_record!=null){
-                        if($check_record->type!=$request->input('type')){
-                            $success = false;
-                            $message = "You can add at a time one Package or Coupon";
-                            $response['success'] = $success;
-                            $response['message'] = $message;
-                            $response['data'] = $data;
+            $auth = Auth::user();
+            $check_record = Cart::where('customer_id', $auth->id)->first();
+            if ($check_record != null) {
+                if ($check_record->type != $request->input('type')) {
+                    $success = false;
+                    $message = "You can add at a time one Package or Coupon";
+                    $response['success'] = $success;
+                    $response['message'] = $message;
+                    $response['data'] = $data;
 
-                            return response()->json($response, 200);
-                        }
-                    }
+                    return response()->json($response, 200);
+                }
+            }
             if ($request->input('type') == 'coupon') {
                 $record = HotelCoupon::where(['id' => $request->input('coupon_id'), 'status' => 'Active'])->first();
                 if ($record) {
@@ -89,7 +86,7 @@ class CartController extends Controller
                     $message = __('api.cart.record_not_found');
                 }
             }
-        } catch(Exception $e) {
+        } catch (Exception $e) {
             $success = false;
             $message = __('api.cart.fail');
         }
@@ -100,60 +97,27 @@ class CartController extends Controller
         return response()->json($response, 200);
     }
 
-    public function removeCart(Request $request)
+    public function removeCart($id)
     {
-        $success = false;
-        $message = '';
-        $data = null;
-        $validator = Validator::make($request->all(), [
-            'cart_id' => 'required',
-        ]);
-        if ($validator->fails()) {
-            return response()->json(['error' => $validator->errors()], 401);
-        }
         try {
-            $affected_row = Cart::where('id', $request->input('cart_id'))->delete();
+            $affected_row = Cart::where(['id' => $id , 'customer_id' => Auth::guard('customer')->user()->id])->delete();
             if ($affected_row) {
-                $success = true;
-                $message = __('api.cart.record_deleted');
+                return redirect(route('viewCart'));
             } else {
-                $success = false;
-                $message = __('api.cart.record_not_found');
+                return redirect(route('viewCart'));
             }
-        } catch(Exception $e) {
-            $success = false;
-            $message = __('api.cart.fail');
+        } catch (Exception $e) {
         }
-        $response['success'] = $success;
-        $response['message'] = $message;
-        $response['data'] = $data;
-
-        return response()->json($response, 200);
     }
 
     public function viewCart(Request $request)
     {
-        $success = false;
-        $message = '';
-        $data = null;
-        try {
-            $auth = Auth::user();
-            $records = Cart::where('customer_id', $auth->id)->with(['coupons','Package'])->get();
-            if ($records) {
-                $success = true;
-                $data = $records;
-            } else {
-                $success = false;
-                $message = __('api.cart.record_not_found');
-            }
-        } catch(Exception $e) {
-            $success = false;
-            $message = __('api.cart.fail');
-        }
-        $response['success'] = $success;
-        $response['message'] = $message;
-        $response['data'] = $data;
 
-        return response()->json($response, 200);
+        $auth = Auth::guard('customer')->user();
+        $data = Cart::where('customer_id', $auth->id)->with(['coupons', 'Package'])->get();
+
+        // dd($data);
+
+        return view('user.cart', compact('data'));
     }
 }
