@@ -1,6 +1,7 @@
 @extends('layouts.admin_design')
 @section('title','Coupon')
 @section('content')
+@if(auth()->user()->hasRole('admin') || auth()->user()->hasRole('manager') ||auth()->user()->hasRole('agent'))
 <div class="content-wrapper">
    <section class="content-header">
         <div class="container-fluid">
@@ -376,4 +377,5 @@ $(document).ajaxComplete(function() {
     $("[data-toggle='tooltip']").tooltip();
 });
 </script>
+@endif
 @endsection

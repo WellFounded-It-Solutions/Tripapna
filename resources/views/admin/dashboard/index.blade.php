@@ -1,6 +1,7 @@
 @extends('layouts.admin_design')
 @section('title','Dashboard')
 @section('content')
+@if(auth()->user()->hasRole('admin') || auth()->user()->hasRole('manager') ||auth()->user()->hasRole('agent'))
   <div class="content-wrapper">
     <!-- Content Header (Page header) -->
     <div class="content-header">
@@ -256,5 +257,6 @@
     </section>
     <!-- /.content -->
   </div>
+  @endif
 
 @endsection

@@ -1,6 +1,7 @@
 @extends('layouts.admin_design')
 @section('title','User')
 @section('content')
+@if(auth()->user()->hasRole('admin') || auth()->user()->hasRole('manager') ||auth()->user()->hasRole('agent'))
 <div class="content-wrapper">
    <section class="content-header">
       <div class="container-fluid">
@@ -71,4 +72,6 @@
       </div>
    </section>
 </div>
+@endif
+
 @endsection
