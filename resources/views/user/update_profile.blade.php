@@ -45,7 +45,8 @@
 
             <div class="col-lg-8 col-md-12">
                 <div class="dashboard-stats">
-                    <form [formGroup]="profileForm" *ngIf="!updateForm">
+                    <form action="{{route('customer.profile.update') }}" method="post">
+                        @csrf()
                         <div class="row">
                             <div class="col-lg-6 col-md-6">
                                 <div class="form-group">
@@ -56,7 +57,7 @@
                             <div class="col-lg-6 col-md-6">
                                 <div class="form-group">
                                     <label>Username <span>*</span></label>
-                                    <input type="text" formControlName="name" class="form-control" value="{{auth()->guard('customer')->user()->name}}" />
+                                    <input name="name" type="text" formControlName="name" class="form-control" value="{{auth()->guard('customer')->user()->name}}" />
                                     @error('name')
                                     <small class="text-danger">* {{ $message }}</small>
                                     @enderror
@@ -65,7 +66,7 @@
                             <div class="col-lg-6 col-md-6">
                                 <div class="form-group">
                                     <label>Mobile</label>
-                                    <input type="text" formControlName="mobile" class="form-control" value="{{auth()->guard('customer')->user()->mobile}}">
+                                    <input name="mobile" type="text" formControlName="mobile" class="form-control" value="{{auth()->guard('customer')->user()->mobile}}">
                                     @error('mobile')
                                     <small class="text-danger">* {{ $message }}</small>
                                     @enderror
@@ -85,7 +86,7 @@
 
             </div>
 
-            <div class="col-lg-8 col-md-12">
+            <div class="col-lg-8 col-md-12 d-none">
                 <div class="dashboard-stats">
                     <form [formGroup]="profileFormWithPass" *ngIf="updateForm">
                         <div class="row">
