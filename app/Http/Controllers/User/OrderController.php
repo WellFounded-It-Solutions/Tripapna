@@ -1,5 +1,7 @@
 <?php
+
 namespace App\Http\Controllers\User;
+
 use App\Models\Cart;
 use App\Models\Coupon;
 use App\Models\Hotel;
@@ -14,37 +16,36 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Validator;
 use Illuminate\Support\Facades\Http;
+
 class OrderController extends Controller
 {
-    public function __construct()
-    {
-    }
-    public function createOrder($amount = 0,$order=null,$email=null,$mobile=null)
+    public function __construct() {}
+    public function createOrder($amount = 0, $order = null, $email = null, $mobile = null)
     {
         $paymentData = [
             'merchantId' => env('PHONEPE_MERCHANT_ID'),
             'merchantTransactionId' => $order['trans_id'],
             'amount' => ($amount * 100),
-            'merchantUserId' => 'MUID'.$order['user_id'],
+            'merchantUserId' => 'MUID' . $order['user_id'],
             'redirectUrl' => url('api/phone_redirect_url'),
             'redirectMode' => 'POST',
             'callbackUrl' => url('api/phone_redirect_url'),
             'merchantOrderId' =>  $order['order_id'],
             'mobileNumber' => $mobile,
-            'paymentInstrument'=>array('type'=>'PAY_PAGE'),
+            'paymentInstrument' => array('type' => 'PAY_PAGE'),
         ];
         $json_payload = json_encode($paymentData);
         $payloadMain = base64_encode($json_payload);
-        $keyIndex =1;
-        $payload = $payloadMain."/pg/v1/pay".env('PHONEPE_MERCHANT_SECRET_KEY');
+        $keyIndex = 1;
+        $payload = $payloadMain . "/pg/v1/pay" . env('PHONEPE_MERCHANT_SECRET_KEY');
         $sha256 = hash("sha256", $payload);
-        $final_x_header = $sha256.'###'.$keyIndex;
-        $request = json_encode(array('request'=>$payloadMain));
+        $final_x_header = $sha256 . '###' . $keyIndex;
+        $request = json_encode(array('request' => $payloadMain));
         $ch = curl_init('https://api.phonepe.com/apis/hermes/pg/v1/pay');
         // $ch = curl_init('https://api.phonepe.com/apis/hermes/pg/v1/pay');
         $headers = [
             'Content-Type: application/json',
-            'X-VERIFY: '.$final_x_header,
+            'X-VERIFY: ' . $final_x_header,
             "accept:application/json",
         ];
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -58,8 +59,7 @@ class OrderController extends Controller
         curl_close($ch);
         $res = json_decode($response);
         $payUrl = '';
-        if(isset($res->success) && $res->success == 1)
-        {
+        if (isset($res->success) && $res->success == 1) {
             $payUrl = $res->data->instrumentResponse->redirectInfo->url;
         }
         return $payUrl;
@@ -99,9 +99,8 @@ class OrderController extends Controller
             $order['user_name'] = $auth->name;
             $order['user_email'] = $auth->email;
             $order['user_phone'] = $auth->mobile;
-            if($request->payment_method == 'phone_pay')
-            {
-                $return_response=$this->createOrder($post_amount,$order,$auth->email,$auth->mobile);
+            if ($request->payment_method == 'phone_pay') {
+                $return_response = $this->createOrder($post_amount, $order, $auth->email, $auth->mobile);
                 $response['success'] = true;
                 $response['payUrl'] = $return_response;
                 $phonepe_orders = new PhonePeOrders();
@@ -219,7 +218,7 @@ class OrderController extends Controller
                         $update['order_log'] = json_encode($record->toarray());
                         $update['amount'] = $amount;
                         $update['type'] = 'coupon';
-                        $aff = Order::where('id',$order_create->id)->update($update);
+                        $aff = Order::where('id', $order_create->id)->update($update);
                         $coupon_data = HotelCoupon::where('id', $value->coupon_id)->first();
                         $hotel_data = Hotel::where('id', $record->hotel_id)->first();
                         $orderItems['order_id'] = $order_create->id;
@@ -248,7 +247,7 @@ class OrderController extends Controller
             $message = __('api.order.success');
             $update_order['amount'] = $amount;
             $update_order = Order::where('id', $order_create->id)->update($update_order);
-        } catch(Exception $e) {
+        } catch (Exception $e) {
             $success = false;
             $message = __('api.order.fail');
         }
@@ -259,23 +258,39 @@ class OrderController extends Controller
     }
     public function myOrder(Request $request)
     {
-        $success = false;
-        $message = '';
-        $data = null;
         try {
-            $auth = Auth::user();
-            if($request->input('type')!=""){
+            if ($request->input('type') != "") {
 
-            // $records = Order::where('user_id', Auth::guard('customer')->user()->id)->where('type',$request->input('type'))->with(['orderDetails'])->get();
-            // }else{
-            //     $records = Order::where('user_id', Auth::guard('customer')->user()->id)->with(['orderDetails'])->get();
-            // }
+                // $records = Order::where('user_id', Auth::guard('customer')->user()->id)->where('type',$request->input('type'))->with(['orderDetails'])->get();
+                // }else{
+                //     $records = Order::where('user_id', Auth::guard('customer')->user()->id)->with(['orderDetails'])->get();
+                // }
 
-              $records = Order::where('user_id', Auth::guard('customer')->user()->id)->where('type',$request->input('type'))->get();
-            }else{
+                $records = Order::where('user_id', Auth::guard('customer')->user()->id)->where('type', $request->input('type'))->get();
+            } else {
                 $records = Order::where('user_id', Auth::guard('customer')->user()->id)->get();
             }
 
+            return view('user.myorder', compact('records'));
+        } catch (Exception $e) {
+            $success = false;
+            $message = __('api.order.fail');
+        }
+    }
+    public function getorderbyid(Request $request)
+    {
+        $success = false;
+        $message = '';
+        $data = null;
+        $validator = Validator::make($request->all(), [
+            'id' => 'required',
+        ]);
+        if ($validator->fails()) {
+            return response()->json(['error' => $validator->errors()], 401);
+        }
+        try {
+            $auth = Auth::user();
+            $records = Order::where('user_id', Auth::guard('customer')->user()->id)->where('id', $request->input('id'))->with(['orderDetails'])->get();
             if ($records) {
                 $success = true;
                 $data = $records;
@@ -283,7 +298,7 @@ class OrderController extends Controller
                 $success = false;
                 $message = __('api.order.record_not_found');
             }
-        } catch(Exception $e) {
+        } catch (Exception $e) {
             $success = false;
             $message = __('api.order.fail');
         }
@@ -292,143 +307,93 @@ class OrderController extends Controller
         $response['data'] = $data;
         return response()->json($response, 200);
     }
-    public function getorderbyid(Request $request) {
+    public function orderDetails($id)
+    {
+        try {
+            $auth = Auth::user();
+            //$records = orderDetails::where('order_id', $request->input('order_id'))->with('order')->get();
+            $records = Order::where('id', $id)->where('type', 'package')->with('packageDetails')->first();
+
+            // dd($records);
+
+            return view('user.orderdetails', compact('records'));
+        } catch (Exception $e) {
+
+        }
+    }
+    public function voucherDetails(Request $request)
+    {
         $success = false;
         $message = '';
         $data = null;
-            $validator = Validator::make($request->all(), [
-            'id' => 'required',
-            ]);
-            if ($validator->fails()) {
-                 return response()->json(['error' => $validator->errors()], 401);
-            }
-            try {
-                $auth = Auth::user();
-                $records = Order::where('user_id', Auth::guard('customer')->user()->id)->where('id',$request->input('id'))->with(['orderDetails'])->get();
-                if ($records) {
-                    $success = true;
-                    $data = $records;
-                } else {
-                    $success = false;
-                    $message = __('api.order.record_not_found');
-                }
-            } catch(Exception $e) {
-                $success = false;
-                $message = __('api.order.fail');
-            }
-            $response['success'] = $success;
-            $response['message'] = $message;
-            $response['data'] = $data;
-           return response()->json($response, 200);
+        $validator = Validator::make($request->all(), [
+            'order_id' => 'required',
+        ]);
+        if ($validator->fails()) {
+            return response()->json(['error' => $validator->errors()], 401);
         }
-        public function orderDetails(Request $request)
-        {
+        try {
+            $auth = Auth::user();
+            //$records = orderDetails::where('order_id', $request->input('order_id'))->with('order')->get();
+            $records = Order::where('id', $request->input('order_id'))->where('type', 'coupon')->with('orderDetails')->first();
+            if ($records) {
+                // foreach($records as $v){
+                // $v->coupon_data = json_decode($v->coupon_data);
+                // $v->hotel_data = json_decode($v->hotel_data);
+                // }
+                $success = true;
+                $data = $records;
+            } else {
+                $success = false;
+                $message = __('api.order.record_not_found');
+            }
+        } catch (Exception $e) {
             $success = false;
-            $message = '';
-            $data = null;
-            $validator = Validator::make($request->all(), [
-                'order_id' => 'required',
-            ]);
-            if ($validator->fails()) {
-                return response()->json(['error' => $validator->errors()], 401);
-            }
-            try {
-                $auth = Auth::user();
-                //$records = orderDetails::where('order_id', $request->input('order_id'))->with('order')->get();
-                $records = Order::where('id', $request->input('order_id'))->where('type','package')->with('packageDetails')->first();
-                if ($records) {
-                    // foreach($records as $v){
-                    // $v->coupon_data = json_decode($v->coupon_data);
-                    // $v->hotel_data = json_decode($v->hotel_data);
-                    // }
-                    $success = true;
-                    $data = $records;
-                } else {
-                    $success = false;
-                    $message = __('api.order.record_not_found');
-                }
-            } catch(Exception $e) {
-                $success = false;
-                $message = __('api.order.fail');
-            }
-            $response['success'] = $success;
-            $response['message'] = $message;
-            $response['data'] = $data;
-            return response()->json($response, 200);
+            $message = __('api.order.fail');
         }
-        public function voucherDetails(Request $request)
-        {
+        $response['success'] = $success;
+        $response['message'] = $message;
+        $response['data'] = $data;
+        return response()->json($response, 200);
+    }
+    public function package_coupon(Request $request)
+    {
+        $success = false;
+        $message = '';
+        $data = null;
+        $validator = Validator::make($request->all(), [
+            'order_id' => 'required',
+            'package_id' => 'required',
+        ]);
+        if ($validator->fails()) {
+            return response()->json(['error' => $validator->errors()], 401);
+        }
+        try {
+            $auth = Auth::user();
+            $records = orderDetails::where('order_id', $request->input('order_id'))->where('package_id', $request->input('package_id'))->get();
+            // $records = Order::where('id', $request->input('order_id'))->where('package_id',$request->input('package_id'))->with('orderDetails')->first();
+            $search = $request->input('package_id');
+            // $records = Order::whereHas('orderDetails', function($q) use($search){
+            // $q->where('package_id', $search);
+            // })->get();
+            if ($records) {
+                // foreach($records as $v){
+                // $v->coupon_data = json_decode($v->coupon_data);
+                // $v->hotel_data = json_decode($v->hotel_data);
+                // }
+                $success = true;
+                $data = $records;
+            } else {
+                $success = false;
+                $message = __('api.order.record_not_found');
+            }
+        } catch (Exception $e) {
             $success = false;
-            $message = '';
-            $data = null;
-            $validator = Validator::make($request->all(), [
-                'order_id' => 'required',
-            ]);
-            if ($validator->fails()) {
-                return response()->json(['error' => $validator->errors()], 401);
-            }
-            try {
-                $auth = Auth::user();
-                //$records = orderDetails::where('order_id', $request->input('order_id'))->with('order')->get();
-                $records = Order::where('id', $request->input('order_id'))->where('type','coupon')->with('orderDetails')->first();
-                if ($records) {
-                    // foreach($records as $v){
-                    // $v->coupon_data = json_decode($v->coupon_data);
-                    // $v->hotel_data = json_decode($v->hotel_data);
-                    // }
-                    $success = true;
-                    $data = $records;
-                } else {
-                    $success = false;
-                    $message = __('api.order.record_not_found');
-                }
-            } catch(Exception $e) {
-                $success = false;
-                $message = __('api.order.fail');
-            }
-            $response['success'] = $success;
-            $response['message'] = $message;
-            $response['data'] = $data;
-            return response()->json($response, 200);
+            $message = __('api.order.fail');
         }
-        public function package_coupon(Request $request)
-        {
-            $success = false;
-            $message = '';
-            $data = null;
-            $validator = Validator::make($request->all(), [
-                'order_id' => 'required',
-                'package_id' => 'required',
-            ]);
-            if ($validator->fails()) {
-                return response()->json(['error' => $validator->errors()], 401);
-            }
-            try {
-                $auth = Auth::user();
-                $records = orderDetails::where('order_id', $request->input('order_id'))->where('package_id',$request->input('package_id'))->get();
-                // $records = Order::where('id', $request->input('order_id'))->where('package_id',$request->input('package_id'))->with('orderDetails')->first();
-                $search = $request->input('package_id');
-                // $records = Order::whereHas('orderDetails', function($q) use($search){
-                // $q->where('package_id', $search);
-                // })->get();
-                if ($records) {
-                    // foreach($records as $v){
-                    // $v->coupon_data = json_decode($v->coupon_data);
-                    // $v->hotel_data = json_decode($v->hotel_data);
-                    // }
-                    $success = true;
-                    $data = $records;
-                } else {
-                    $success = false;
-                    $message = __('api.order.record_not_found');
-                }
-            } catch(Exception $e) {
-                $success = false;
-                $message = __('api.order.fail');
-            }
-            $response['success'] = $success;
-            $response['message'] = $message;
-            $response['data'] = $data;
-            return response()->json($response, 200);
-        }
+        $response['success'] = $success;
+        $response['message'] = $message;
+        $response['data'] = $data;
+        return response()->json($response, 200);
+    }
 }

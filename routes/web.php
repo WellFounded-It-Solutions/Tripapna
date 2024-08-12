@@ -406,14 +406,14 @@ Route::group(['middleware' => 'auth:customer'], function () {
 
     Route::get("/dashboard", [AuthController::class, 'me'])->name('dashboard');
     Route::get("/profile", [AuthController::class, 'update_profile'])->name('update_profile');
-    Route::post("/update-profile", [AuthController::class, 'update_profile_post'])->name('update_profile_post');
+    Route::post("/update-profile", [AuthController::class, 'update_profile_post'])->name('customer.profile.update');
 
     Route::post('/orderPlace', [UserOrderController::class, 'orderPlace'])->name('orderPlace');
-    // Route::get('myOrder', 'OrderController@myOrder');
-    // Route::post('getorderbyid', 'OrderController@getorderbyid');
-    // Route::post('orderDetails', 'OrderController@orderDetails');
-    // Route::post('voucherDetails', 'OrderController@voucherDetails');
-    // Route::post('package_coupon', 'OrderController@package_coupon');
+    Route::get('/packages', [UserOrderController::class, 'myOrder'])->name('myOrder');
+    // Route::post('getorderbyid', 'UserOrderController@getorderbyid');
+    Route::get('/order-detail/{id}', [UserOrderController::class, 'orderDetails'])->name('orderDetails');
+    // Route::post('voucherDetails', 'UserOrderController@voucherDetails');
+    // Route::post('package_coupon', 'UserOrderController@package_coupon');
 });
 
 Route::get('/cart', [CartController::class, 'viewCart'])->name('viewCart');

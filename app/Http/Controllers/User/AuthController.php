@@ -64,73 +64,19 @@ class AuthController extends Controller
 
     public function update_profile_post(Request $request)
     {
-        $input = $request->all();
-        // pr($input);
-        $validation_array = [
+        $request->validate([
             'name' => 'required',
-            // 'email' => 'required',
             'mobile' => 'required|regex:/^([0-9\s\-\+\(\)]*)$/|min:10',
-        ];
-        if ($input['new_password'] != '') {
-            $validation_array['current_password'] = 'required';
-            $validation_array['new_password'] = 'required:min:8';
-            $validation_array['new_confirm_password'] = 'same:new_password';
-        }
-        $validator = Validator::make($request->all(), $validation_array, [
-            'current_password.required' => 'current password is required',
-            'new_confirm_password.required' => 'new password  is required',
         ]);
-        if (!$validator->fails()) {
-            //  echo $_SERVER['DOCUMENT_ROOT']; die;
-            if ($input['new_password'] != '') {
-                $auth = Auth::user();
-                if (!Hash::check($input['current_password'], $auth->password)) {
-                    $response['data'] = null;
-                    $response['message'] = 'Your current password not correct'; //add logic here
-                    $response['success'] = false;
 
-                    return response()->json($response);
-                    exit;
-                } else {
-                    $update['name'] = $input['name'];
-                    // $update['email'] = $input['email'];
-                    $update['mobile'] = $input['mobile'];
-                    $update['password'] = Hash::make($input['new_password']);
-                    if ($request->hasFile('image')) {
-                        $imageName = time() . '.' . $request->image->extension();
-                        $request->image->move($_SERVER["DOCUMENT_ROOT"] . "/public/upload", $imageName);
-                        $update['image'] = $imageName;
-                    }
-                    $affrow = Customer::where('id', $auth->id)->update($update);
-                    if ($affrow) {
-                        auth()->logout();
-                        $response['message'] = 'Your password  is updated successfully'; //add logic here
-                        $response['success'] = true;
-                    }
-                }
-            } else {
-                $update['name'] = $input['name'];
-                //  $update['email'] = $input['email'];
-                $update['mobile'] = $input['mobile'];
-                if ($request->hasFile('image')) {
-                    $imageName = time() . '.' . $request->image->extension();
-                    $re = $request->image->move($_SERVER["DOCUMENT_ROOT"] . "/public/upload", $imageName);
-                    $update['image'] = $imageName;
-                }
-                $affrow = Customer::where('id', Auth::id())->update($update);
-                $update_user_Data = Customer::where('id', Auth::id())->first();
-                if ($affrow) {
-                    $response['message'] = 'Your profile is updated successfully'; //add logic here
-                    $response['success'] = true;
-                    $response['data'] = $update_user_Data;
-                }
-            }
+        $update = ['name' => $request->name, 'mobile' => $request->mobile];
+
+        $affrow = Customer::where('id', Auth::guard('customer')->user()->id)->update($update);
+        if ($affrow) {
+            return redirect()->back()->with('success', 'Profile updated successfully');
         } else {
-            return response()->json(['error' => $validator->errors()], 401);
+            return redirect()->back()->with('error', 'Profile not updated');
         }
-
-        return response()->json($response);
-        exit;
     }
     public function update_password(Request $request)
     {
