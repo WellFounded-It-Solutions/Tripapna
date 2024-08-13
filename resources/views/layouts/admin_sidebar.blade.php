@@ -79,6 +79,7 @@ if (auth()->check() && auth()->user()->hasRole('admin')) {
                         </p>
                     </a>
                 </li>
+                
                 @if(auth()->check() && auth()->user()->hasRole('admin'))
                 <li class="nav-item">
                     <a href="<?php echo $permissionUrl ?>" class="nav-link {{ Route::is(Auth::user()->roles['0']->params.'_permission') ? 'active' : '' }}">
@@ -89,7 +90,14 @@ if (auth()->check() && auth()->user()->hasRole('admin')) {
                     </a>
                 </li>
                 @endif
-                
+                <li class="nav-item">
+                    <a href="{{ route('sales_executives.index') }}"class="nav-link {{ route('sales_executives.index') }} ">
+                        <i class="nav-icon fas fa-tachometer-alt"></i>
+                        <p>
+                            Sales Executive
+                        </p>
+                    </a>
+                </li>
                 <li class="nav-item @if( Route::is(Auth::user()->roles['0']->params.'_user') || Route::is(Auth::user()->roles['0']->params.'_customer') || Route::is(Auth::user()->roles['0']->params.'_hotel') ) menu-open @endif">
                 @if(auth()->user()->hasRole('admin') )
                 <a href="#" class="nav-link @if( Route::is(Auth::user()->roles['0']->params.'_user') || Route::is(Auth::user()->roles['0']->params.'_customer') || Route::is(Auth::user()->roles['0']->params.'_hotel') ) active @endif">
