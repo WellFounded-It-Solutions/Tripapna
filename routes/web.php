@@ -21,6 +21,9 @@ use App\Http\Controllers\Hotel\HotelUsersController;
 use App\Http\Controllers\HotelController;
 use App\Http\Controllers\User\AuthController;
 use App\Http\Controllers\User\UserController;
+use App\Http\Controllers\Admin\SaleExecutiveController;
+
+
 use App\Http\Controllers\User\CartController;
 use App\Http\Controllers\User\OrderController as UserOrderController;
 
@@ -276,6 +279,9 @@ Route::group(['middleware' => 'role:manager'], function () {
     Route::get('/manager/orders', [OrderController::class, 'index'])->name('manager_order');
     Route::get('/manager/orderlist', [OrderController::class, 'get_list'])->name('manager_order_list');
     Route::get('/manager/order/details/{id}', [OrderController::class, 'details'])->name('manager_order_details');
+
+    Route::resource('sales_executives', SaleExecutiveController::class);
+
 });
 
 // Agent Route
