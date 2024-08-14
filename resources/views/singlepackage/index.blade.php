@@ -1,4 +1,5 @@
 @extends('layouts.admin_design') @section('title','Coupon categories') @section('content')
+@if(auth()->user()->hasRole('admin') || auth()->user()->hasRole('manager'))
 <div class="content-wrapper">
     <section class="content-header">
         <div class="container-fluid">
@@ -766,4 +767,5 @@
           $('.summernote').summernote();
         });
     </script>
+    @endif
 @endsection

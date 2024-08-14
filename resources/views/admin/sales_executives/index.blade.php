@@ -1,20 +1,13 @@
 @extends('layouts.admin_design')
+@if(auth()->user()->hasRole('admin') || auth()->user()->hasRole('manager'))
 @section('content')
-
-<div class="content-wrapper">
-   <section class="content-header">
-        <div class="container-fluid">
-            <div class="row mb-2">
-                <div class="col-sm-6">
-                <h1>Sales Excecutive </h1>
-                </div>
-         </div>
-      </div>
-   </section>
-   <section class="content">
-      <div class="container-fluid">
-      <a href="{{ route('sales_executives.create') }}" class="btn btn-primary mb-3">Add New</a>
-    <table class="table table-bordered">
+<div class="content-wrapper pl-3">
+    <h1>Sales Executives</h1>
+    <a href="{{ route('sales_executives.create') }}" class="btn btn-primary mb-3">Add New</a>
+    @if ($message = Session::get('success'))
+        <div class="alert alert-success">{{ $message }}</div>
+    @endif
+    <table class="card-body table table-bordered">
         <thead>
             <tr>
                 <th>Name</th>
@@ -23,47 +16,24 @@
                 <th>Actions</th>
             </tr>
         </thead>
-        <tbody id="salesExecutivesTable">
-            <!-- Sales Executives will be loaded here by AJAX -->
+        <tbody>
+            @foreach ($salesExecutives as $salesExecutive)
+                <tr>
+                    <td>{{ $salesExecutive->name }}</td>
+                    <td>{{ $salesExecutive->email }}</td>
+                    <td>{{ $salesExecutive->mobile }}</td>
+                    <td>
+                        <a href="{{ route('sales_executives.show', $salesExecutive->id) }}" class="btn btn-warning">Edit</a>
+                        <form action="{{ route('sales_executives.destroy', $salesExecutive->id) }}" method="POST" style="display:inline;">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="btn btn-danger">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+            @endforeach
         </tbody>
     </table>
-      </div>
-   </section>
 </div>
-
-</div>
-
-@endsection
-@section('scripts')
-<!-- Ensure jQuery is loaded before any custom scripts -->
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script>
-    alert('sdsdsdsd')
-    // $(document).ready(function() {
-        loadSalesExecutives();
-
-        function loadSalesExecutives() {
-            $.ajax({
-                url: "{{ route('sales_executives.index') }}",
-                method: "GET",
-                success: function(data) {
-                    $('#salesExecutivesTable').html(data);
-                }
-            });
-        }
-
-        $(document).on('click', '.delete-button', function() {
-            if (confirm('Are you sure you want to delete this Sales Executive?')) {
-                let id = $(this).data('id');
-                $.ajax({
-                    url: '/sales_executives/' + id,
-                    method: 'DELETE',
-                    success: function(data) {
-                        loadSalesExecutives();
-                    }
-                });
-            }
-        });
-    // });
-</script>
+@endif
 @endsection
