@@ -90,6 +90,7 @@ if (auth()->check() && auth()->user()->hasRole('admin')) {
                     </a>
                 </li>
                 @endif
+                @if(auth()->user()->hasRole('admin') || auth()->user()->hasRole('manager'))
                 <li class="nav-item">
                     <a href="{{ route('sales_executives.index') }}"class="nav-link {{ route('sales_executives.index') }} ">
                         <i class="nav-icon fas fa-tachometer-alt"></i>
@@ -98,6 +99,7 @@ if (auth()->check() && auth()->user()->hasRole('admin')) {
                         </p>
                     </a>
                 </li>
+                @endif
                 <li class="nav-item @if( Route::is(Auth::user()->roles['0']->params.'_user') || Route::is(Auth::user()->roles['0']->params.'_customer') || Route::is(Auth::user()->roles['0']->params.'_hotel') ) menu-open @endif">
                 @if(auth()->user()->hasRole('admin') )
                 <a href="#" class="nav-link @if( Route::is(Auth::user()->roles['0']->params.'_user') || Route::is(Auth::user()->roles['0']->params.'_customer') || Route::is(Auth::user()->roles['0']->params.'_hotel') ) active @endif">
@@ -175,18 +177,16 @@ if (auth()->check() && auth()->user()->hasRole('admin')) {
                     </ul>
                 </li>
                 @endif
-                <li class="nav-item @if( Route::is(Auth::user()->roles['0']->params.'_single_package') || Route::is(Auth::user()->roles['0']->params.'_multiple_package')  ) menu-is-opening menu-open @endif ">
-                    <a href="#" class="nav-link @if( Route::is(Auth::user()->roles['0']->params.'_single_package') || Route::is(Auth::user()->roles['0']->params.'_multiple_package')  ) active @endif">
+                @if(auth()->user()->hasRole('admin') || auth()->user()->hasRole('manager'))
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
                         <i class="fas fa-people-carry nav-item"></i>
                         <p>
                             &nbsp;&nbsp;&nbsp;&nbsp; Package
                             <i class="right fas fa-angle-left"></i>
                         </p>
                     </a>
-                    <ul class="nav nav-treeview" @if( Route::is(Auth::user()->roles['0']->params.'_single_package') || Route::is(Auth::user()->roles['0']->params.'_multiple_package') ) style="display: block @endif ">
-                        @if(auth()->check() && auth()->user()->can('view-single-package'))
-
-                        
+                    <ul class="nav nav-treeview">                        
                         <li class="nav-item">
                             <a href="<?php echo $singlePakcage ?>" class="nav-link {{ Route::is(Auth::user()->roles['0']->params.'_single_package') ? 'active' : '' }}">
                                 <i class="far fa-circle nav-icon"></i>
@@ -195,8 +195,6 @@ if (auth()->check() && auth()->user()->hasRole('admin')) {
                                 </p>
                             </a>
                         </li>
-                        @endif
-                        @if(auth()->check() && auth()->user()->can('view-multiple-package'))
                          <li class="nav-item">
                             <a href="<?php echo $multiplePakcage ?>" class="nav-link {{ Route::is(Auth::user()->roles['0']->params.'_multiple_package') ? 'active' : '' }}">
                                 <i class="far fa-circle nav-icon"></i>
@@ -205,10 +203,9 @@ if (auth()->check() && auth()->user()->hasRole('admin')) {
                                 </p>
                             </a>
                         </li>
-                        @endif
                     </ul>
                 </li>
-                
+                @endif
                 @if(auth()->check() && auth()->user()->can('view-orders'))
 
                 <li class="nav-item">

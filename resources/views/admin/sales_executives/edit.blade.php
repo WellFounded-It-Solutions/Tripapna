@@ -1,54 +1,49 @@
-@extends('layouts.app')
-
+@extends('layouts.admin_design')
+@if(auth()->user()->hasRole('admin') || auth()->user()->hasRole('manager'))
 @section('content')
-<div class="container">
-    <h2>Edit Sales Executive</h2>
-    <form id="editSalesExecutiveForm">
+<div class="content-wrapper pl-3">
+    <h1>Sales Executives</h1>
+   <div class="row">
+    <div class="col-md-8">
+    <form action="{{ route('sales_executives.update', $salesExecutive->id) }}" method="POST">
         @csrf
         @method('PUT')
         <div class="form-group">
-            <label for="name">Name</label>
+            <label>Name</label>
             <input type="text" name="name" class="form-control" value="{{ $salesExecutive->name }}" required>
         </div>
         <div class="form-group">
-            <label for="email">Email</label>
-            <input type="email" name="email" class="form-control" value="{{ $salesExecutive->email }}" required>
+            <label>Email</label>
+            <input type="email" name="email" class="form-control" value="{{ $salesExecutive->email }}" readonly>
         </div>
         <div class="form-group">
-            <label for="mobile">Mobile</label>
+            <label>Age</label>
+            <input type="number" name="age" class="form-control" value="{{ $salesExecutive->age }}" required>
+        </div>
+        <div class="form-group">
+            <label>Address</label>
+            <input type="text" name="address" class="form-control" value="{{ $salesExecutive->address }}" required>
+        </div>
+        <div class="form-group">
+            <label>Mobile</label>
             <input type="text" name="mobile" class="form-control" value="{{ $salesExecutive->mobile }}" required>
         </div>
         <div class="form-group">
-            <label for="address">Address</label>
-            <textarea name="address" class="form-control" required>{{ $salesExecutive->address }}</textarea>
-        </div>
-        <div class="form-group">
-            <label for="id_proof">ID Proof</label>
+            <label>ID Proof</label>
             <input type="text" name="id_proof" class="form-control" value="{{ $salesExecutive->id_proof }}" required>
-        </div>
-        <div class="form-group">
-            <label for="age">Age</label>
-            <input type="number" name="age" class="form-control" value="{{ $salesExecutive->age }}" required>
         </div>
         <button type="submit" class="btn btn-success">Update</button>
     </form>
 </div>
-
-<script>
-    $('#editSalesExecutiveForm').submit(function(e) {
-        e.preventDefault();
-        $.ajax({
-            url: "{{ route('sales_executives.update', $salesExecutive->id) }}",
-            method: "POST",
-            data: $(this).serialize(),
-            success: function(data) {
-                alert('Sales Executive updated successfully!');
-                window.location.href = "{{ route('sales_executives.index') }}";
-            },
-            error: function(xhr) {
-                alert('An error occurred while updating the Sales Executive.');
-            }
-        });
-    });
-</script>
+</div>
+</div>
+@endif
 @endsection
+
+
+
+
+
+
+   
+

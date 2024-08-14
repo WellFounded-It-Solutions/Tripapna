@@ -1,66 +1,90 @@
 <?php
 
 namespace App\Http\Controllers\Admin;
-
 use App\Http\Controllers\Controller;
 use App\Models\SaleExecutive;
+use App\Models\User;
+use App\Models\UserRoles;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+
+
 use Illuminate\Http\Request;
 
 class SaleExecutiveController extends Controller
 {
-
-    public function index()
+    public function index(request $request)
     {
-        $ExecutiveData = SaleExecutive::select('*')->latest()->get();
-        // dd($data);
-        return view('admin.sales_executives.index', compact('ExecutiveData'));
+        $manager = Auth::user()->id;
+        $salesExecutives = User::where('parent_id',$manager)->get();
+        return view('admin.sales_executives.index', compact('salesExecutives'));
     }
+
     public function create()
     {
-        return view('sales_executives.create');
+        return view('admin.sales_executives.create');
     }
 
     public function store(Request $request)
     {
+        // dd($request->all());
         $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:sales_executives',
-            'mobile' => 'required|string|max:15|unique:sales_executives',
-            'address' => 'required|string',
-            'id_proof' => 'required|string|max:255',
-            'age' => 'required|integer|min:18',
+            'name' => 'required',
+            'email' => 'required|email|unique:users',
+            'age' => 'required|integer',
+            'mobile' => 'required',
+            // 'id_proof' => 'required',
+        ]);
+        $managerid = Auth::user()->id;
+        $agent = User::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => Hash::make($request->password),
+            'age' => $request->age,
+            'address' => $request->address,
+            'status' => 'Active',
+            'mobile' => $request->mobile,
+            'parent_id' => $managerid,
+            'role' => '7',
+            'pay_status' => 'COD',
+            'id_proof' => $request->id_proof
+        ]);
+        UserRoles::insert([
+            'user_id' => $agent->id, 
+            'role_id' => '7', 
         ]);
 
-        SalesExecutive::create($request->all());
-
-        return redirect()->route('sales-executives.index')
+        return redirect()->route('sales_executives.index')
                          ->with('success', 'Sales Executive created successfully.');
     }
 
-    public function show(SalesExecutive $salesExecutive)
+    public function show($id)
     {
-        return view('sales_executives.show', compact('salesExecutive'));
+        $salesExecutive = User::where('id', $id)->first();
+        return view('admin.sales_executives.edit', compact('salesExecutive'));
     }
 
-    public function edit(SalesExecutive $salesExecutive)
-    {
-        return view('sales_executives.edit', compact('salesExecutive'));
-    }
+    // public function edit($id)
+    // {
+    //     $salesExecutive = User::where('id', $id)->first();
+    //     return view('admin.sales_executives.edit', compact('salesExecutive'));
+    // }
 
-    public function update(Request $request, SalesExecutive $salesExecutive)
+    public function update(Request $request, $id)
     {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:sales_executives,email,' . $salesExecutive->id,
-            'mobile' => 'required|string|max:15|unique:sales_executives,mobile,' . $salesExecutive->id,
-            'address' => 'required|string',
-            'id_proof' => 'required|string|max:255',
-            'age' => 'required|integer|min:18',
+
+        // dd($request->all());
+        // $salesExecutive->update($request->all());
+        User::where('id', $id)->update([
+            'name' => $request->name,
+            'age' => $request->age,
+            'address' => $request->address,
+            'mobile' => $request->mobile,
+            'id_proof' => $request->id_proof,
+            'pay_status' => 'COD'
         ]);
 
-        $salesExecutive->update($request->all());
-
-        return redirect()->route('sales-executives.index')
+        return redirect()->route('sales_executives.index')
                          ->with('success', 'Sales Executive updated successfully.');
     }
 
@@ -68,8 +92,7 @@ class SaleExecutiveController extends Controller
     {
         $salesExecutive->delete();
 
-        return redirect()->route('sales-executives.index')
+        return redirect()->route('sales_executives.index')
                          ->with('success', 'Sales Executive deleted successfully.');
     }
-
 }

@@ -26,6 +26,10 @@ class User extends Authenticatable
         'role',
         'owner_id',
         'maneger_id',
+        'pay_status',
+        'address',
+        'parent_id',
+        'age'
     ];
 
     /**
