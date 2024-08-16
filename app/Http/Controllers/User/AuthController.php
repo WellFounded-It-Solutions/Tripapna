@@ -67,9 +67,20 @@ class AuthController extends Controller
         $request->validate([
             'name' => 'required',
             'mobile' => 'required|regex:/^([0-9\s\-\+\(\)]*)$/|min:10',
+            'pincode' => 'required',
+            'address' => 'required',
+            'dob' => 'required',
+            'anniversary' => 'required',
         ]);
 
-        $update = ['name' => $request->name, 'mobile' => $request->mobile];
+        $update = [
+            'name' => $request->name,
+            'mobile' => $request->mobile,
+            'pincode' => $request->pincode,
+            'anniversary' => $request->anniversary,
+            'dob' => $request->dob,
+            'address' => $request->address
+        ];
 
         $affrow = Customer::where('id', Auth::guard('customer')->user()->id)->update($update);
         if ($affrow) {

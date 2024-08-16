@@ -73,6 +73,46 @@
                                 </div>
                             </div>
 
+                            <div class="col-lg-6 col-md-6">
+                                <div class="form-group">
+                                    <label>Pin Code</label>
+                                    <input name="pincode" type="text" formControlName="pincode" class="form-control" value="{{auth()->guard('customer')->user()->pincode}}">
+                                    @error('pincode')
+                                    <small class="text-danger">* {{ $message }}</small>
+                                    @enderror
+                                </div>
+                            </div>
+
+                            <div class="col-lg-6 col-md-6">
+                                <div class="form-group">
+                                    <label>DOB</label>
+                                    <input name="dob" type="date" formControlName="dob" class="form-control" value="{{auth()->guard('customer')->user()->dob}}">
+                                    @error('dob')
+                                    <small class="text-danger">* {{ $message }}</small>
+                                    @enderror
+                                </div>
+                            </div>
+
+                            <div class="col-lg-6 col-md-6">
+                                <div class="form-group">
+                                    <label>Anniversary Date</label>
+                                    <input name="anniversary" type="date" formControlName="anniversary_date" class="form-control" value="{{auth()->guard('customer')->user()->anniversary}}">
+                                    @error('anniversary')
+                                    <small class="text-danger">* {{ $message }}</small>
+                                    @enderror
+                                </div>
+                            </div>
+
+                            <div class="col-lg-6 col-md-6">
+                                <div class="form-group">
+                                    <label>Address</label>
+                                    <textarea name="address" type="text" formControlName="address" class="form-control" >{{auth()->guard('customer')->user()->address}}</textarea>
+                                    @error('address')
+                                    <small class="text-danger">* {{ $message }}</small>
+                                    @enderror
+                                </div>
+                            </div>
+
                             <div class="col-lg-12 col-md-12 mt-5 mb-3">
                                 <button type="submit" onclick="updateProfile()" class="default-btn">Update Profile</button>
                             </div>

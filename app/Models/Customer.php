@@ -24,7 +24,10 @@ class Customer extends Authenticatable implements Auditable
         'password',
         'mobile',
         'status',
-
+        'address',
+        'pincode',
+        'dob',
+        'anniversary',
     ];
     public function toSearchableArray()
     {
@@ -33,6 +36,10 @@ class Customer extends Authenticatable implements Auditable
             'name' => $this->name,
             'email' => $this->email,
             'mobile' => $this->mobile,
+            'address' => $this->address,
+            'pincode' => $this->pincode,
+            'dob' => $this->dob,
+            'anniversary' => $this->anniversary
         ];
     }
 }
