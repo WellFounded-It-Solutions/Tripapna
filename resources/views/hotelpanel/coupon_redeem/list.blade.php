@@ -1,9 +1,13 @@
 
 <?php
+
+
 if (($records->count() > 0)) {
     foreach ($records as $key => $value) {
     	$singleOrder = geSingleOrder($value->order_id);
-    	$hotel_data = isset($value->hotel_data) ? json_decode($value->hotel_data):'';
+
+    	$hotel_data = isset($value->hotel_data) ? ($value->hotel_data):'';
+    	// $hotel_data = isset($value->hotel_data) ? json_decode($value->hotel_data):'';
         if ($value->status == "Active") {
             $class = "success";
         } else if ($value->status == "Inactive") {
@@ -11,7 +15,7 @@ if (($records->count() > 0)) {
         } else {
             $class = "primary";
         }?>
-        <?php 
+        <?php
             $newClass = 'danger';
             $label = "No";
          ?>
@@ -31,7 +35,7 @@ if (($records->count() > 0)) {
 
 				<li>
 
-					<button type="button" class="btn btn-block btn-info btn-sm" data-toggle="tooltip" data-placement="bottom" title="Details" onClick="viewRecord(<?php echo $singleOrder->id ?>)">View Details</button>	
+					<button type="button" class="btn btn-block btn-info btn-sm" data-toggle="tooltip" data-placement="bottom" title="Details" onClick="viewRecord(<?php echo $singleOrder->id ?>)">View Details</button>
 				 </li>
 			</ul></td>
 		</tr>

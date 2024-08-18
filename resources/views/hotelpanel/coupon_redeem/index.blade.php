@@ -21,7 +21,7 @@
                      {{csrf_field()}} -->
                     <table class="table align-items-center mb-0">
                     <thead>
-                        <tr>  
+                        <tr>
                         <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Order id</th>
                         <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">User</th>
                         <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Amount</th>
@@ -77,8 +77,9 @@
                                     <tr>
                                         <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
                                             <input id="check_all" type="checkbox">
-                                        </th>   
+                                        </th>
                                         <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Code</th>
+                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2 min-w-80">Coupon Description</th>
                                         <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Category</th>
                                         <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Visit Type</th>
                                         <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Mobile</th>
@@ -102,7 +103,7 @@
     </div>
 </div>
 <script type = "text/javascript" >
-  
+
 function addCallBack() {
         setTimeout(function() {
             $('#addFromPopup').modal('hide');
@@ -114,7 +115,7 @@ function updatedCallback() {
         $('#editFromPopup').modal('hide');
     }, 1000);
     getList();
-} 
+}
 $(document).ready(function() {
         getList();
         $(document).on('click', '.pagination a', function(event) {
@@ -122,7 +123,7 @@ $(document).ready(function() {
             var page = $(this).attr('href').split('page=')[1];
             fetch_date(page);
         });
-    }); 
+    });
     function getList() {
         var coupon = $('#coupon').val();
         var mobile = $('#mobile').val();
@@ -163,7 +164,7 @@ $(document).ready(function() {
             console.log(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
         }
     });
-   
+
 }
     // function viewRecord(id) {
     //     $.ajax({
@@ -212,7 +213,7 @@ $(document).ready(function() {
                 console.log(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
             }
         });
-    } 
+    }
     function deleteRecord(id) {
         Swal.fire({
             title: 'Are you sure?',
@@ -301,7 +302,7 @@ function changeSatus(id, status) {
                             'error'
                         )
                     }
-                    
+
                 },
                 error: function(xhr, ajaxOptions, thrownError) {
                     console.log(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
