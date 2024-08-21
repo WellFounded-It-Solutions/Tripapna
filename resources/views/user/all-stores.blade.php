@@ -440,7 +440,7 @@
                 @foreach($HotelList as $hotel)
                 <div class="col-lg-3 col-sm-4 col-6 col-md-4" *ngFor="let Item of hotellist;">
                     <div class="item">
-                        <a href="/stores-details/{{$hotel->id}}">
+                        <a href="{{url('/stores-details')}}/{{$hotel->id}}">
                             <img src="{{$hotel->logo}}" alt="image">
                         </a>
                     </div>
