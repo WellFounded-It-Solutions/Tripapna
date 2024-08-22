@@ -71,6 +71,7 @@ if (auth()->check() && auth()->user()->hasRole('admin')) {
         </div>
         <nav class="mt-2">
             <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+            @if(auth()->user()->hasRole('admin')|| auth()->user()->hasRole('manager')||auth()->user()->hasRole('agent'))
                 <li class="nav-item">
                     <a href="<?php echo $dashboardUrl ?>" class="nav-link {{ Route::is('admin_dashboard') ? 'active' : '' }}">
                         <i class="nav-icon fas fa-tachometer-alt"></i>
@@ -79,7 +80,7 @@ if (auth()->check() && auth()->user()->hasRole('admin')) {
                         </p>
                     </a>
                 </li>
-                
+                @endif
                 @if(auth()->check() && auth()->user()->hasRole('admin'))
                 <li class="nav-item">
                     <a href="<?php echo $permissionUrl ?>" class="nav-link {{ Route::is(Auth::user()->roles['0']->params.'_permission') ? 'active' : '' }}">
@@ -90,12 +91,42 @@ if (auth()->check() && auth()->user()->hasRole('admin')) {
                     </a>
                 </li>
                 @endif
-                @if(auth()->user()->hasRole('admin') || auth()->user()->hasRole('manager'))
+                @if(auth()->user()->hasRole('manager'))
                 <li class="nav-item">
                     <a href="{{ route('sales_executives.index') }}"class="nav-link {{ route('sales_executives.index') }} ">
-                        <i class="nav-icon fas fa-tachometer-alt"></i>
+                        <i class="nav-icon fas fa-users"></i>
                         <p>
                             Sales Executive
+                        </p>
+                    </a>
+                </li>
+                @endif
+                @if(auth()->user()->hasRole('manager'))
+                <li class="nav-item">
+                    <a href="{{ route('sales_executives.index') }}"class="nav-link {{ route('sales_executives.index') }} ">
+                        <i class="nav-icon fa fa-map-marker"></i>
+                        <p>
+                            Track Orders
+                        </p>
+                    </a>
+                </li>
+                @endif
+                @if(auth()->user()->hasRole('manager'))
+                <li class="nav-item">
+                    <a href="{{ route('sales_executives.index') }}"class="nav-link {{ route('sales_executives.index') }} ">
+                        <i class="nav-icon fas fa-credit-card"></i>
+                        <p>
+                            Payment
+                        </p>
+                    </a>
+                </li>
+                @endif
+                @if(auth()->user()->hasRole('manager'))
+                <li class="nav-item">
+                    <a href="{{ route('sales_executives.index') }}"class="nav-link {{ route('sales_executives.index') }} ">
+                        <i class="nav-icon fas fa-bullhorn"></i>
+                        <p>
+                            Offer for sales boy
                         </p>
                     </a>
                 </li>
@@ -121,7 +152,7 @@ if (auth()->check() && auth()->user()->hasRole('admin')) {
                             </a>
                         </li>
                         @endif
-                        @if(auth()->user()->hasRole('admin') || auth()->user()->hasRole('manager'))
+                        @if(auth()->user()->hasRole('admin'))
                         <li class="nav-item">
                             <a href="<?php echo $customerUrl; ?>" class="nav-link {{ Route::is(Auth::user()->roles['0']->params.'_customer') ? 'active' : '' }}">
                                 <i class="nav-icon fas fa-users"></i>
@@ -132,7 +163,7 @@ if (auth()->check() && auth()->user()->hasRole('admin')) {
                             </a>
                         </li>
                         @endif
-                        @if(auth()->user()->hasRole('admin') || auth()->user()->hasRole('manager'))
+                        @if(auth()->user()->hasRole('admin'))
                         <li class="nav-item">
                             <a href="<?php echo $hotelUrl ?>" class="nav-link {{ Route::is(Auth::user()->roles['0']->params.'_hotel') ? 'active' : '' }}">
                                 <i class="nav-icon fas fa-hotel"></i>
@@ -144,7 +175,7 @@ if (auth()->check() && auth()->user()->hasRole('admin')) {
                         @endif
                     </ul>
                 </li>
-                @if(auth()->user()->hasRole('admin') || auth()->user()->hasRole('manager')||auth()->user()->hasRole('agent'))
+                @if(auth()->user()->hasRole('admin'))
                 <li class="nav-item @if( Route::is(Auth::user()->roles['0']->params.'_categories') || Route::is(Auth::user()->roles['0']->params.'_coupons')  ) menu-is-opening menu-open @endif ">
                     <a href="#" class="nav-link @if( Route::is(Auth::user()->roles['0']->params.'_categories') || Route::is(Auth::user()->roles['0']->params.'_coupons')  ) active @endif">
                         <i class="fas fa-ad"></i>
@@ -164,7 +195,7 @@ if (auth()->check() && auth()->user()->hasRole('admin')) {
                             </a>
                         </li>
                         @endif
-                        @if(auth()->user()->hasRole('admin') || auth()->user()->hasRole('manager')||auth()->user()->hasRole('agent'))
+                        @if(auth()->user()->hasRole('admin'))
                         <li class="nav-item">
                             <a href="<?php echo $couponUrl ?>" class="nav-link {{ Route::is(Auth::user()->roles['0']->params.'_coupons') ? 'active' : '' }}">
                                 <i class="fas fa-window-restore"></i>&nbsp;&nbsp;&nbsp;&nbsp;
@@ -177,7 +208,7 @@ if (auth()->check() && auth()->user()->hasRole('admin')) {
                     </ul>
                 </li>
                 @endif
-                @if(auth()->user()->hasRole('admin') || auth()->user()->hasRole('manager'))
+                @if(auth()->user()->hasRole('admin'))
                 <li class="nav-item">
                     <a href="#" class="nav-link">
                         <i class="fas fa-people-carry nav-item"></i>
@@ -206,8 +237,7 @@ if (auth()->check() && auth()->user()->hasRole('admin')) {
                     </ul>
                 </li>
                 @endif
-                @if(auth()->check() && auth()->user()->can('view-orders'))
-
+                @if(auth()->user()->hasRole('admin'))
                 <li class="nav-item">
                     <a href="<?php echo $orderUrl ?>" class="nav-link {{ Route::is(Auth::user()->roles['0']->params.'_order') ? 'active' : '' }}">
                         <i class="fab fa-linode nav-icon"></i>
@@ -218,7 +248,7 @@ if (auth()->check() && auth()->user()->hasRole('admin')) {
                 </li>
                 @endif
                 
-                @if(auth()->check() && auth()->user()->can('view-profile'))
+                @if(auth()->check() && auth()->user()->can('view-profile')|| auth()->user()->hasRole('manager') || auth()->user()->hasRole('agent'))
                 <li class="nav-item">
                     <a href="<?php echo $profileUrl ?>" class="nav-link {{ Route::is(Auth::user()->roles['0']->params.'_profile') ? 'active' : '' }}">
                         <i class="nav-icon fas fa-tools"></i>&nbsp;&nbsp;&nbsp;&nbsp;

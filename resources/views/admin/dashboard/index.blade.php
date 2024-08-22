@@ -1,7 +1,7 @@
 @extends('layouts.admin_design')
 @section('title','Dashboard')
 @section('content')
-@if(auth()->user()->hasRole('admin') || auth()->user()->hasRole('manager') ||auth()->user()->hasRole('agent'))
+@if(auth()->user()->hasRole('admin') || auth()->user()->hasRole('manager')||auth()->user()->hasRole('agent'))
   <div class="content-wrapper">
     <!-- Content Header (Page header) -->
     <div class="content-header">
@@ -27,6 +27,7 @@
         <!-- Info boxes -->
         <div class="row">
           <div class="col-12 col-sm-6 col-md-3">
+          @if(auth()->user()->hasRole('admin'))
             <div class="info-box">
               <span class="info-box-icon bg-warning elevation-1"><i class="fas fa-users"></i></span>
 
@@ -39,9 +40,24 @@
               </div>
               <!-- /.info-box-content -->
             </div>
+            @endif
+            @if(auth()->user()->hasRole('manager'))
+            <div class="info-box">
+              <span class="info-box-icon bg-warning elevation-1"><i class="fas fa-users"></i></span>
+              <div class="info-box-content">
+                <span class="info-box-text">Sales Boy</span>
+                <span class="info-box-number">
+                  30
+                  <small></small>
+                </span>
+              </div>
+              <!-- /.info-box-content -->
+            </div>
+            @endif
             <!-- /.info-box -->
           </div>
           <!-- /.col -->
+          @if(auth()->user()->hasRole('admin'))
           <div class="col-12 col-sm-6 col-md-3">
             <div class="info-box mb-3">
               <span class="info-box-icon bg-danger elevation-1"><i class="fas fa-hotel"></i></span>
@@ -54,10 +70,12 @@
             </div>
             <!-- /.info-box -->
           </div>
+          @endif
           <!-- /.col -->
 
           <!-- fix for small devices only -->
           <div class="clearfix hidden-md-up"></div>
+          @if(auth()->user()->hasRole('admin') || auth()->user()->hasRole('manager'))
 
           <div class="col-12 col-sm-6 col-md-3">
             <div class="info-box mb-3">
@@ -71,7 +89,62 @@
             </div>
             <!-- /.info-box -->
           </div>
+          @endif
+           @if(auth()->user()->hasRole('agent'))
+
+          <div class="col-12 col-sm-6 col-md-3">
+            <div class="info-box mb-3">
+              <span class="info-box-icon bg-success elevation-1"><i class="fas fa-people-carry"></i></span>
+              <div class="info-box-content">
+                <span class="info-box-text">My Package</span>
+                <span class="info-box-number">{{ $package_count }}</span>
+              </div>
+              <!-- /.info-box-content -->
+            </div>
+            <!-- /.info-box -->
+          </div>
+
+          <div class="col-12 col-sm-6 col-md-3">
+            <div class="info-box mb-3">
+              <span class="info-box-icon bg-primary elevation-1"><i class="fab fa-linode"></i></span>
+              <div class="info-box-content">
+                <span class="info-box-text">My orders</span>
+                <span class="info-box-number">{{ $package_count }}</span>
+              </div>
+              <!-- /.info-box-content -->
+            </div>
+            <!-- /.info-box -->
+          </div>
+
+          <div class="col-12 col-sm-6 col-md-3">
+            <div class="info-box mb-3">
+              <span class="info-box-icon bg-red elevation-1"><i class="fas fa-wallet"></i></span>
+              <div class="info-box-content">
+                <span class="info-box-text">My Wallet</span>
+                <span class="info-box-number">{{ $package_count }}</span>
+              </div>
+              <!-- /.info-box-content -->
+            </div>
+            <!-- /.info-box -->
+          </div>
+
+          <div class="col-12 col-sm-6 col-md-3">
+            <div class="info-box mb-3">
+              <span class="info-box-icon bg-warning elevation-1"><i class="fas fa-bullhorn  text-white"></i></span>
+              <div class="info-box-content">
+                <span class="info-box-text">My Offers</span>
+                <span class="info-box-number">{{ $package_count }}</span>
+              </div>
+              <!-- /.info-box-content -->
+            </div>
+            <!-- /.info-box -->
+          </div>
+          @endif
+
+
           <!-- /.col -->
+          @if(auth()->user()->hasRole('admin'))
+
           <div class="col-12 col-sm-6 col-md-3">
             <div class="info-box mb-3">
               <span class="info-box-icon bg-info elevation-1"><i class="fas fa-window-restore"></i></span>
@@ -84,8 +157,11 @@
             </div>
             <!-- /.info-box -->
           </div>
+          @endif
+
           <!-- /.col -->
         </div>
+        @if(auth()->user()->hasRole('admin'))
         <div class="row">
           <div class="col-12 col-sm-6 col-md-3">
             <div class="info-box">
@@ -147,12 +223,14 @@
           </div>
           <!-- /.col -->
         </div>
+        @endif
         <div class="row">
           <!-- Left col -->
           <div class="col-md-12">
             <div class="row">
               <div class="col-md-12">
                 <!-- USERS LIST -->
+                @if(auth()->user()->hasRole('admin')||auth()->user()->hasRole('manager'))
                 <div class="card">
                   <div class="card-header">
                     <h3 class="card-title">Latest Hotels</h3>
@@ -185,6 +263,7 @@
                   </div>
                   <!-- /.card-footer -->
                 </div>
+                @endif
                 <!--/.card -->
               </div>
               <!-- /.col -->
@@ -192,6 +271,7 @@
             <!-- /.row -->
 
             <!-- TABLE: LATEST ORDERS -->
+            @if(auth()->user()->hasRole('admin'))
             <div class="card">
               <div class="card-header border-transparent">
                 <h3 class="card-title">Latest Orders</h3>
@@ -248,6 +328,7 @@
               </div>
               <!-- /.card-footer -->
             </div>
+            @endif
             <!-- /.card -->
           </div>
           <!-- /.col -->
