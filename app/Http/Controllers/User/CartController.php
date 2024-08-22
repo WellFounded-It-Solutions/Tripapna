@@ -110,13 +110,28 @@ class CartController extends Controller
         }
     }
 
+    public function updateCart(Request $request)
+    {
+
+        $auth = Auth::guard('customer')->user();
+        $input = [];
+        $input['qty'] = $request->input('qty');
+        $input['amount'] = Cart::where(['id' => $request->input('id') , 'customer_id' => $auth->id])->first()->amount;
+        $affected_row = Cart::where(['id' => $request->input('id') , 'customer_id' => $auth->id])->update($input);
+        if ($affected_row) {
+           $response['success'] = true;
+           $response['message'] = __('api.cart.success');
+        } else {
+            $response['success'] = false;
+            $response['message'] = __('api.cart.fail');
+        }
+    }
+
     public function viewCart(Request $request)
     {
 
         $auth = Auth::guard('customer')->user();
         $data = Cart::where('customer_id', $auth->id)->with(['coupons', 'Package'])->get();
-
-        // dd($data);
 
         return view('user.cart', compact('data'));
     }

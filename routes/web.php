@@ -56,7 +56,7 @@ Route::group(['middleware' => 'role:admin'], function () {
     Route::get('/administrator/permission', [PermissionController::class, 'index'])->name('administrator_permission');
     Route::get('/administrator/permissionlist', [PermissionController::class, 'get_list'])->name('administrator_permissionlist');
     Route::get('/administrator/permission/getPermission/{id}', [PermissionController::class, 'getPermission'])->name('administrator_getPermission');
-    // Route::post('/administrator/permission/permission', [PermissionController::class, 'permission'])->name('administrator_permission');
+    Route::post('/administrator/permission/permission', [PermissionController::class, 'permission'])->name('administrator_permission');
 
     Route::get('/administrator/dashboard', [DashboardController::class, 'index'])->name('administrator_dashboard');
     Route::get('/administrator/users', [UsersController::class, 'index'])->name('administrator_user');
@@ -409,6 +409,7 @@ Route::group(['middleware' => 'auth:customer'], function () {
     Route::get('/cart', [CartController::class, 'viewCart'])->name('viewCart');
     Route::post('addtocart', [CartController::class, 'addtocart'])->name('addtocart');
     Route::get('/removeCart/{id}', [CartController::class, 'removeCart'])->name('removeCart');
+    Route::post('/updateCart', [CartController::class, 'updateCart'])->name('updateCart');
 
     Route::get("/dashboard", [AuthController::class, 'me'])->name('dashboard');
     Route::get("/profile", [AuthController::class, 'update_profile'])->name('update_profile');

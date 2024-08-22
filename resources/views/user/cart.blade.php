@@ -382,7 +382,7 @@
     @media only screen and (min-width: 1550px) {}
 </style>
 
-<div class="page-title-area" *ngFor="let Content of pageTitle;" style="background-image: url(assets/img/TripApna/image-header.jpg);">
+<div class="page-title-area" style="background-image: url(assets/img/TripApna/image-header.jpg);">
     <div class="container">
         <h1>Cart</h1>
     </div>
@@ -406,7 +406,7 @@
                 <tbody>
 
                     @for($i=0; $i < count($data); $i++)
-                        <tr>
+                        <tr id="row_{{$data[$i]->id}}">
                         <td class="product-thumbnail">
                             <input type="hidden" class="productId" value="{{$data[$i]->id}}" />
                             @if($data[$i]->coupons)
@@ -434,13 +434,13 @@
                         <td class="product-quantity">
 
                             <div class="input-counter">
-                                <button onclick="minus(this)" type="button" style="border: none"><i class='bx bx-minus'></i></button>
-                                <input type="number" value="{{$data[$i]->qty}}" disabled aria-disabled="">
-                                <button onclick="plus(this)" type="button" style="border: none"><i class='bx bx-plus'></i></button>
+                                <button onclick="minus(this,{{$data[$i]->id}} , {{$data[$i]->amount}})" type="button" style="border: none"><i class='bx bx-minus'></i></button>
+                                <input id="qty_{{$data[$i]->id}}" type="number" value="{{$data[$i]->qty}}" disabled aria-disabled="">
+                                <button onclick="plus(this,{{$data[$i]->id}} , {{$data[$i]->amount}})" type="button" style="border: none"><i class='bx bx-plus'></i></button>
                             </div>
                         </td>
                         <td class="product-subtotal">
-                            <span class="subtotal-amount"><i class="fa fa-rupee"></i>{{$data[$i]->amount}}</span>
+                            <span class="subtotal-amount"><i class="fa fa-rupee"></i><span id="total_{{$data[$i]->id}}">{{$data[$i]->amount * $data[$i]->qty }}</span></span>
                             <a href="{{'removeCart/'.$data[$i]->id}}" class="remove"><i class='bx bx-trash'></i></a>
                         </td>
                         </tr>
@@ -527,16 +527,46 @@
         })
     }
 
-    function plus(e) {
+    function plus(e, id, amount) {
         var input = e.previousElementSibling;
         input.value = Number(input.value) + 1;
+
+        updateCart(id);
+
+        var total = document.getElementById("total_" + id);
+        total.innerHTML = Number(amount) * Number(input.value);
     }
 
-    function minus(e) {
+    function minus(e, id, amount) {
         var input = e.nextElementSibling;
         if (input.value > 1) {
             input.value = Number(input.value) - 1;
+
+            updateCart(id);
+
+            var total = document.getElementById("total_" + id);
+            total.innerHTML = Number(amount) * Number(input.value);
         }
+    }
+
+    function updateCart(id) {
+
+        var qty = document.getElementById("qty_" + id).value;
+        $.ajax({
+            type: "POST",
+            url: "{{route('updateCart')}}",
+            data: {
+                "_token": "{{ csrf_token() }}",
+                "id": id,
+                "qty": qty
+            },
+            success: function(response) {
+                if (response.status == 200) {
+                    var total = document.getElementById("total_" + id);
+                    total.innerHTML = Number(response.data.amount) * Number(response.data.qty);
+                }
+            }
+        })
     }
 </script>
 
