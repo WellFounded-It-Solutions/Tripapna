@@ -463,11 +463,13 @@
                         <button type="submit">Apply Coupon</button>
                     </div>
                     <div class="pay-option">
-                        <input type="radio" id="cash_on_delivery" name="cash_on_delivery" value="cash_on_delivery" checked>
+                        <input type="radio" id="cash_on_delivery" name="pay-option" value="cash_on_delivery" checked>
                         <label for="cash_on_delivery">Cash on delivery</label>
 
-                        <input type="radio" id="paypal" name="paypal" value="paypal">
-                        <label for="paypal">Paypal</label>
+                        <br>
+
+                        <input type="radio" id="pay_with_phonepay" name="pay-option" value="phone_pay">
+                        <label for="pay_with_phonepay">Pay with PhonePay</label>
                     </div>
                 </div>
                 <div class="col-lg-5 col-sm-5 col-md-5 text-end">
