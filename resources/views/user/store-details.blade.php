@@ -492,12 +492,12 @@
                     <div class="col-xl-4 col-lg-6 col-sm-6 col-md-6" *ngFor="let Content of productdata | paginate: { itemsPerPage: 12, currentPage: dealsGrid }">
                         <div class="single-deals-box">
                             <div class="deals-image">
-                                <a href="/deals-details/{{$Content->id}}" class="d-block">
+                                <a href="{{url('deals-details')}}/{{$Content->id}}" class="d-block">
                                     <img src="{{asset($Content->image)}}" alt="image">
                                 </a>
                                 <!-- <a href="javascript:void(0)" class="bookmark-save"></a> -->
                                 <div class="discount">{{$Content->discount}}</div>
-                                <a href="/{{$Content->detailsLink}}" class="show-coupon-code" target="_blank" ngxClipboard [cbContent]="[Content.couponCode]" [container]="container" tooltip="Click to Copy" placement="right" show-delay="100" *ngIf="Content.couponCode">Show Coupon Code</a>
+                                <!-- <a href="/{{$Content->detailsLink}}" class="show-coupon-code" target="_blank" ngxClipboard [cbContent]="[Content.couponCode]" [container]="container" tooltip="Click to Copy" placement="right" show-delay="100" *ngIf="Content.couponCode">Show Coupon Code</a> -->
                             </div>
                             <div class="deals-content">
                                 <!-- <div class="d-flex align-items-center justify-content-between">
