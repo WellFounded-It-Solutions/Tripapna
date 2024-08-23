@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\SaleExecutive;
 use App\Models\User;
+use App\Models\Hotel;
 use App\Models\UserRoles;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -17,7 +18,16 @@ class SaleExecutiveController extends Controller
     {
         $manager = Auth::user()->id;
         $salesExecutives = User::where('parent_id',$manager)->get();
-        return view('admin.sales_executives.index', compact('salesExecutives'));
+        return view('admin.sales_executives.index', compact('salesExecutives','assignData'));
+    }
+    public function assignHotel()
+    {
+        if (!Auth::check()) {
+            return redirect()->route('login')->with('error', 'You must be logged in to access this page.');
+        }
+        $managerId = Auth::id();
+        $assignData = Hotel::where(['manager_id'=> $managerId,'status'=>'Active'])->get();
+        return view('admin.sales_executives.assignhotel', compact('assignData'));
     }
 
     public function create()

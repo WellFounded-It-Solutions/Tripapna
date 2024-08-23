@@ -279,8 +279,10 @@ Route::group(['middleware' => 'role:manager'], function () {
     Route::get('/manager/orders', [OrderController::class, 'index'])->name('manager_order');
     Route::get('/manager/orderlist', [OrderController::class, 'get_list'])->name('manager_order_list');
     Route::get('/manager/order/details/{id}', [OrderController::class, 'details'])->name('manager_order_details');
-
+// Amrita
     Route::resource('sales_executives', SaleExecutiveController::class);
+    Route::get('/sales_executives/assignHotel', [SaleExecutiveController::class,'assignHotel',])->name('assignHotel')->middleware('role:manager');;
+    
 
 });
 

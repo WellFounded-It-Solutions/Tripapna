@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Hotel;
+use App\Models\User;
 use App\Models\hotelImages;
 use App\Models\HotelCategory;
 use Illuminate\Http\Request;
@@ -28,7 +29,8 @@ class HotelController extends Controller
         if ($check) {
             $page_name = 'Hotels';
             $hotel_category = HotelCategory::where('status', 'Active')->get();
-            return view('hotels.index', compact('page_name', 'hotel_category'));
+            $manager_list = User::where(['status'=> 'Active','role'=>'1'])->get();
+            return view('hotels.index', compact('page_name', 'hotel_category','manager_list'));
         }
     }
     public function get_list(Request $request)
@@ -73,6 +75,7 @@ class HotelController extends Controller
     }
     public function store(Request $request)
     {
+        // dd($request->manager_id);
         $check = $this->check($request, 'create-hotel', 'ajax');
         if ($check) {
             if ($request->isMethod('post')) {
@@ -88,7 +91,7 @@ class HotelController extends Controller
                     'mobile' => 'required|regex:/^([0-9\s\-\+\(\)]*)$/|min:10',
                     'logo' => 'required|image|mimes:jpeg,png,jpg|max:2048',
                     'filenames' => 'required',
-                    'filenames.*' => 'image'
+                    'filenames.*' => 'image',
                 ];
                 if ($input['type'] == 'c') {
                     $validation_array['amount'] = 'required';
@@ -142,6 +145,7 @@ class HotelController extends Controller
     }
     public function update(Request $request)
     {
+        // dd($request->manager_id);
         $check = $this->check($request, 'edit-hotel', 'ajax');
         if ($check) {
             if ($request->isMethod('post')) {

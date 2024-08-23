@@ -167,6 +167,17 @@
                                 </select>
                             </div>
                         </div>
+                        <div class="form-group row">
+                            <label for="fname" class="col-sm-3 text-right control-label col-form-label">Assign Hotel to Manager</label>
+                            <div class="col-sm-9">
+                                <select class="form-control" name="manager_id">
+                                    <option value="">Select</option>
+                                    @foreach ( $manager_list as $v )
+                                    <option value="{{ $v->id }}">{{ $v->name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
                         <div class="row">
                             <label for="fname" class="col-sm-3 text-right control-label col-form-label">Logo</label>
                             <div class="col-sm-9">
@@ -291,6 +302,17 @@
                                     <option value="">Select</option>
                                     @foreach ( $hotel_category as $v )
                                     <option value="{{ $v->id }}">{{ $v->title }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="fname" class="col-sm-3 text-right control-label col-form-label">Assign Hotel to Manager</label>
+                            <div class="col-sm-9">
+                                <select class="form-control" name="manager_id" id="edit_manager_id">
+                                    <option value="">Select</option>
+                                    @foreach ( $manager_list as $v )
+                                    <option value="{{ $v->id }}">{{ $v->name }}</option>
                                     @endforeach
                                 </select>
                             </div>
@@ -447,6 +469,7 @@
                     $('#ulat').val(json.data.lat);
                     $('#ulong').val(json.data.long);
                     $('#ufhotel_category').val(json.data.hotel_category);
+                    $('#edit_manager_id').val(json.data.manager_id).trigger('change');
                     $('#_id').val(json.data.id);
                     if (json.data.type == 'c') {
                         $('.amount').show();

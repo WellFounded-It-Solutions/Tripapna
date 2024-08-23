@@ -106,7 +106,7 @@ if (auth()->check() && auth()->user()->hasRole('admin')) {
                     <a href="{{ route('sales_executives.index') }}"class="nav-link {{ route('sales_executives.index') }} ">
                         <i class="nav-icon fa fa-map-marker"></i>
                         <p>
-                            Track Orders
+                            Track sales
                         </p>
                     </a>
                 </li>
@@ -116,14 +116,14 @@ if (auth()->check() && auth()->user()->hasRole('admin')) {
                     <a href="{{ route('sales_executives.index') }}"class="nav-link {{ route('sales_executives.index') }} ">
                         <i class="nav-icon fas fa-credit-card"></i>
                         <p>
-                            Payment
+                            Payment Status
                         </p>
                     </a>
                 </li>
                 @endif
                 @if(auth()->user()->hasRole('manager'))
                 <li class="nav-item">
-                    <a href="{{ route('sales_executives.index') }}"class="nav-link {{ route('sales_executives.index') }} ">
+                    <a href="{{ route('assignHotel') }}"class="nav-link {{ route('assignHotel') }} ">
                         <i class="nav-icon fas fa-bullhorn"></i>
                         <p>
                             Offer for sales boy

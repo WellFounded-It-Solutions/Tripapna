@@ -35,5 +35,8 @@
         </tbody>
     </table>
 </div>
+
+@include('admin.sales_executives.assignhotel')
+
 @endif
 @endsection
