@@ -2,6 +2,8 @@
 @section('title','User')
 @section('content')
 @if(auth()->user()->hasRole('admin'))
+<link href="//cdnjs.cloudflare.com/ajax/libs/select2/4.0.0/css/select2.min.css" rel="stylesheet" />
+<script src="//cdnjs.cloudflare.com/ajax/libs/select2/4.0.0/js/select2.min.js"></script>
 <div class="content-wrapper">
    <section class="content-header">
         <div class="container-fluid">
@@ -135,6 +137,17 @@
                             </div>
                         </div> 
                     </div>
+                    <div class="form-group row">
+                            <label for="fname" class="col-sm-3 text-right control-label col-form-label">Assign Hotel to Manager</label>
+                            <div class="col-sm-9">
+                                <select class="form-control select2" name="hotel_id[]" id="hotel_id"multiple="multiple">
+                                    <option value="">Select</option>
+                                    @foreach ( $assignData as $hotel )
+                                    <option value="{{ $hotel->id }}">{{ $hotel->name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
                 <div class="border-top">
                     <div class="card-body">
                         <button type="submit" class="btn btn-info rounded-0">Submit</button>
@@ -189,6 +202,17 @@
                             </div>
                         </div> 
                     </div>
+                    <div class="form-group row">
+                            <label for="fname" class="col-sm-3 text-right control-label col-form-label">Assign Hotel to Manager</label>
+                            <div class="col-sm-9">
+                                <select class="form-control select2" name="hotel_id[]" id="edit_hotel_id"multiple="multiple">
+                                    <option value="">Select</option>
+                                    @foreach ( $assignData as $hotel )
+                                    <option value="{{ $hotel->id }}">{{ $hotel->name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
                     <input type="hidden" name="id" id="_id"/>
                 <div class="border-top">
                     <div class="card-body">
@@ -201,6 +225,7 @@
 </div>
 </div>
 <script type = "text/javascript" >
+  $('.select2').select2();
   
 function addCallBack() {
         setTimeout(function() {
@@ -320,6 +345,12 @@ function editRecord(id) {
             $('#umobile').val(json.data.mobile);
             $('#famount').val(json.data.amount);
             $('#_id').val(json.data.id);
+            if(json.data.hotel_id != null){
+                // var abc = json.data.hotel_id.replace(/[\[\]"]+/g, '');
+                var selectedHotelIds = json.data.hotel_id.split(',');
+                console.log(selectedHotelIds);
+                $('#edit_hotel_id').val(selectedHotelIds).trigger('change');
+            }
             $('#editFromPopup').modal('show');
         },
         error: function(xhr, ajaxOptions, thrownError) {

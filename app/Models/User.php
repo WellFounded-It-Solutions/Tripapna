@@ -29,7 +29,8 @@ class User extends Authenticatable
         'pay_status',
         'address',
         'parent_id',
-        'age'
+        'age',
+        'hotel_id'
     ];
 
     /**

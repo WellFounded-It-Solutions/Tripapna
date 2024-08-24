@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\RolePermission;
 use App\Models\User;
+use App\Models\Hotel;
 use App\Models\UserRoles;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -29,12 +30,14 @@ class UsersController extends Controller
 
     public function index(Request $request)
     {
+
         $check = $this->check($request, 'view-user', 'view');
         if ($check) {
             $manegers = User::where('role', '1')->get();
+            $assignData = Hotel::select('id','name')->where('status','Active')->get();
             $page_name = 'Users';
 
-            return view('admin.users.index', compact('page_name', 'manegers'));
+            return view('admin.users.index', compact('page_name', 'manegers','assignData'));
         }
     }
 
@@ -98,6 +101,7 @@ class UsersController extends Controller
 
     public function store(Request $request)
     {
+        // dd($request->hotel_id);
         $check = $this->check($request, 'create-user', 'ajax');
         if ($check) {
             if ($request->isMethod('post')) {
@@ -108,17 +112,21 @@ class UsersController extends Controller
                         'password' => 'required|min:8',
                         'role' => 'required',
                         'mobile' => 'required|regex:/^([0-9\s\-\+\(\)]*)$/|min:10',
+                        'hotel_id' => 'required|array|min:1'
+
                     ]);
                 if (! $validator->fails()) {
                     try {
                         $input = $request->all();
                         $input['password'] = bcrypt($input['password']);
+                        $input['hotel_id'] = implode(',',$input['hotel_id']);
                         $input['owner_id'] = Auth::user()->id;
                         $user = User::create($input);
                         if ($user) {
                             $addToUserRole = [];
                             $addToUserRole['user_id'] = $user->id;
                             $addToUserRole['role_id'] = $input['role'];
+
                             UserRoles::create($addToUserRole);
                         }
                         $response['success'] = true;
@@ -151,17 +159,21 @@ class UsersController extends Controller
     public function update(Request $request)
     {
         $check = $this->check($request, 'edit-user', 'ajax');
+        // dd($request->hotel_id);
         if ($check) {
             if ($request->isMethod('post')) {
                 $update = $request->all();
                 $validation_array = ['name' => 'required|alpha'];
                 $validation_array = ['password' => 'required|min:8'];
                 $validation_array = ['mobile' => 'required|regex:/^([0-9\s\-\+\(\)]*)$/|min:10'];
+                $validation_array = [ 'hotel_id' => 'required|array|min:1' ];
+                
                 $validator = Validator::make($request->all(), $validation_array);
                 if (! $validator->fails()) {
                     unset($update['_token']);
                     unset($update['confirmed']);
                     $update['password'] = bcrypt($update['password']);
+                    $update['hotel_id'] = implode(',',$update['hotel_id']);
                     $user = User::where('id', $update['id'])->update($update);
                     $response['success'] = true;
                     $response['message'] = 'Records Updated SuccessFully';
