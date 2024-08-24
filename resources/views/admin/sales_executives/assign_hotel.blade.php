@@ -1,3 +1,6 @@
+@extends('layouts.admin_design')
+@if(auth()->user()->hasRole('manager'))
+@section('content')
 <div class="content-wrapper pl-3">
     <h1>Assigned Hotels</h1>
     <table class="card-body table table-bordered">
@@ -19,3 +22,5 @@
         </tbody>
     </table>
 </div>
+@endif
+@endsection

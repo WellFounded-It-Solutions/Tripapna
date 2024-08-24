@@ -18,7 +18,7 @@ class SaleExecutiveController extends Controller
     {
         $manager = Auth::user()->id;
         $salesExecutives = User::where('parent_id',$manager)->get();
-        return view('admin.sales_executives.index', compact('salesExecutives','assignData'));
+        return view('admin.sales_executives.index', compact('salesExecutives'));
     }
     public function assignHotel()
     {
@@ -26,8 +26,8 @@ class SaleExecutiveController extends Controller
             return redirect()->route('login')->with('error', 'You must be logged in to access this page.');
         }
         $managerId = Auth::id();
-        $assignData = Hotel::where(['manager_id'=> $managerId,'status'=>'Active'])->get();
-        return view('admin.sales_executives.assignhotel', compact('assignData'));
+        $assignData = Hotel::select('name','email','location')->where(['manager_id'=> $managerId,'status'=>'Active'])->get();
+        return view('admin.sales_executives.assign_hotel', compact('assignData'));
     }
 
     public function create()

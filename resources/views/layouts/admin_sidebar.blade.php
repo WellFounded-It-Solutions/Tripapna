@@ -103,6 +103,16 @@ if (auth()->check() && auth()->user()->hasRole('admin')) {
                 @endif
                 @if(auth()->user()->hasRole('manager'))
                 <li class="nav-item">
+                    <a href="{{ route('assignHotel') }}"class="nav-link {{ route('assignHotel') }} ">
+                        <i class="nav-icon fas fa-bullhorn"></i>
+                        <p>
+                            Offer for sales boy
+                        </p>
+                    </a>
+                </li>
+                @endif
+                @if(auth()->user()->hasRole('manager'))
+                <li class="nav-item">
                     <a href="{{ route('sales_executives.index') }}"class="nav-link {{ route('sales_executives.index') }} ">
                         <i class="nav-icon fa fa-map-marker"></i>
                         <p>
@@ -113,20 +123,10 @@ if (auth()->check() && auth()->user()->hasRole('admin')) {
                 @endif
                 @if(auth()->user()->hasRole('manager'))
                 <li class="nav-item">
-                    <a href="{{ route('sales_executives.index') }}"class="nav-link {{ route('sales_executives.index') }} ">
+                    <a href="{{ route('sales_executives.index') }}"class="nav-link {{ route('sales_executives.index') ? 'active' : ''}} ">
                         <i class="nav-icon fas fa-credit-card"></i>
                         <p>
                             Payment Status
-                        </p>
-                    </a>
-                </li>
-                @endif
-                @if(auth()->user()->hasRole('manager'))
-                <li class="nav-item">
-                    <a href="{{ route('assignHotel') }}"class="nav-link {{ route('assignHotel') }} ">
-                        <i class="nav-icon fas fa-bullhorn"></i>
-                        <p>
-                            Offer for sales boy
                         </p>
                     </a>
                 </li>

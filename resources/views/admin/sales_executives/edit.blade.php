@@ -1,6 +1,6 @@
 @extends('layouts.admin_design')
-@if(auth()->user()->hasRole('admin') || auth()->user()->hasRole('manager'))
 @section('content')
+@if(auth()->user()->hasRole('admin') || auth()->user()->hasRole('manager'))
 <div class="content-wrapper pl-3">
     <h1>Sales Executives</h1>
    <div class="row">

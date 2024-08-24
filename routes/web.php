@@ -53,7 +53,7 @@ Route::group(['middleware' => 'role:admin'], function () {
     // Route::post('/administrator/modules/update', [ModuleController::class, 'update'])->name('administrator_modules_update');
     // Route::get('/administrator/modules/delete/{ids}', [ModuleController::class, 'destroy'])->name('administrator_modules_delete');
 
-    Route::get('/administrator/permission', [PermissionController::class, 'index'])->name('administrator_permission');
+    // Route::get('/administrator/permission', [PermissionController::class, 'index'])->name('administrator_permission');
     Route::get('/administrator/permissionlist', [PermissionController::class, 'get_list'])->name('administrator_permissionlist');
     Route::get('/administrator/permission/getPermission/{id}', [PermissionController::class, 'getPermission'])->name('administrator_getPermission');
     Route::post('/administrator/permission/permission', [PermissionController::class, 'permission'])->name('administrator_permission');
@@ -281,7 +281,7 @@ Route::group(['middleware' => 'role:manager'], function () {
     Route::get('/manager/order/details/{id}', [OrderController::class, 'details'])->name('manager_order_details');
 // Amrita
     Route::resource('sales_executives', SaleExecutiveController::class);
-    Route::get('/sales_executives/assignHotel', [SaleExecutiveController::class,'assignHotel',])->name('assignHotel')->middleware('role:manager');;
+    Route::get('/assignHotel', [SaleExecutiveController::class,'assignHotel'])->name('assignHotel')->middleware('role:manager');
     
 
 });
