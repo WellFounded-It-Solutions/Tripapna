@@ -73,6 +73,7 @@ class OrderController extends Controller
     }
     public function orderPlace(Request $request)
     {
+
         $success = false;
         $message = '';
         $data = null;
@@ -83,7 +84,7 @@ class OrderController extends Controller
             return response()->json(['error' => $validator->errors()], 401);
         }
         try {
-            $auth = Auth::user();
+            $auth = Auth::guard('customer')->user();
             $cart = Cart::where('customer_id', Auth::guard('customer')->user()->id)->get();
             $post_amount = 1;
             // foreach($cart as $key => $value)

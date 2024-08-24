@@ -282,7 +282,7 @@ Route::group(['middleware' => 'role:manager'], function () {
 // Amrita
     Route::resource('sales_executives', SaleExecutiveController::class);
     Route::get('/assignHotel', [SaleExecutiveController::class,'assignHotel'])->name('assignHotel')->middleware('role:manager');
-    
+
 
 });
 
@@ -421,6 +421,7 @@ Route::group(['middleware' => 'auth:customer'], function () {
     Route::get('/packages', [UserOrderController::class, 'myOrder'])->name('myOrder');
     // Route::post('getorderbyid', 'UserOrderController@getorderbyid');
     Route::get('/order-detail/{id}', [UserOrderController::class, 'orderDetails'])->name('orderDetails');
+    Route::get('/vouchers', [UserOrderController::class, 'myVouchers'])->name('myVouchers');
     // Route::post('voucherDetails', 'UserOrderController@voucherDetails');
     // Route::post('package_coupon', 'UserOrderController@package_coupon');
 });
