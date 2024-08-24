@@ -290,7 +290,6 @@ class OrderController extends Controller
             return response()->json(['error' => $validator->errors()], 401);
         }
         try {
-            $auth = Auth::user();
             $records = Order::where('user_id', Auth::guard('customer')->user()->id)->where('id', $request->input('id'))->with(['orderDetails'])->get();
             if ($records) {
                 $success = true;
@@ -311,11 +310,8 @@ class OrderController extends Controller
     public function orderDetails($id)
     {
         try {
-            $auth = Auth::user();
-            //$records = orderDetails::where('order_id', $request->input('order_id'))->with('order')->get();
+            // $records = orderDetails::where('order_id', $id)->with('order')->get();
             $records = Order::where('id', $id)->where('type', 'package')->with('packageDetails')->first();
-
-            // dd($records);
 
             return view('user.orderdetails', compact('records'));
         } catch (Exception $e) {
@@ -334,7 +330,6 @@ class OrderController extends Controller
             return response()->json(['error' => $validator->errors()], 401);
         }
         try {
-            $auth = Auth::user();
             //$records = orderDetails::where('order_id', $request->input('order_id'))->with('order')->get();
             $records = Order::where('id', $request->input('order_id'))->where('type', 'coupon')->with('orderDetails')->first();
             if ($records) {
@@ -370,7 +365,6 @@ class OrderController extends Controller
             return response()->json(['error' => $validator->errors()], 401);
         }
         try {
-            $auth = Auth::user();
             $records = orderDetails::where('order_id', $request->input('order_id'))->where('package_id', $request->input('package_id'))->get();
             // $records = Order::where('id', $request->input('order_id'))->where('package_id',$request->input('package_id'))->with('orderDetails')->first();
             $search = $request->input('package_id');

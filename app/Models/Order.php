@@ -18,6 +18,7 @@ class Order extends Model
         'user_email',
         'user_phone',
         'trans_id',
+        'type'
         // Add any other fields you want to be mass assignable
     ];
     public function orderDetails()
