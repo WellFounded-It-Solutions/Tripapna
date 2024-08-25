@@ -11,7 +11,7 @@ use Laravel\Sanctum\HasApiTokens;
 class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable, HasPermissionsTrait; //Import The Trait
-
+    
     /**
      * The attributes that are mass assignable.
      *
@@ -30,7 +30,8 @@ class User extends Authenticatable
         'address',
         'parent_id',
         'age',
-        'hotel_id'
+        'hotel_id',
+        'package_id'
     ];
 
     /**
@@ -50,9 +51,19 @@ class User extends Authenticatable
      */
     protected $casts = [
         'email_verified_at' => 'datetime',
+        'hotel_id' => 'array',
     ];
+   
     public function getRoleNameAttribute()
 {
     return $this->roles->first()->name;
 }
+public function AssignHotels()
+{
+    return $this->hasMany(Hotel::class, 'hotel_id');
+}
+public function hotels()
+    {
+        return Hotel::whereIn('id', $this->hotel_id)->get();
+    }
 }

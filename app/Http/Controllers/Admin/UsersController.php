@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\RolePermission;
 use App\Models\User;
 use App\Models\Hotel;
+use App\Models\Package;
 use App\Models\UserRoles;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -30,14 +31,20 @@ class UsersController extends Controller
 
     public function index(Request $request)
     {
-
+        // $data = User::with('AssignHotels')->where('role', '1')->get();
+        // $user = User::find(29);
+        // dd($user);
+        // $hotels = $user->hotels();
+// 
+        // dd($hotels);
         $check = $this->check($request, 'view-user', 'view');
         if ($check) {
             $manegers = User::where('role', '1')->get();
             $assignData = Hotel::select('id','name')->where('status','Active')->get();
+            $assignPackage = Package::select('id','title')->where('status','Active')->get();
             $page_name = 'Users';
 
-            return view('admin.users.index', compact('page_name', 'manegers','assignData'));
+            return view('admin.users.index', compact('page_name', 'manegers','assignData','assignPackage'));
         }
     }
 
@@ -112,14 +119,15 @@ class UsersController extends Controller
                         'password' => 'required|min:8',
                         'role' => 'required',
                         'mobile' => 'required|regex:/^([0-9\s\-\+\(\)]*)$/|min:10',
-                        'hotel_id' => 'required|array|min:1'
-
+                        'hotel_id' => 'required|array|min:1',
+                        'package_id' => 'required|array|min:1'
                     ]);
                 if (! $validator->fails()) {
                     try {
                         $input = $request->all();
                         $input['password'] = bcrypt($input['password']);
                         $input['hotel_id'] = implode(',',$input['hotel_id']);
+                        $input['package_id'] = implode(',',$input['package_id']);
                         $input['owner_id'] = Auth::user()->id;
                         $user = User::create($input);
                         if ($user) {
@@ -167,13 +175,15 @@ class UsersController extends Controller
                 $validation_array = ['password' => 'required|min:8'];
                 $validation_array = ['mobile' => 'required|regex:/^([0-9\s\-\+\(\)]*)$/|min:10'];
                 $validation_array = [ 'hotel_id' => 'required|array|min:1' ];
-                
+                $validation_array = [ 'package_id' => 'required|array|min:1' ];
+               
                 $validator = Validator::make($request->all(), $validation_array);
                 if (! $validator->fails()) {
                     unset($update['_token']);
                     unset($update['confirmed']);
                     $update['password'] = bcrypt($update['password']);
                     $update['hotel_id'] = implode(',',$update['hotel_id']);
+                    $update['package_id'] = implode(',',$update['package_id']);
                     $user = User::where('id', $update['id'])->update($update);
                     $response['success'] = true;
                     $response['message'] = 'Records Updated SuccessFully';

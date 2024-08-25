@@ -148,6 +148,18 @@
                                 </select>
                             </div>
                         </div>
+                        <div class="form-group row">
+                            <label for="fname" class="col-sm-3 text-right control-label col-form-label">Assign Package to Agent</label>
+                            <div class="col-sm-9">
+                                <select class="form-control select2" name="package_id[]" id="package_id"multiple="multiple">
+                                    <option value="">Select</option>
+                                    @foreach ( $assignPackage as $package )
+                                    <option value="{{ $package->id }}">{{ $package->title }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+                        
                 <div class="border-top">
                     <div class="card-body">
                         <button type="submit" class="btn btn-info rounded-0">Submit</button>
@@ -209,6 +221,17 @@
                                     <option value="">Select</option>
                                     @foreach ( $assignData as $hotel )
                                     <option value="{{ $hotel->id }}">{{ $hotel->name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="fname" class="col-sm-3 text-right control-label col-form-label">Assign Package to Agent</label>
+                            <div class="col-sm-9">
+                                <select class="form-control select2" name="package_id[]" id="edit_package_id"multiple="multiple">
+                                    <option value="">Select</option>
+                                    @foreach ( $assignPackage as $package )
+                                    <option value="{{ $package->id }}">{{ $package->title }}</option>
                                     @endforeach
                                 </select>
                             </div>
@@ -346,10 +369,13 @@ function editRecord(id) {
             $('#famount').val(json.data.amount);
             $('#_id').val(json.data.id);
             if(json.data.hotel_id != null){
-                // var abc = json.data.hotel_id.replace(/[\[\]"]+/g, '');
                 var selectedHotelIds = json.data.hotel_id.split(',');
                 console.log(selectedHotelIds);
                 $('#edit_hotel_id').val(selectedHotelIds).trigger('change');
+            }
+            if(json.data.package_id != null){
+                var selectedPackageIds = json.data.package_id.split(',');
+                $('#edit_package_id').val(selectedPackageIds).trigger('change');
             }
             $('#editFromPopup').modal('show');
         },

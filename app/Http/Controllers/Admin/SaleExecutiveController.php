@@ -46,6 +46,7 @@ class SaleExecutiveController extends Controller
             // 'id_proof' => 'required',
         ]);
         $managerid = Auth::user()->id;
+        dd($managerid);
         $agent = User::create([
             'name' => $request->name,
             'email' => $request->email,
