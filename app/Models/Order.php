@@ -12,10 +12,13 @@ class Order extends Model
     protected $table = 'tbl_orders';
     protected $fillable = [
         'order_id',    // Add 'order_id' to allow mass assignment
+        'hotel_id',
+        'user_id',
         'user_name',   // Add other fields as necessary
         'user_email',
         'user_phone',
         'trans_id',
+        'type'
         // Add any other fields you want to be mass assignable
     ];
     public function orderDetails()

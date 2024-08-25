@@ -25,7 +25,7 @@
                 </thead>
                 <tbody>
                     @foreach($records->packageDetails as $packageDetails)
-                    <tr *ngFor="let data of orderDetail">
+                    <tr>
 
                         <td class="product-thumbnail">
                             <a class="proImage">
