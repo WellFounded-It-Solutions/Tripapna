@@ -133,6 +133,8 @@ class CartController extends Controller
         $auth = Auth::guard('customer')->user();
         $data = Cart::where('customer_id', $auth->id)->with(['coupons', 'Package'])->get();
 
-        return view('user.cart', compact('data'));
+        $pageTitle = 'Cart';
+
+        return view('user.cart', compact('data' , 'pageTitle'));
     }
 }

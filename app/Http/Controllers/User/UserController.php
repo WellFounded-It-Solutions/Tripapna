@@ -69,8 +69,9 @@ class UserController extends Controller
             }
         }
 
+        $pageTitle = 'Hotel';
 
-        return view('user.store-details', compact('records'));
+        return view('user.store-details', compact('records' , 'pageTitle'));
     }
 
     public function dealDetails(Request $request, $id)
@@ -91,7 +92,9 @@ class UserController extends Controller
             $productdata->hotel = Hotel::select('location', 'mobile', 'lat', 'long', 'id')->where('id', $value->hotel_id)->with('images')->first();
         }
 
-        return view('user.deal-details', compact('productdata', 'couponCategories'));
+        $pageTitle = 'Deal Details';
+
+        return view('user.deal-details', compact('productdata', 'couponCategories' , 'pageTitle'));
     }
 
 
