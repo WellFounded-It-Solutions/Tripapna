@@ -11,7 +11,7 @@
             <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6">
                 <div class="single-deals-box">
                     <div class="deals-image">
-                        <a href="deals-details/{{$Content->id}}" class="d-block">
+                        <a href="{{url('deals-details')}}/{{$Content->id}}" class="d-block">
                             <img src="{{asset($Content->image)}}" alt="image">
                         </a>
                         <!-- <a href="javascript:void(0)" class="bookmark-save"></a> -->
@@ -28,7 +28,7 @@
                             <span *ngIf="Content.trending"><i class='bx bx-trending-up'></i> Content.trending}}</span>
                         </div> -->
                         </div>
-                        <h3><a href="deals-details/{{$Content->id}}">{{$Content->title}}</a></h3>
+                        <h3><a href="{{url('deals-details')}}/{{$Content->id}}">{{$Content->title}}</a></h3>
                         <span class="location"><i class='bx bxs-map'></i> {{$Content->location}}</span>
                     </div>
                     <div class="box-footer">
@@ -37,7 +37,7 @@
                                 <span class="new-price"><i class="fa fa-rupee"></i>{{$Content->amount}}</span>
                                 <!-- <span class="old-price" *ngIf="Content.oldPrice">Content.oldPrice}}</span> -->
                             </div>
-                            <a href="deals-details/{{$Content->id}}" class="details-btn">View Details</a>
+                            <a href="{{url('deals-details')}}/{{$Content->id}}" class="details-btn">View Details</a>
                         </div>
                     </div>
                 </div>

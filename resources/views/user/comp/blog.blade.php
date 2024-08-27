@@ -136,8 +136,30 @@
         <div class="col-lg-4 col-md-6" *ngFor="let Content of singleBlogPost;">
             <div class="single-blog-post">
                 <div class="post-image">
+                    <a href="/Content.detailsLink" class="d-block">
+                        <img src="{{asset('user/img/TripApna')}}/bl1.jpg" alt="image">
+                    </a>
+                </div>
+                <div class="post-content">
+                    <ul class="meta">
+                        <li><i class="bx bx-purchase-tag"></i> <a href="/Content.tagLink">Travel</a></li>
+                    </ul>
+                    <h3>
+                        <a href="/Content.detailsLink">
+                            The top 5 destinations for travel in July 2020: New edition
+                        </a>
+                    </h3>
+                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore.</p>
+                    <a href="/Content.detailsLink" class="link-btn">Read More <i class='bx bx-right-arrow-alt'></i></a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4 col-md-6" *ngFor="let Content of singleBlogPost;">
+            <div class="single-blog-post">
+                <div class="post-image">
                     <a href="/Content.detailsLink}}" class="d-block">
-                        <img src="https://tripapna.in/assets/img/TripApna/bl1.jpg" alt="image">
+                        <img src="{{asset('user/img/TripApna')}}/bl1.jpg" alt="image">
                     </a>
                 </div>
                 <div class="post-content">
@@ -159,29 +181,7 @@
             <div class="single-blog-post">
                 <div class="post-image">
                     <a href="/Content.detailsLink}}" class="d-block">
-                        <img src="https://tripapna.in/assets/img/TripApna/bl1.jpg" alt="image">
-                    </a>
-                </div>
-                <div class="post-content">
-                    <ul class="meta">
-                        <li><i class="bx bx-purchase-tag"></i> <a href="/Content.tagLink}}">Travel</a></li>
-                    </ul>
-                    <h3>
-                        <a href="/Content.detailsLink}}">
-                            The top 5 destinations for travel in July 2020: New edition
-                        </a>
-                    </h3>
-                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore.</p>
-                    <a href="/Content.detailsLink}}" class="link-btn">Read More <i class='bx bx-right-arrow-alt'></i></a>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-lg-4 col-md-6" *ngFor="let Content of singleBlogPost;">
-            <div class="single-blog-post">
-                <div class="post-image">
-                    <a href="/Content.detailsLink}}" class="d-block">
-                        <img src="https://tripapna.in/assets/img/TripApna/bl1.jpg" alt="image">
+                        <img src="{{asset('user/img/TripApna')}}/bl1.jpg" alt="image">
                     </a>
                 </div>
                 <div class="post-content">

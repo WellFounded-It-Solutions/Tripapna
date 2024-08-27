@@ -473,17 +473,18 @@
 
 <div class="container-fluid">
     <div class="section-title text-start" style="
-    padding-top: 40px;" *ngFor="let Title of sectionTitle;">
+    padding-top: 40px;">
         <h2>Best Deals In This Month</h2>
         <p>Grab the best deals on popular hotels at the best price</p>
     </div>
 
     <div class="deals-slides">
             <div class="responsive-slider owl-carousel owl-theme" >
+                @foreach($latestDeal as $Content)
                 <div class="single-deals-box">
                     <div class="deals-image">
-                        <a routerLink="deals-details/id" class="d-block">
-                            <img src="https://www.tripapna.in/admin/package/1696520319.jpg" alt="image">
+                        <a href="{{url('deals-details')}}/{{$Content->id}}" class="d-block">
+                            <img src="{{asset($Content->image)}}" alt="image">
                         </a>
                         <!-- <a href="javascript:void(0)" class="bookmark-save"></a> -->
                         <div class="discount" *ngIf="Content.discount">discount</div>
@@ -492,89 +493,27 @@
                         <div class="d-flex align-items-center justify-content-between">
                             <div class="rating">
                                 <i class="bx bxs-star"></i><i class="bx bxs-star"></i><i class="bx bxs-star"></i><i class="bx bxs-star"></i>
-                                <span class="count">bx bxs-star</span>
+                                <span class="count"></span>
                             </div>
                             <!-- <div class="status">
                                 <span *ngIf="Content.trending"><i class='bx bx-trending-up'></i> .trending}}</span>
                             </div> -->
                         </div>
-                        <h3><a routerLink="deals-details/Content.id">The Leela Platinum Package</a></h3>
-                        <span class="location"><i class='bx bxs-map'></i>location</span>
+                        <h3><a href="{{url('deals-details')}}/{{$Content->id}}">{{ $Content->title }}</a></h3>
+                        <span class="location"><i class='bx bxs-map'></i> {{ $Content->location }}</span>
                     </div>
                     <div class="box-footer">
                         <div class="d-flex align-items-center justify-content-between">
                             <div class="price">
-                                <span class="new-price"><i class="fa fa-rupee"></i>amount</span>
+                                <span class="new-price"><i class="fa fa-rupee"></i>{{number_format($Content->amount)}}</span>
                                 <!-- <span class="old-price" *ngIf="Content.oldPrice">.oldPrice}}</span> -->
                             </div>
-                            <a routerLink="deals-details/.id}}" class="details-btn">View Details</a>
+                            <a href="{{url('deals-details')}}/{{$Content->id}}" class="details-btn">View Details</a>
                         </div>
                     </div>
                 </div>
+                @endforeach
 
-                <div class="single-deals-box">
-                    <div class="deals-image">
-                        <a routerLink="deals-details/id" class="d-block">
-                            <img src="https://www.tripapna.in/admin/package/1696520319.jpg" alt="image">
-                        </a>
-                        <!-- <a href="javascript:void(0)" class="bookmark-save"></a> -->
-                        <div class="discount" *ngIf="Content.discount">discount</div>
-                    </div>
-                    <div class="deals-content">
-                        <div class="d-flex align-items-center justify-content-between">
-                            <div class="rating">
-                                <i class="bx bxs-star"></i><i class="bx bxs-star"></i><i class="bx bxs-star"></i><i class="bx bxs-star"></i>
-                                <span class="count">bx bxs-star</span>
-                            </div>
-                            <!-- <div class="status">
-                                <span *ngIf="Content.trending"><i class='bx bx-trending-up'></i> .trending}}</span>
-                            </div> -->
-                        </div>
-                        <h3><a routerLink="deals-details/Content.id">The Leela Platinum Package</a></h3>
-                        <span class="location"><i class='bx bxs-map'></i>location</span>
-                    </div>
-                    <div class="box-footer">
-                        <div class="d-flex align-items-center justify-content-between">
-                            <div class="price">
-                                <span class="new-price"><i class="fa fa-rupee"></i>amount</span>
-                                <!-- <span class="old-price" *ngIf="Content.oldPrice">.oldPrice}}</span> -->
-                            </div>
-                            <a routerLink="deals-details/.id}}" class="details-btn">View Details</a>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="single-deals-box">
-                    <div class="deals-image">
-                        <a routerLink="deals-details/id" class="d-block">
-                            <img src="https://www.tripapna.in/admin/package/1696520319.jpg" alt="image">
-                        </a>
-                        <!-- <a href="javascript:void(0)" class="bookmark-save"></a> -->
-                        <div class="discount" *ngIf="Content.discount">discount</div>
-                    </div>
-                    <div class="deals-content">
-                        <div class="d-flex align-items-center justify-content-between">
-                            <div class="rating">
-                                <i class="bx bxs-star"></i><i class="bx bxs-star"></i><i class="bx bxs-star"></i><i class="bx bxs-star"></i>
-                                <span class="count">bx bxs-star</span>
-                            </div>
-                            <!-- <div class="status">
-                                <span *ngIf="Content.trending"><i class='bx bx-trending-up'></i> .trending}}</span>
-                            </div> -->
-                        </div>
-                        <h3><a routerLink="deals-details/Content.id">The Leela Platinum Package</a></h3>
-                        <span class="location"><i class='bx bxs-map'></i>location</span>
-                    </div>
-                    <div class="box-footer">
-                        <div class="d-flex align-items-center justify-content-between">
-                            <div class="price">
-                                <span class="new-price"><i class="fa fa-rupee"></i>amount</span>
-                                <!-- <span class="old-price" *ngIf="Content.oldPrice">.oldPrice}}</span> -->
-                            </div>
-                            <a routerLink="deals-details/.id}}" class="details-btn">View Details</a>
-                        </div>
-                    </div>
-                </div>
             </div>
     </div>
 </div>

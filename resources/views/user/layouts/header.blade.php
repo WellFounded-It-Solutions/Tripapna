@@ -1568,7 +1568,7 @@
 <div class="navbar-area navbar-style-two" ngStickyNav stickyClass="sticky-box-shadow" ngStickyNav>
     <div class="container-fluid">
         <nav class="navbar navbar-expand-lg navbar-light bg-light" [class.active]="classApplied">
-            <a class="navbar-brand" href="/"><img src="assets/img/logo.png" alt="logo"></a>
+            <a class="navbar-brand" href="/"><img src="{{ asset('user/img/logo.png') }}" alt="logo"></a>
             <button class="navbar-toggler" type="button" (click)="toggleClass()">
                 <span class="burger-menu">
                     <span class="top-bar"></span>

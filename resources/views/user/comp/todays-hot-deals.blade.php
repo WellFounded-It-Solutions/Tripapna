@@ -26,9 +26,7 @@
                             <p>{{$coupon->description}}</p>
                             <div class="show-coupon-code">
                                 <span>Coupon Code:</span>
-                                <p class="code-btn" (click)="AddtoCart(Content)">Buy now<i class="bx bx-chevron-right"></i></p>
-
-                                <!-- <a routerLink="/{{$coupon->id}}" class="code-btn" target="_blank" ngxClipboard [cbContent]="[{{$coupon->couponCode]" [container]="container" tooltip="Click to Copy" placement="right" show-delay="100">Buy now<i class="bx bx-chevron-right"></i></a> -->
+                                <p class="code-btn" click="AddtoCart(Content)">Buy now<i class="bx bx-chevron-right"></i></p>
                             </div>
                         </div>
                     </div>
@@ -50,7 +48,7 @@
                 </div>
                 <div class="widget widget_custom_ads">
                     <a href="#" class="d-block" target="_blank">
-                        <img src="https://tripapna.in/assets/img/TripApna/flight.jpg" alt="image">
+                        <img src="{{asset('user/img/TripApna/flight.jpg')}}" alt="image">
                     </a>
                 </div>
                 <!-- <div class="widget widget_custom_ads">

@@ -40,10 +40,13 @@ class UserController extends Controller
             }
         }
 
+        $latestDeal = Package::where('status', 'Active')->with(['PackageItem'])->OrderBy('id', 'DESC')->limit('4')->get();
+
+
         $HotelCoupons = HotelCoupon::where('status', 'Active')->with('hotel')->get();
         $HotelList = Hotel::where('status', 'Active')->with('images')->get();
 
-        return view('user.home', compact('mostPopularPackages', 'HotelCoupons', 'HotelList'));
+        return view('user.home', compact('mostPopularPackages', 'HotelCoupons', 'HotelList' , 'latestDeal'));
     }
 
     public function allStores()
