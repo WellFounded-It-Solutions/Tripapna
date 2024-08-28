@@ -488,7 +488,7 @@
                 <div class="banner-wrapper-image" *ngFor="let Image of bannerWrapperImage;">
                     <!-- <img [src]="Image.img" alt="image"> -->
                     <video controls autoplay width="510" height="330">
-                        <source [src]="Image.img" type="video/mp4">
+                        <source src="{{asset('user/img/TripApna/flightvideo.mp4')}}" type="video/mp4">
                     </video>
                 </div>
 

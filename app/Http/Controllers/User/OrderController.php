@@ -272,7 +272,9 @@ class OrderController extends Controller
                 $records = Order::where('user_id', Auth::guard('customer')->user()->id)->get();
             }
 
-            return view('user.myorder', compact('records'));
+            $pageTitle = 'My Order';
+
+            return view('user.myorder', compact('records' , 'pageTitle'));
         } catch (Exception $e) {
             $success = false;
             $message = __('api.order.fail');
@@ -313,7 +315,9 @@ class OrderController extends Controller
             // $records = orderDetails::where('order_id', $id)->with('order')->get();
             $records = Order::where('id', $id)->where('type', 'package')->with('packageDetails')->first();
 
-            return view('user.orderdetails', compact('records'));
+            $pageTitle = 'Order Details';
+
+            return view('user.orderdetails', compact('records' , 'pageTitle'));
         } catch (Exception $e) {
 
         }

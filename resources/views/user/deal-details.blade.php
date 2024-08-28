@@ -551,7 +551,7 @@
     /* Min width 1550px */
 </style>
 
-<div class="page-title-area" style="background-image: url({{$productdata->image}});">
+<div class="page-title-area" style="background-image: url({{asset($productdata->image)}});">
     <div class="container">
         <h1>{{$productdata->title}}</h1>
     </div>
@@ -565,7 +565,7 @@
                     <owl-carousel-o [options]="dealsDetailsImageSlides">
                         <ng-template carouselSlide>
                             <div class="article-image">
-                                <img src="{{$productdata->image}}" alt="image">
+                                <img src="{{asset($productdata->image)}}" alt="image">
                             </div>
                         </ng-template>
                         <div class="single-slider owl-carousel owl-theme">
@@ -819,7 +819,7 @@
                             <img src="assets/img/user1.jpg" alt="image">
                             <h4>Chris Orwig</h4>
                             <span>Photographer, Author, Writer</span>
-                            <a routerLink="/contact" class="default-btn">Contact With Me</a>
+                            <a href="/contact" class="default-btn">Contact With Me</a>
                         </div>
                     </div> -->
                     <div class="widget widget_socials_link">
@@ -832,7 +832,7 @@
                     </div>
                     <div class="widget widget_about_store">
                         <div class="content">
-                            <a routerLink="/stores-details" class="d-inline-block"><img class="m-0" src="assets/img/TripApna/flight.jpg" alt="image"></a>
+                            <a href="/stores-details" class="d-inline-block"><img class="m-0" src="{{asset('user/img/TripApna/flight.jpg')}}" alt="image"></a>
                         </div>
                     </div>
                 </aside>

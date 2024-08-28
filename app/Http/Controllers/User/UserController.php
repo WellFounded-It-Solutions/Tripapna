@@ -40,10 +40,13 @@ class UserController extends Controller
             }
         }
 
+        $latestDeal = Package::where('status', 'Active')->with(['PackageItem'])->OrderBy('id', 'DESC')->limit('4')->get();
+
+
         $HotelCoupons = HotelCoupon::where('status', 'Active')->with('hotel')->get();
         $HotelList = Hotel::where('status', 'Active')->with('images')->get();
 
-        return view('user.home', compact('mostPopularPackages', 'HotelCoupons', 'HotelList'));
+        return view('user.home', compact('mostPopularPackages', 'HotelCoupons', 'HotelList' , 'latestDeal'));
     }
 
     public function allStores()
@@ -66,8 +69,9 @@ class UserController extends Controller
             }
         }
 
+        $pageTitle = 'Hotel';
 
-        return view('user.store-details', compact('records'));
+        return view('user.store-details', compact('records' , 'pageTitle'));
     }
 
     public function dealDetails(Request $request, $id)
@@ -88,7 +92,9 @@ class UserController extends Controller
             $productdata->hotel = Hotel::select('location', 'mobile', 'lat', 'long', 'id')->where('id', $value->hotel_id)->with('images')->first();
         }
 
-        return view('user.deal-details', compact('productdata', 'couponCategories'));
+        $pageTitle = 'Deal Details';
+
+        return view('user.deal-details', compact('productdata', 'couponCategories' , 'pageTitle'));
     }
 
 
