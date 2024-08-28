@@ -451,7 +451,7 @@
         @endif
         @if(count($data) == 0)
         <div class="text-center noCart">
-            <img src='{{ "assets/img/no-cart.png" }}' alt="" class="img">
+            <img src='{{ asset("user/img/no-cart.png") }}' alt="" class="img">
         </div>
         @endif
         <div class="cart-buttons" *ngIf="cartDetails->length">
@@ -506,7 +506,7 @@
 
         if (document.getElementById("cash_on_delivery").checked) {
             payment_method = "cash_on_delivery";
-        } else if (document.getElementById("paypal").checked) {
+        } else if (document.getElementById("pay_with_phonepay").checked) {
             payment_method = "paypal";
         }
 
@@ -522,9 +522,9 @@
                 "payment_method": payment_method
             },
             success: function(response) {
-                if (response.status == 200) {
-
-                }
+                console.log(response);
+                if (response.success)
+                    window.location.href = "{{ route('myOrder') }}";
             }
         })
     }

@@ -42,7 +42,7 @@
                         </td>
                         <td class="product-quantity">
                             <div class="input-counter">
-                                <input type="number" value="1" disabled aria-disabled="">
+                                <input type="number" value="{{$packageDetails->quantity}}`" disabled aria-disabled="">
                             </div>
                         </td>
                         <td class="product-subtotal">

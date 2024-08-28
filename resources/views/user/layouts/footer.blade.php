@@ -263,7 +263,7 @@
             <div class="col-lg-3 col-sm-6 col-md-6">
                 <div class="single-footer-widget" *ngFor="let Content of singleFooterWidget;">
                     <a routerLink="/" class="logo d-inline-block">
-                        <img src="{{asset('img/logo.png')}}" alt="image">
+                        <img src="{{asset('user/img/logo.png')}}" alt="image">
                     </a>
                     <p>Our company is providing our members with the promise of Lowest Price Guarantee across our listed properties along with 24x7 Customer Support.</p>
                     <ul class="social-links">

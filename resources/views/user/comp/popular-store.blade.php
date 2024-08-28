@@ -311,7 +311,7 @@
 
 
             <div class="col-lg-4 col-md-6 col-sm-12">
-                <div class="popular-store-content" style="background-image: url('{{asset('img/TripApna/hotel.jpg')}}')">
+                <div class="popular-store-content" style="background-image: url('{{asset('user/img/TripApna/hotel.jpg')}}')">
                     <div class="content">
                         <h2>Popular Hotel</h2>
                         <p>Find top hotel Membership here!!!</p>

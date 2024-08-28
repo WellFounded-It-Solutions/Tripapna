@@ -562,12 +562,12 @@
         <div class="row">
             <div class="col-lg-8 col-md-12">
                 <div class="deals-details-image-slides">
-                    <owl-carousel-o [options]="dealsDetailsImageSlides">
-                        <ng-template carouselSlide>
+                    <div class="owl-theme responsive-slider owl-carousel ">
+                        <!-- <ng-template carouselSlide>
                             <div class="article-image">
                                 <img src="{{asset($productdata->image)}}" alt="image">
                             </div>
-                        </ng-template>
+                        </ng-template> -->
                         <div class="single-slider owl-carousel owl-theme">
                             @foreach($productdata->hotel->images as $imgs)
                             <div class="article-image">
@@ -575,7 +575,7 @@
                             </div>
                             @endforeach
                         </div>
-                    </owl-carousel-o>
+                    </div>
                 </div>
                 <div class="deals-details-content">
                     <h3>{{$productdata->title}}</h3>
@@ -637,7 +637,7 @@
                                             {{$item->coupondata->description}}
                                         </p>
                                         <p class="coupon-desc-second">
-
+                                          Note:-  {{$item->coupondata->note}}
                                         </p>
                                     </div>
 
