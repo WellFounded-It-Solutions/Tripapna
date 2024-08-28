@@ -21,8 +21,9 @@ class SaleExecutive extends Model
         'address',
         'mobile',
         'age',
-        // 'status',
+        'package_id',
         'id_proof',
+        'manager_id'
     ];
 
 

@@ -5,6 +5,7 @@ use App\Http\Controllers\Controller;
 use App\Models\SaleExecutive;
 use App\Models\User;
 use App\Models\Hotel;
+use App\Models\Package;
 use App\Models\UserRoles;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -27,12 +28,15 @@ class SaleExecutiveController extends Controller
         }
         $managerId = Auth::id();
         $assignData = Hotel::select('name','email','location')->where(['manager_id'=> $managerId,'status'=>'Active'])->get();
+
         return view('admin.sales_executives.assign_hotel', compact('assignData'));
     }
 
     public function create()
     {
-        return view('admin.sales_executives.create');
+        $assignPackage = Package::select('id','title')->where('status','Active')->get();
+
+        return view('admin.sales_executives.create',compact('assignPackage'));
     }
 
     public function store(Request $request)
@@ -46,7 +50,7 @@ class SaleExecutiveController extends Controller
             // 'id_proof' => 'required',
         ]);
         $managerid = Auth::user()->id;
-        dd($managerid);
+        // dd($managerid);
         $agent = User::create([
             'name' => $request->name,
             'email' => $request->email,
@@ -56,9 +60,12 @@ class SaleExecutiveController extends Controller
             'status' => 'Active',
             'mobile' => $request->mobile,
             'parent_id' => $managerid,
+            'manager_id' => $managerid,
             'role' => '7',
             'pay_status' => 'COD',
-            'id_proof' => $request->id_proof
+            'id_proof' => $request->id_proof,
+            'package_id' => implode(',',$request->package_id)
+
         ]);
         UserRoles::insert([
             'user_id' => $agent->id, 
@@ -72,7 +79,10 @@ class SaleExecutiveController extends Controller
     public function show($id)
     {
         $salesExecutive = User::where('id', $id)->first();
-        return view('admin.sales_executives.edit', compact('salesExecutive'));
+        // $assignPackage = Package::select('id','title')->where('status','Active')->get();
+        $assignPackage = Package::all(); // Fetch packages from the database
+        $selectedPackages = explode(',', $salesExecutive->package_id);
+        return view('admin.sales_executives.edit', compact('salesExecutive','assignPackage','selectedPackages'));
     }
 
     // public function edit($id)
@@ -92,7 +102,8 @@ class SaleExecutiveController extends Controller
             'address' => $request->address,
             'mobile' => $request->mobile,
             'id_proof' => $request->id_proof,
-            'pay_status' => 'COD'
+            'pay_status' => 'COD',
+            'package_id' => implode(',', $request->package_id)
         ]);
 
         return redirect()->route('sales_executives.index')

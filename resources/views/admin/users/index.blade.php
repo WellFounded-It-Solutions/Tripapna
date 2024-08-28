@@ -148,17 +148,7 @@
                                 </select>
                             </div>
                         </div>
-                        <div class="form-group row">
-                            <label for="fname" class="col-sm-3 text-right control-label col-form-label">Assign Package to Agent</label>
-                            <div class="col-sm-9">
-                                <select class="form-control select2" name="package_id[]" id="package_id"multiple="multiple">
-                                    <option value="">Select</option>
-                                    @foreach ( $assignPackage as $package )
-                                    <option value="{{ $package->id }}">{{ $package->title }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                        </div>
+                       
                         
                 <div class="border-top">
                     <div class="card-body">
@@ -225,17 +215,7 @@
                                 </select>
                             </div>
                         </div>
-                        <div class="form-group row">
-                            <label for="fname" class="col-sm-3 text-right control-label col-form-label">Assign Package to Agent</label>
-                            <div class="col-sm-9">
-                                <select class="form-control select2" name="package_id[]" id="edit_package_id"multiple="multiple">
-                                    <option value="">Select</option>
-                                    @foreach ( $assignPackage as $package )
-                                    <option value="{{ $package->id }}">{{ $package->title }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                        </div>
+                      
                     <input type="hidden" name="id" id="_id"/>
                 <div class="border-top">
                     <div class="card-body">
