@@ -141,6 +141,7 @@ class OrderController extends Controller
                             $update_to_package = [];
                             $order_package_details = [];
                             $order_package_details['order_id'] = $order_create->id;
+                            $order_package_details['qty'] = $value->qty;
                             $order_package_details['package_id'] = $record->id;
                             $order_package_details['package_log'] = json_encode($record->toarray());
                             $order_package_details['hotel_id'] = $hotel_data->id;
@@ -181,6 +182,7 @@ class OrderController extends Controller
                                     array_push($hotal_array, $hotel_data->id);
                                     $order_package_details = [];
                                     $order_package_details['order_id'] = $order_create->id;
+                                    $order_package_details['qty'] = $value->qty;
                                     $order_package_details['package_id'] = $record->id;
                                     $order_package_details['package_log'] = json_encode($record->toarray());
                                     $order_package_details['hotel_id'] = $hotel_data->id;
@@ -316,6 +318,8 @@ class OrderController extends Controller
             $records = Order::where('id', $id)->where('type', 'package')->with('packageDetails')->first();
 
             $pageTitle = 'Order Details';
+
+            // dd($records->packageDetails);
 
             return view('user.orderdetails', compact('records' , 'pageTitle'));
         } catch (Exception $e) {

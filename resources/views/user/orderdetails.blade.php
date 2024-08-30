@@ -25,6 +25,7 @@
                 </thead>
                 <tbody>
                     @foreach($records->packageDetails as $packageDetails)
+
                     <tr>
 
                         <td class="product-thumbnail">
@@ -42,7 +43,7 @@
                         </td>
                         <td class="product-quantity">
                             <div class="input-counter">
-                                <input type="number" value="{{$packageDetails->quantity}}`" disabled aria-disabled="">
+                                <input type="nubmer" value="{{$packageDetails->qty}}" disabled aria-disabled="">
                             </div>
                         </td>
                         <td class="product-subtotal">
