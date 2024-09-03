@@ -5,7 +5,7 @@
 
 <div class="page-title-area" *ngFor="let Content of pageTitle;" style="background-image: url('assets/img/TripApna/image-header.jpg');">
     <div class="container">
-        <h1>Order Detail</h1>
+        <h1>Voucher Detail</h1>
     </div>
 </div>
 
@@ -25,7 +25,6 @@
                 </thead>
                 <tbody>
                     @foreach($records->packageDetails as $packageDetails)
-
                     <tr>
 
                         <td class="product-thumbnail">

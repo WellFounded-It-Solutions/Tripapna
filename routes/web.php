@@ -279,11 +279,9 @@ Route::group(['middleware' => 'role:manager'], function () {
     Route::get('/manager/orders', [OrderController::class, 'index'])->name('manager_order');
     Route::get('/manager/orderlist', [OrderController::class, 'get_list'])->name('manager_order_list');
     Route::get('/manager/order/details/{id}', [OrderController::class, 'details'])->name('manager_order_details');
-// Amrita
+    // Amrita
     Route::resource('sales_executives', SaleExecutiveController::class);
-    Route::get('/assignHotel', [SaleExecutiveController::class,'assignHotel'])->name('assignHotel')->middleware('role:manager');
-
-
+    Route::get('/assignHotel', [SaleExecutiveController::class, 'assignHotel'])->name('assignHotel')->middleware('role:manager');
 });
 
 // Agent Route
@@ -423,7 +421,7 @@ Route::group(['middleware' => 'auth:customer'], function () {
     // Route::post('getorderbyid', 'UserOrderController@getorderbyid');
     Route::get('/order-detail/{id}', [UserOrderController::class, 'orderDetails'])->name('orderDetails');
     Route::get('/vouchers', [UserOrderController::class, 'myVouchers'])->name('myVouchers');
-    // Route::post('voucherDetails', 'UserOrderController@voucherDetails');
+    Route::get('/voucherDetails/{id}', [UserOrderController::class, 'voucherDetails'])->name('voucherDetails');
     // Route::post('package_coupon', 'UserOrderController@package_coupon');
 });
 
