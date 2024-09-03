@@ -89,6 +89,30 @@ class AuthController extends Controller
             return redirect()->back()->with('error', 'Profile not updated');
         }
     }
+
+    public function upadate_profie_image(Request $request)
+    {
+        $request->validate([
+            'image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+        ]);
+
+        $image = $request->file('image');
+        $input['imagename'] = time() . '.' . $image->getClientOriginalExtension();
+
+        $destinationPath = public_path('/user/img/');
+
+        $image->move($destinationPath, $input['imagename']);
+
+        $update['image'] = $input['imagename'];
+
+        $affrow = Customer::where('id', Auth::guard('customer')->user()->id)->update($update);
+        if ($affrow) {
+            return response()->json(['success' => 'Profile updated successfully']);
+        } else {
+            return response()->json(['error' => 'Profile not updated']);
+        }
+    }
+
     public function update_password(Request $request)
     {
         $input = $request->all();
