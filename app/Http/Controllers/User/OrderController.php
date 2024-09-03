@@ -262,21 +262,17 @@ class OrderController extends Controller
     public function myOrder(Request $request)
     {
         try {
-            if ($request->input('type') != "") {
 
-                // $records = Order::where('user_id', Auth::guard('customer')->user()->id)->where('type',$request->input('type'))->with(['orderDetails'])->get();
-                // }else{
-                //     $records = Order::where('user_id', Auth::guard('customer')->user()->id)->with(['orderDetails'])->get();
-                // }
+            // $records = Order::where('user_id', Auth::guard('customer')->user()->id)->where('type',$request->input('type'))->with(['orderDetails'])->get();
+            // }else{
+            //     $records = Order::where('user_id', Auth::guard('customer')->user()->id)->with(['orderDetails'])->get();
+            // }
 
-                $records = Order::where('user_id', Auth::guard('customer')->user()->id)->where('type', $request->input('type'))->get();
-            } else {
-                $records = Order::where('user_id', Auth::guard('customer')->user()->id)->get();
-            }
+            $records = Order::where('user_id', Auth::guard('customer')->user()->id)->where('type', 'package')->get();
 
             $pageTitle = 'My Order';
 
-            return view('user.myorder', compact('records' , 'pageTitle'));
+            return view('user.myorder', compact('records', 'pageTitle'));
         } catch (Exception $e) {
             $success = false;
             $message = __('api.order.fail');
@@ -321,44 +317,41 @@ class OrderController extends Controller
 
             // dd($records->packageDetails);
 
-            return view('user.orderdetails', compact('records' , 'pageTitle'));
+            return view('user.orderdetails', compact('records', 'pageTitle'));
         } catch (Exception $e) {
-
         }
     }
-    public function voucherDetails(Request $request)
+
+    public function myVouchers(Request $request)
     {
-        $success = false;
-        $message = '';
-        $data = null;
-        $validator = Validator::make($request->all(), [
-            'order_id' => 'required',
-        ]);
-        if ($validator->fails()) {
-            return response()->json(['error' => $validator->errors()], 401);
-        }
         try {
-            //$records = orderDetails::where('order_id', $request->input('order_id'))->with('order')->get();
-            $records = Order::where('id', $request->input('order_id'))->where('type', 'coupon')->with('orderDetails')->first();
-            if ($records) {
-                // foreach($records as $v){
-                // $v->coupon_data = json_decode($v->coupon_data);
-                // $v->hotel_data = json_decode($v->hotel_data);
-                // }
-                $success = true;
-                $data = $records;
-            } else {
-                $success = false;
-                $message = __('api.order.record_not_found');
-            }
+
+            // $records = Order::where('user_id', Auth::guard('customer')->user()->id)->where('type',$request->input('type'))->with(['orderDetails'])->get();
+            // }else{
+            //     $records = Order::where('user_id', Auth::guard('customer')->user()->id)->with(['orderDetails'])->get();
+            // }
+
+            $records = Order::where('user_id', Auth::guard('customer')->user()->id)->where('type', 'coupon')->get();
+
+
+            $pageTitle = 'My Order';
+
+            return view('user.voucher', compact('records', 'pageTitle'));
         } catch (Exception $e) {
             $success = false;
             $message = __('api.order.fail');
         }
-        $response['success'] = $success;
-        $response['message'] = $message;
-        $response['data'] = $data;
-        return response()->json($response, 200);
+    }
+
+    public function voucherDetails($id)
+    {
+        //$records = orderDetails::where('order_id', $request->input('order_id'))->with('order')->get();
+        $records = Order::where('id', $id)->where('type', 'coupon')->with('orderDetails')->first();
+
+        // return response()->json($records, 200);
+
+        return view('user.voucherdetails', compact('records'));
+
     }
     public function package_coupon(Request $request)
     {
