@@ -60,7 +60,7 @@ class CouponRedeemController extends Controller
 			$response['message'] = "You don't have permission";
 		}
 		return response()->json($response);
-		exit;    
+		exit;
 	}
 	public function get_list(Request $request, $id=null)
 	{
@@ -110,7 +110,7 @@ class CouponRedeemController extends Controller
 	//         $response['message'] = "You don't have permission";
 	//     }
 	//     return response()->json($response);
-	//     exit;    
+	//     exit;
 	// }
 	public function change_status(Request $request, $id, $status)
 	{
@@ -123,7 +123,7 @@ class CouponRedeemController extends Controller
 		}else{
 			$response['success'] = false;
 			$response['message'] = "You don't have permission";
-		}    
+		}
 		return response()->json($response);
 		exit;
 	}
@@ -132,7 +132,6 @@ class CouponRedeemController extends Controller
 		$check = $this->check($request, 'cr-reedem', 'ajax');
 		$row_check = $request->input('row-check');
 		if ($check && !empty($row_check)) {
-			echo 'here';
 			foreach($row_check as $key => $value) {
 				$update['status'] = "Redeem";
 				$user = OrderDetails::where('id', $value)->update($update);
@@ -142,9 +141,9 @@ class CouponRedeemController extends Controller
 		}else{
 			$response['success'] = false;
 			$response['message'] = "You don't have permission";
-		} 
+		}
 		// return response()->json($response);
-		// exit;   
+		// exit;
 	   return redirect()->back();
 		exit;
 	}
