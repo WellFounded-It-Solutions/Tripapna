@@ -32,7 +32,21 @@
             <label>ID Proof</label>
             <input type="text" name="id_proof" class="form-control" value="{{ $salesExecutive->id_proof }}" required>
         </div>
-        <button type="submit" class="btn btn-success">Update</button>
+        </div>
+        <div class="form-group row">
+            <label for="package_id" class="col-sm-3 text-right control-label col-form-label">Assign Package to Agent</label>
+            <div class="col-sm-9">
+                <select class="form-control select2" name="package_id[]" id="edit_package_id" multiple="multiple">
+                    @foreach ($assignPackage as $package)
+                        <option value="{{ $package->id }}" {{ in_array($package->id, $selectedPackages) ? 'selected' : '' }}>
+                            {{ $package->title }}
+                        </option>
+                    @endforeach
+                </select>
+            </div>
+        </div>
+        <div class="form-group">        <button type="submit" class="btn btn-success">Update</button>
+        </div>               
     </form>
 </div>
 </div>
