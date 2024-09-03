@@ -29,13 +29,13 @@
                 <div class="dashboard-profile-box">
                     <div class="image">
                         <div class="profileImageView">
-                            <img src={{auth()->guard('customer')->user()->image ?? asset('assets/img/user1.jpg')}} alt="userProfile" class="userProfile">
+                            <img src={{auth()->guard('customer')->user()->image ? asset("user/img/".auth()->guard('customer')->user()->image) : asset('user/img/user1.jpg')}} alt="userProfile" class="userProfile">
                         </div>
                         <span class="userName">{{auth()->guard('customer')->user()->name}}</span>
                     </div>
                     <div class="pb-3">
                         <input type="file" accept="image/*" hidden id="file" class="profilePic"
-                            data-max-width="4046" (change)="onImageChanged($event)" />
+                            data-max-width="4046" onchange="onImageChanged(this , event)" />
                         <a onclick="imageUpload()" class="logout">Change Profile</a>
                     </div>
                     <!-- <p>You have <strong>$19,321</strong> dollars left, <a href="/">earn mores</a></p> -->
@@ -106,7 +106,7 @@
                             <div class="col-lg-6 col-md-6">
                                 <div class="form-group">
                                     <label>Address</label>
-                                    <textarea name="address" type="text" formControlName="address" class="form-control" >{{auth()->guard('customer')->user()->address}}</textarea>
+                                    <textarea name="address" type="text" formControlName="address" class="form-control">{{auth()->guard('customer')->user()->address}}</textarea>
                                     @error('address')
                                     <small class="text-danger">* {{ $message }}</small>
                                     @enderror
@@ -175,5 +175,46 @@
         </div>
     </div>
 </div>
+
+<script>
+    function imageUpload() {
+        document.getElementById("file").click();
+    }
+
+    function onImageChanged(input, event) {
+
+        var file = event.target.files[0];
+        if (file) {
+            var reader = new FileReader();
+            reader.onload = function(e) {
+                $('.userProfile').attr('src', e.target.result);
+            }
+            reader.readAsDataURL(file);
+        }
+
+        document.getElementById("file").value = null;
+
+        var formData = new FormData();
+        formData.append("image", file);
+        formData.append("_token", "{{csrf_token()}}");
+
+        // $.ajaxSetup({
+        //     headers: {
+        //         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        //     }
+        // });
+
+        $.ajax({
+            type: "POST",
+            url: "{{route('customer.image.upload')}}",
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function(data) {
+                console.log(data);
+            }
+        });
+    }
+</script>
 
 @endsection
