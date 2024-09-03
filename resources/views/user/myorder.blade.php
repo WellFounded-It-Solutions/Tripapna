@@ -29,7 +29,7 @@
                 <div class="dashboard-profile-box">
                     <div class="image">
                         <div class="profileImageView">
-                            <img src={{auth()->guard('customer')->user()->image ?? `assets/img/user1.jpg` }} alt="userProfile" class="userProfile">
+                            <img src={{auth()->guard('customer')->user()->image ? asset("user/img/".auth()->guard('customer')->user()->image) : `user/img/user1.jpg` }} alt="userProfile" class="userProfile">
                         </div>
                         <span class="userName">{{auth()->guard('customer')->user()->name}}</span>
                     </div>
