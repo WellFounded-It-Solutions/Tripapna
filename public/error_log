@@ -1,0 +1,10 @@
+[16-May-2024 11:27:41 UTC] PHP Warning:  require(/home3/thetripapna/public_html/abid_work/public/vendor/autoload.php): Failed to open stream: No such file or directory in /home3/thetripapna/public_html/abid_work/public/index.php on line 33
+[16-May-2024 11:27:41 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '/home3/thetripapna/public_html/abid_work/public/vendor/autoload.php' (include_path='.:/opt/alt/php82/usr/share/pear:/opt/alt/php82/usr/share/php:/usr/share/pear:/usr/share/php') in /home3/thetripapna/public_html/abid_work/public/index.php:33
+Stack trace:
+#0 {main}
+  thrown in /home3/thetripapna/public_html/abid_work/public/index.php on line 33
+[16-May-2024 11:27:44 UTC] PHP Warning:  require(/home3/thetripapna/public_html/abid_work/public/vendor/autoload.php): Failed to open stream: No such file or directory in /home3/thetripapna/public_html/abid_work/public/index.php on line 33
+[16-May-2024 11:27:44 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '/home3/thetripapna/public_html/abid_work/public/vendor/autoload.php' (include_path='.:/opt/alt/php82/usr/share/pear:/opt/alt/php82/usr/share/php:/usr/share/pear:/usr/share/php') in /home3/thetripapna/public_html/abid_work/public/index.php:33
+Stack trace:
+#0 {main}
+  thrown in /home3/thetripapna/public_html/abid_work/public/index.php on line 33
