@@ -103,7 +103,7 @@ if (auth()->check() && auth()->user()->hasRole('admin')) {
                 @endif
                 @if(auth()->user()->hasRole('manager'))
                 <li class="nav-item">
-                    <a href="{{ route('assignHotel') }}"class="nav-link {{ route('assignHotel') }} ">
+                    <a href="{{ route('sales_executive_offers') }}"class="nav-link {{ route('sales_executive_offers') }} ">
                         <i class="nav-icon fas fa-bullhorn"></i>
                         <p>
                             Offer for sales boy
@@ -113,7 +113,7 @@ if (auth()->check() && auth()->user()->hasRole('admin')) {
                 @endif
                 @if(auth()->user()->hasRole('manager'))
                 <li class="nav-item">
-                    <a href="{{ route('sales_executives.index') }}"class="nav-link {{ route('sales_executives.index') }} ">
+                    <a href="{{ route('sales_executive_show') }}"class="nav-link {{ route('sales_executive_show') }} ">
                         <i class="nav-icon fa fa-map-marker"></i>
                         <p>
                             Track sales
@@ -123,7 +123,7 @@ if (auth()->check() && auth()->user()->hasRole('admin')) {
                 @endif
                 @if(auth()->user()->hasRole('manager'))
                 <li class="nav-item">
-                    <a href="{{ route('sales_executives.index') }}"class="nav-link {{ route('sales_executives.index') ? 'active' : ''}} ">
+                    <a href="{{ route('sales_executive_payment') }}"class="nav-link {{ route('sales_executive_payment')}} ">
                         <i class="nav-icon fas fa-credit-card"></i>
                         <p>
                             Payment Status
@@ -234,7 +234,25 @@ if (auth()->check() && auth()->user()->hasRole('admin')) {
                                 </p>
                             </a>
                         </li>
+                        <li class="nav-item">
+                            <a href="<?php echo $singlePakcage ?>" class="nav-link {{ Route::is(Auth::user()->roles['0']->params.'_holiday_package') ? 'active' : '' }}">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>
+                                    Holiday Package
+                                </p>
+                            </a>
+                        </li>
                     </ul>
+                </li>
+                @endif
+                @if(auth()->user()->hasRole('admin'))
+                <li class="nav-item">
+                    <a href="<?php echo $orderUrl ?>" class="nav-link {{ Route::is(Auth::user()->roles['0']->params.'_order') ? 'active' : '' }}">
+                        <i class="fas fa-wallet nav-icon"></i>
+                        <p>
+                            Wallet Management
+                        </p>
+                    </a>
                 </li>
                 @endif
                 @if(auth()->user()->hasRole('admin'))
@@ -243,6 +261,16 @@ if (auth()->check() && auth()->user()->hasRole('admin')) {
                         <i class="fab fa-linode nav-icon"></i>
                         <p>
                             Orders
+                        </p>
+                    </a>
+                </li>
+                @endif
+                @if(auth()->user()->hasRole('admin'))
+                <li class="nav-item">
+                    <a href="<?php echo $orderUrl ?>" class="nav-link {{ Route::is(Auth::user()->roles['0']->params.'_order') ? 'active' : '' }}">
+                        <i class="fas fa-ban nav-icon"></i>
+                        <p>
+                            Fake Orders
                         </p>
                     </a>
                 </li>

@@ -117,6 +117,7 @@ class CouponRedeemController extends Controller
 		$check = $this->check($request, 'cr-reedem', 'ajax');
 		if ($check) {
 			$update['status'] = $status;
+			
 			$user = OrderDetails::where('id', $id)->update($update);
 			$response['success'] = true;
 			$response['message'] = 'Status Changed SuccessFully';

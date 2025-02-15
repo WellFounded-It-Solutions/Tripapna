@@ -32,6 +32,14 @@
             <label>ID Proof</label>
             <input type="text" name="id_proof" class="form-control" value="{{ $salesExecutive->id_proof }}" required>
         </div>
+        <div class="form-group">
+            <label for="floatingSelect">Payment Type : </label>            
+            <select class="form-select" id="floatingSelect" aria-label="Floating label select example" name="pay_status">
+                <option selected>Choose</option>
+                <option value="1">COD(Cash On Deposit)</option>
+                <option value="2">Online Payment</option>
+              </select>
+        </div>
         </div>
         <div class="form-group row">
             <label for="package_id" class="col-sm-3 text-right control-label col-form-label">Assign Package to Agent</label>

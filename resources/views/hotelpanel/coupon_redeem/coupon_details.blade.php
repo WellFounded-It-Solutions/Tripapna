@@ -24,7 +24,7 @@ if (($records->count() > 0)) {
             <td><input type="number" min="1" value="1" style="width: 50px;" class="form-control"/> </td>
             <td><?php echo ucfirst($value->visit_type) ?></td>
             <td>
-
+                
                 <div class="dropdown">
                     <?php if ($value->status == "Redeem") { ?>
                         <a class="btn btn-<?php echo $class ?>" href="javascript:"><?php echo ucfirst($value->status) ?></a>

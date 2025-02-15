@@ -81,9 +81,8 @@
                                         <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Code</th>
                                         <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2 min-w-80">Coupon Description</th>
                                         <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Category</th>
+                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Qty</th>
                                         <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Visit Type</th>
-                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Mobile</th>
-                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Date</th>
                                         <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Action</th>
                                         <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Created</th>
                                         <th class="text-secondary opacity-7"></th>
@@ -286,7 +285,7 @@ function changeSatus(id, status) {
     }).then((result) => {
         if (result.value) {
             $.ajax({
-                url: baseUrl + "coupons_redeem/change_status/" + id + "/" + status,
+                url: baseUrl + "coupons_redeem/change_status/" + id + "/" + status ,
                 type: 'get',
                 dataType: 'json',
                 beforeSend: function() {},

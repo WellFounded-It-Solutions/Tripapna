@@ -39,6 +39,18 @@ class multiplePackageController extends Controller
             return view('multiplepackage.index', compact('page_name', 'hotelRecord', 'Categories', 'couponRecord'));
         }
     }
+    public function new(Request $request)
+    {
+        $check = $this->check($request, 'view-multiple-package', 'view');
+        if ($check) {
+            $page_name = 'Package';
+            $hotelRecord = Hotel::where('status', 'Active')->get();
+            $Categories = Categories::where('status', 'Active')->get();
+            $couponRecord = Coupon::where('status', 'Active')->get();
+
+            return view('multiplepackage.addPackage', compact('page_name', 'hotelRecord', 'Categories', 'couponRecord'));
+        }
+    }
 
     public function get_list(Request $request)
     {
@@ -98,6 +110,7 @@ class multiplePackageController extends Controller
                     'coupon' => 'required|array',
                     'category_id' => 'required|array',
                     'limit' => 'required',
+                    'quantity' => 'required',
                     'term_conditions' => 'required',
                     'description' => 'required',
                     'image' => 'required|image|mimes:jpeg,png,jpg|max:2048',
@@ -136,6 +149,7 @@ class multiplePackageController extends Controller
                                 $inputitems['hotel_id'] = $request->input('hotel_id')[$key];
                                 $inputitems['category_id'] = $request->input('category_id')[$key];
                                 $inputitems['coupon_id'] = $value;
+                                $inputitems['quantity'] = $request->input('quantity')[$key];    
                                 PackageItem::create($inputitems);
                             }
                         }

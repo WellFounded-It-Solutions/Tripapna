@@ -40,6 +40,20 @@ class singlePackageController extends Controller
         }
     }
 
+    public function new(Request $request)
+    {
+        $check = $this->check($request, 'view-single-package', 'view');
+        if ($check) {
+            $page_name = 'Package';
+            $hotelRecord = Hotel::where('status', 'Active')->get();
+            $couponRecord = Coupon::where('status', 'Active')->get();
+            $Categories = Categories::where('status', 'Active')->get();
+
+            return view('singlepackage.addpackage', compact('page_name', 'hotelRecord', 'Categories', 'couponRecord'));
+        }
+    }
+
+
     public function get_list(Request $request)
     {
         $check = $this->check($request, 'view-single-package', 'ajax');
@@ -93,6 +107,7 @@ class singlePackageController extends Controller
                     'hotel_id' => 'required',
                     'coupon' => 'required|array',
                     'limit' => 'required',
+                    'quantity' => 'required',
                     'term_conditions' => 'required',
                     'description' => 'required',
                     'expire_type' => 'required',
@@ -132,6 +147,7 @@ class singlePackageController extends Controller
                                 $record = couponDetails($value);
                                 $inputitems['category_id'] = $record->category_id;
                                 $inputitems['coupon_id'] = $value;
+                                $inputitems['quantity'] = $request->input("quantity")[$value] ?? null;
                                 PackageItem::create($inputitems);
                             }
                         }

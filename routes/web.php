@@ -104,6 +104,7 @@ Route::group(['middleware' => 'role:admin'], function () {
     Route::get('/administrator/customer/change_status/{id}/{status}', [CustomerController::class, 'change_status'])->name('administrator_customer_change_status');
 
     Route::get('/administrator/single-package', [singlePackageController::class, 'index'])->name('administrator_single_package');
+    Route::get('/administrator/single-packagelist/new', [singlePackageController::class, 'new'])->name('administrator_single_package_new');
     Route::get('/administrator/single-packagelist', [singlePackageController::class, 'get_list'])->name('administrator_single_package_list');
     Route::get('/administrator/single-package/get_record_by_id/{id}', [singlePackageController::class, 'get_record_by_id'])->name('administrator_single_package_get_record_by_id');
     Route::get('/administrator/single-package/change_status/{id}/{status}', [singlePackageController::class, 'change_status'])->name('administrator_single_package_change_status');
@@ -116,6 +117,7 @@ Route::group(['middleware' => 'role:admin'], function () {
     Route::get('/administrator/single-package/getCoupon/{id}', [singlePackageController::class, 'getCoupon'])->name('administrator_single_package_getCoupon');
 
     Route::get('/administrator/multiple-package', [multiplePackageController::class, 'index'])->name('administrator_multiple_package');
+    Route::get('/administrator/multiple-package/new', [multiplePackageController::class, 'new'])->name('administrator_multiple_package_new');
     Route::get('/administrator/multiple-packagelist', [multiplePackageController::class, 'get_list'])->name('administrator_multiple_package_list');
     Route::get('/administrator/multiple-package/get_record_by_id/{id}', [multiplePackageController::class, 'get_record_by_id'])->name('administrator_multiple_package_get_record_by_id');
     Route::get('/administrator/multiple-package/change_status/{id}/{status}', [multiplePackageController::class, 'change_status'])->name('administrator_multiple_package_change_status');
@@ -281,7 +283,16 @@ Route::group(['middleware' => 'role:manager'], function () {
     Route::get('/manager/order/details/{id}', [OrderController::class, 'details'])->name('manager_order_details');
     // Amrita
     Route::resource('sales_executives', SaleExecutiveController::class);
+    
     Route::get('/assignHotel', [SaleExecutiveController::class, 'assignHotel'])->name('assignHotel')->middleware('role:manager');
+    Route::get('/manager/track-sales', [SaleExecutiveController::class,'track_sales'])->name('sales_executive_show');
+    Route::get('/mangaer/offer-sales-boy', [SaleExecutiveController::class,'create_offer'])->name('sales_executive_offers');
+    Route::get('/mangaer/sales-boy-payment', [SaleExecutiveController::class,'payment'])->name('sales_executive_payment');
+
+
+
+    Route::resource('sales_boy_offers', SalesBoyOfferController::class);
+
 });
 
 // Agent Route

@@ -16,7 +16,7 @@
                 <div class="col-12">
                     <div class="clearfix mb-5">
                         @if(auth()->check() && auth()->user()->can('add-single-package'))
-                        <button type="button" class="btn btn-primary float-right" data-toggle="modal" data-target="#addFromPopup"><i class="fas fa-plus"></i> Add</button> @endif
+                        <button type="button" class="btn btn-primary float-right" data-target="#addFromPopup"  onclick="window.location.href='{{ route('administrator_single_package_new') }}'"  ><i class="fas fa-plus"></i> Add</button> @endif
                     </div>
                     <div class="callout callout-info">
                         <div class="row">
@@ -64,137 +64,6 @@
     </section>
 </div>
 <!-- Modal -->
-<div class="modal fade " id="addFromPopup" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true ">
-    <div class="modal-dialog modal-lg" role="document ">
-        <form class="form-horizontal ajax_form" action="{{ route(Auth::user()->roles['0']->params.'_single_package_store') }}" method="post" id="user">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Add</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true ">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                    {{csrf_field()}}
-                    <div class="card-body">
-                        <div class="form-group row">
-                            <label for="fname" class="col-sm-3 text-right control-label col-form-label">Title</label>
-                            <div class="col-sm-9">
-                                <input type="text" class="form-control" id="title" placeholder="Title" name="title" data-role="tagsinput" value="">
-                            </div>
-                        </div>
-                        <div class="form-group row">
-                            <label for="fname" class="col-sm-3 text-right control-label col-form-label">Hotel</label>
-                            <div class="col-sm-9">
-                                <select class="form-control" data-placeholder="Select a Category" name="hotel_id" id="h_id">
-                                    <option value="">Select</option>
-                                    @foreach($hotelRecord as $val)
-                                        <option value="{{ $val->id }}">{{ ucfirst($val->name) }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                        </div>
-                        <div class="form-group row">
-                            <label for="fname" class="col-sm-3 text-right control-label col-form-label">Category</label>
-                            <div class="col-sm-9">
-                                <select class="form-control" data-placeholder="Select a Category" name="category_id" id="category_id" onchange="getCoupon(this)">
-                                    <option value="">Select</option>
-                                    @foreach($Categories as $val)
-                                        <option value="{{ $val->id }}">{{ ucfirst($val->title) }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                        </div>
-                        <div class="form-group row">
-                            <label for="fname" class="col-sm-3 text-right control-label col-form-label">Coupon</label>
-                            <div class="col-sm-9">
-                                <select class="select4 coupon_html" multiple data-placeholder="Select a Category" data-dropdown-css-class="select2-purple" style="width: 100%;" name="coupon[]" id="category_id">
-                                    <option value=""></option>
-
-                                </select>
-                            </div>
-                        </div>
-                        <div class="form-group row">
-                            <label for="fname" class="col-sm-3 text-right control-label col-form-label">Limit</label>
-                            <div class="col-sm-9">
-                                <input type="number" class="form-control" id="limit" placeholder="Limit" name="limit" data-role="tagsinput" value="">
-                            </div>
-                        </div>
-                        <div class="form-group row">
-                            <label for="fname" class="col-sm-3 text-right control-label col-form-label">Terms and Conditions</label>
-                            <div class="col-sm-9">
-                                <textarea rows="5" class="form-control summernote" placeholder="Terms and Conditions" cols="70" name="term_conditions"></textarea>
-                            </div>
-                        </div>
-                        <div class="form-group row">
-                            <label for="fname" class="col-sm-3 text-right control-label col-form-label">Amount</label>
-                            <div class="col-sm-9">
-                                <input type="text" class="form-control" id="amount" placeholder="Amount" name="amount" data-role="tagsinput" value="">
-                            </div>
-                        </div>
-                        <div class="form-group row">
-                            <label for="fname" class="col-sm-3 text-right control-label col-form-label">Discount</label>
-                            <div class="col-sm-9">
-                                <input type="text" class="form-control" id="discount" placeholder="discount in %" name="discount" data-role="tagsinput" value="">
-                            </div>
-                        </div>
-                        <div class="form-group row ">
-                            <label for="fname" class="col-sm-3 text-right control-label col-form-label">Type</label>
-                            <div class="col-sm-9">
-                                <input type="radio" class="btn-check" name="expire_type" id="option1" autocomplete="off" onchange="checkDate(this)" value="Fixed" checked>
-                                <label class="btn btn-secondary" for="option1">Date</label>
-
-                                <input type="radio" class="btn-check" name="expire_type" id="option2" autocomplete="off" value="variable" onchange="checkDate(this)">
-                                <label class="btn btn-secondary" for="option2">Non date</label>
-                            </div>
-                        </div>
-                        <div class="form-group row expire_type ">
-                            <label for="fname" class="col-sm-3 text-right control-label col-form-label">Valid Date</label>
-                            <div class="col-sm-9">
-                                <input type="date" class="form-control" id="valid_date" placeholder="Valid Date" name="valid_date" data-role="tagsinput" value="">
-                            </div>
-                        </div>
-                        <div class="form-group row d-none variable_month">
-                            <label for="fname" class="col-sm-3 text-right control-label col-form-label">Select</label>
-                            <div class="col-sm-9">
-                               <select class="form-control" name="variable_month">
-                                    <option value="">Select</option>
-                                    <option value="3">3 Months</option>
-                                    <option value="3">6 Months</option>
-                                    <option value="9">9 Months</option>
-                                    <option value="12">12 Months</option>
-                               </select>
-                            </div>
-                        </div>
-                        <div class="form-group row">
-                            <label for="fname" class="col-sm-3 text-right control-label col-form-label">Description</label>
-                            <div class="col-sm-9">
-                                <textarea rows="5" class="form-control summernote" placeholder="Description" cols="70" name="description"></textarea>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <label for="fname" class="col-sm-3 text-right control-label col-form-label">Image</label>
-                            <div class="col-sm-9">
-                                <div class="form-group">
-                                    <div class="custom-file">
-                                        <input type="file" class="custom-file-input" id="customFile" name="image">
-                                        <label class="custom-file-label" for="customFile">Choose file</label>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-            </div>
-            <div class="border-top">
-                <div class="card-body">
-                    <button type="submit" class="btn btn-info rounded-0">Submit</button>
-                </div>
-            </div>
-        </div>
-    </div>
-</form>
-</div>
-</div>
 <!-- Modal -->
 <!-- Modal -->
 <div class="modal fade " id="editFromPopup" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true ">

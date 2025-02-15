@@ -39,6 +39,21 @@ class SaleExecutiveController extends Controller
         return view('admin.sales_executives.create',compact('assignPackage'));
     }
 
+    public function create_offer(){
+        $manager = Auth::user()->id;
+
+        $assignedPackage = User::select('package_id','id','name')->where('maneger_id',$manager)->get();
+        error_log($assignedPackage);
+        return view('admin.sales_executives.offer_sales',compact('assignedPackage'));
+    }
+    public function track_sales(){
+        return view('admin.sales_executives.track_sales');
+    }
+
+    public function payment(){
+        return view('admin.sales_executives.pay_sales');
+    }
+
     public function store(Request $request)
     {
         // dd($request->all());
@@ -50,6 +65,7 @@ class SaleExecutiveController extends Controller
             // 'id_proof' => 'required',
         ]);
         $managerid = Auth::user()->id;
+        error_log($managerid);
         // dd($managerid);
         $agent = User::create([
             'name' => $request->name,
@@ -60,9 +76,9 @@ class SaleExecutiveController extends Controller
             'status' => 'Active',
             'mobile' => $request->mobile,
             'parent_id' => $managerid,
-            'manager_id' => $managerid,
+            'maneger_id' => $managerid,
             'role' => '7',
-            'pay_status' => 'COD',
+            'pay_status' => $request->pay_status,
             'id_proof' => $request->id_proof,
             'package_id' => implode(',',$request->package_id)
 
@@ -102,13 +118,14 @@ class SaleExecutiveController extends Controller
             'address' => $request->address,
             'mobile' => $request->mobile,
             'id_proof' => $request->id_proof,
-            'pay_status' => 'COD',
+            'pay_status' => $request->pay_status,
             'package_id' => implode(',', $request->package_id)
         ]);
 
         return redirect()->route('sales_executives.index')
                          ->with('success', 'Sales Executive updated successfully.');
     }
+    
 
     public function destroy(SalesExecutive $salesExecutive)
     {

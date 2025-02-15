@@ -16,7 +16,7 @@
                 <div class="col-12">
                     <div class="clearfix mb-5">
                         @if(auth()->check() && auth()->user()->can('add-multiple-package'))
-                        <button type="button" class="btn btn-primary float-right" data-toggle="modal" data-target="#addFromPopup"><i class="fas fa-plus"></i> Add</button> @endif
+                        <button type="button" class="btn btn-primary float-right" onclick="window.location.href='{{ route('administrator_multiple_package_new') }}'"  data-target="#addFromPopup"><i class="fas fa-plus"></i> Add</button> @endif
                     </div>
                     <div class="callout callout-info">
                         <div class="row">
