@@ -1,8 +1,8 @@
 <?php
 
-use App\Http\App\Controllers\App_Controllers\HomeController;
-use App\Http\App\Controllers\App_Controllers\CartController;
-use App\Http\App\Controllers\App_Controllers\AuthController;
+use App\Http\Controllers\App_Controllers\HomeController;
+use App\Http\Controllers\App_Controllers\CartController;
+use App\Http\Controllers\App_Controllers\AuthController;
 
 /*
 |--------------------------------------------------------------------------
