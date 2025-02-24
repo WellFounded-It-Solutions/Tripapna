@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\App_Controllers;
 
 use App\Models\Coupon;
 use App\Models\Hotel;
