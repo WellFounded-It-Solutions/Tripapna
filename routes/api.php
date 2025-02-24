@@ -15,22 +15,19 @@ use App\Http\App\Controllers\App_Controllers\AuthController;
 |
 */
 // authentication routes
-Route::post('login', 'AuthController@login');
-Route::post('logout', 'AuthController@logout');
-Route::post('refresh', 'AuthController@refresh');
-Route::get('user-profile', 'AuthController@me');
-Route::post('user-register', 'AuthController@register');
-Route::post('update-profile', 'AuthController@update_profile');
-Route::post('update-password', 'AuthController@update_password');
 
+Route::post('login', [AuthController::class, 'login']);
+Route::post('logout', [AuthController::class, 'logout']);
+Route::post('refresh', [AuthController::class, 'refresh']);
+Route::get('user-profile', [AuthController::class, 'me']);
+Route::post('user-register', [AuthController::class, 'register']);
+Route::post('update-profile', [AuthController::class, 'update_profile']);
+Route::post('update-password', [AuthController::class, 'update_password']);
 
+Route::get('hotel_list', [HomeController::class, 'hotel_list']);
+Route::get('getPackage', [HomeController::class, 'packages']);
+Route::get('getCoupon', [HomeController::class, 'getCoupon']);
 
-Route::get('hotel_list', 'HomeController@hotel_list');
-Route::get('getPackage', 'HomeController@packages');
-Route::get('getCoupon', 'HomeController@getCoupon');
-
-
-
-Route::post('addtocart', 'CartController@addtocart');
-Route::post('removeCart', 'CartController@removeCart');
-Route::get('viewCart', 'CartController@viewCart');
+Route::post('addtocart', [CartController::class, 'addtocart']);
+Route::post('removeCart', [CartController::class, 'removeCart']);
+Route::get('viewCart', [CartController::class, 'viewCart']);
