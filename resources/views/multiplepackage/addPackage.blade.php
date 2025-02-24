@@ -18,7 +18,7 @@
                     <div id="dynamicAddRemove">
                         <div class="form-group">
                             <label>Hotel</label>
-                            <select class="form-control" name="hotel_id[]">
+                            <select class="form-control select4 " multiple  name="hotel_id[]" >
                                 <option value="">Select</option>
                                 @foreach($hotelRecord as $val)
                                     <option value="{{ $val->id }}">{{ ucfirst($val->name) }}</option>
@@ -28,7 +28,7 @@
 
                         <div class="form-group">
                             <label>Category</label>
-                            <select class="form-control" name="category_id[]" onchange="getCoupon(this,0)">
+                            <select class="form-control select4" name="category_id[]" onchange="getCoupon(this)" multiple>
                                 <option value="">Select</option>
                                 @foreach($Categories as $val)
                                     <option value="{{ $val->id }}">{{ ucfirst($val->title) }}</option>
@@ -38,9 +38,16 @@
 
                         <div class="form-group">
                             <label>Coupons</label>
-                            <select class="form-control coupon_html0"  name="coupon[]">
+                            <select class="form-control coupon_html select4"  name="coupon[]" multiple onchange="updateCouponQuantities(this)">
                                 <option value="">Select</option>
                             </select>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6"  id = "quantity">
+                        <div class="form-group ">
+                            <label>Coupon Quantities</label>
+                            <div id="couponQuantities" class="d-flex flex-wrap"></div>
                         </div>
                     </div>
 
@@ -48,12 +55,7 @@
                         <label>Limit</label>
                         <input type="number" class="form-control" name="limit" placeholder="Limit">
                     </div>
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label>Quantity</label>
-                            <input type="number" class="form-control" name="quantity" placeholder="Quantity">
-                        </div>
-                    </div>
+
                     <div class="form-group">
                         <label>Terms and Conditions</label>
                         <textarea rows="4" class="form-control" name="term_conditions" placeholder="Terms and Conditions"></textarea>
@@ -144,6 +146,7 @@
 
     $(document).ready(function() {
         getList();
+        $("input , select").val('');
         $(document).on('click', '.pagination a', function(event) {
             event.preventDefault();
             var page = $(this).attr('href').split('page=')[1];
@@ -322,8 +325,28 @@
             }
         });
     }
+    function updateCouponQuantities(select) {
+    var selectedCoupons = $(select).val(); 
+    var quantityContainer = $("#couponQuantities");
 
-    function getCoupon($this,i) {
+    
+    quantityContainer.html("");
+
+    if (selectedCoupons.length > 0) {
+        selectedCoupons.forEach(function (couponId) {
+            var couponTitle = $(select).find("option[value='" + couponId + "']").text(); 
+            
+            var inputHtml = `
+                <div class="form-group mr-4">
+                    <label>${couponTitle}</label>
+                    <input type="number" class="form-control" name="quantity[${couponId}]" placeholder="Enter quantity">
+                </div>
+            `;
+            quantityContainer.append(inputHtml);
+        });
+    }
+}
+    function getCoupon($this) {
         var id = $($this).val();
         $.ajax({
             url: baseUrl + "multiple-package/getCoupon/" + id,
@@ -333,7 +356,7 @@
             complete: function() {},
             success: function(json) {
                 if (json.success) {
-                    $('.coupon_html'+i).html(json.html);
+                    $('.coupon_html').append(json.html);
                 } else {
                     Swal.fire(
                         'Warning!',

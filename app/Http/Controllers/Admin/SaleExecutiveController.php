@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Models\Hotel;
 use App\Models\Package;
 use App\Models\UserRoles;
+use App\Models\UserWallet;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
@@ -87,6 +88,12 @@ class SaleExecutiveController extends Controller
             'user_id' => $agent->id, 
             'role_id' => '7', 
         ]);
+        UserWallet::create([
+            'user_id' => $agent->id,
+            'role'=> '7',
+            'wallet_amount' => 0
+        ]);
+
 
         return redirect()->route('sales_executives.index')
                          ->with('success', 'Sales Executive created successfully.');

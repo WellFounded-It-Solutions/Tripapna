@@ -356,6 +356,7 @@
 
     function getCoupon($this) {
         var id = $($this).val();
+
         $.ajax({
             url: baseUrl + "single-package/getCoupon/" + id,
             type: 'get',
@@ -364,7 +365,7 @@
             complete: function() {},
             success: function(json) {
                 if (json.success) {
-                    $('.coupon_html').html(json.html);
+                    $('.coupon_html').append(json.html);
                 } else {
                     Swal.fire(
                         'Warning!',

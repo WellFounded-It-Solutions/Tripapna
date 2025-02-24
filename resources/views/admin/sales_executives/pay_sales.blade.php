@@ -14,9 +14,9 @@
         <thead>
             <tr>
                 <th>SrNo</th>
-                <th>Package Name</th>
-                <th>Customer Name</th>
                 <th>Sales Boy Name</th>
+                <th>Package Nam</th>
+                <th>Customer Name</th>
                 <th>Amount</th>
                 <th>Payment Method</th>
                 <th>Payment Complete</th>
