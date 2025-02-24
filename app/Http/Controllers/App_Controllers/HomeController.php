@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\App_Controllers;
 
+use App\Http\Controllers\Controller;
 use App\Models\Coupon;
 use App\Models\Hotel;
 use App\Models\HotelCategory;
