@@ -16,8 +16,10 @@ use App\Http\Controllers\App_Controllers\AuthController;
 */
 // authentication routes
 
-Route::post('login', [AuthController::class, 'login']);
-Route::post('logout', [AuthController::class, 'logout']);
+    Route::post('login', [AuthController::class, 'login']);
+    Route::post('logout', [AuthController::class, 'logout']);
+
+
 Route::post('refresh', [AuthController::class, 'refresh']);
 Route::get('user-profile', [AuthController::class, 'me']);
 Route::post('user-register', [AuthController::class, 'register']);
@@ -31,3 +33,25 @@ Route::get('getCoupon', [HomeController::class, 'getCoupon']);
 Route::post('addtocart', [CartController::class, 'addtocart']);
 Route::post('removeCart', [CartController::class, 'removeCart']);
 Route::get('viewCart', [CartController::class, 'viewCart']);
+
+// Order API
+
+// Order API
+Route::post('orderPlace', [OrderController::class, 'orderPlace']);
+Route::get('myOrder', [OrderController::class, 'myOrder']);
+Route::post('getorderbyid', [OrderController::class, 'getorderbyid']);
+Route::post('orderDetails', [OrderController::class, 'orderDetails']);
+Route::post('voucherDetails', [OrderController::class, 'voucherDetails']);
+Route::post('package_coupon', [OrderController::class, 'package_coupon']);
+
+// List
+Route::get('search', [HomeController::class, 'search']);
+Route::get('get-hotel-type', [HomeController::class, 'hotel_type']);
+Route::post('hotel_package', [HomeController::class, 'hotel_package']);
+Route::post('packagesDetails', [HomeController::class, 'packagesDetails']);
+Route::post('getCouponDetails', [HomeController::class, 'getCouponDetails']);
+
+// Wishlist`
+Route::post('addtowish', [WishListController::class, 'add']);
+Route::post('removewishlist', [WishListController::class, 'remove']);
+Route::get('mywishlist', [WishListController::class, 'view']);

@@ -42,4 +42,5 @@ class Customer extends Authenticatable implements Auditable
             'anniversary' => $this->anniversary
         ];
     }
+    
 }

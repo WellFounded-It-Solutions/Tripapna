@@ -24,32 +24,38 @@ class AuthController extends Controller
      */
     public function login(Request $request)
     {
-        $this->validate($request, [
+        // Validate input
+        $request->validate([
             'email' => 'required|email',
             'password' => 'required',
-        ],
-        [ 
-        'email.required' => 'email is required', 
-        'password.required' => 'password is required',
-        'email.email' => 'please enter valid email'
-        ]
-    );
-
-        $credentials = $request->only(['email', 'password']);
-
-        if (! $token = Auth::attempt($credentials)) {
-            $response['data'] = null;
-            $response['message'] = 'Unauthorized';
-            $response['success'] = false;
-
-            return response()->json($response, 401);
+        ], [
+            'email.required' => 'Email is required',
+            'password.required' => 'Password is required',
+            'email.email' => 'Please enter a valid email'
+        ]);
+    
+        $credentials = $request->only('email', 'password');
+    
+        // Use the 'customer' guard
+        if (Auth::guard('customer')->attempt($credentials)) {
+            // Regenerate session to prevent session fixation attack
+            // $request->session()->regenerate();
+    
+            return response()->json([
+                'data' => Auth::guard('customer')->user(),
+                'message' => 'Login successful',
+                'success' => true,
+            ]);
         }
-        $response['data'] = $this->respondWithToken($token);
-        $response['message'] = '';
-        $response['success'] = true;
-
-        return response()->json($response);
+    
+        // If authentication fails
+        return response()->json([
+            'data' => null,
+            'message' => 'Invalid credentials',
+            'success' => false,
+        ], 401);
     }
+    
 
     public function register(Request $request)
     {
@@ -234,12 +240,18 @@ $userdata = DB::table('tbl_orders')
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function logout()
+    public function logout(Request $request)
     {
-        auth()->logout();
-
-        return response()->json(['message' => 'Successfully logged out']);
+        Auth::guard('customer')->logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+    
+        return response()->json([
+            'message' => 'Logout successful',
+            'success' => true,
+        ]);
     }
+    
 
     /**
      * Refresh a token.
