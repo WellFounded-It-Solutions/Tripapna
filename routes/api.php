@@ -3,6 +3,8 @@
 use App\Http\Controllers\App_Controllers\HomeController;
 use App\Http\Controllers\App_Controllers\CartController;
 use App\Http\Controllers\App_Controllers\AuthController;
+use App\Http\Controllers\App_Controllers\SalesAuthController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -16,8 +18,11 @@ use App\Http\Controllers\App_Controllers\AuthController;
 */
 // authentication routes
 
-    Route::post('login', [AuthController::class, 'login']);
-    Route::post('logout', [AuthController::class, 'logout']);
+Route::post('login', [AuthController::class, 'login']);
+Route::post('logout', [AuthController::class, 'logout']);
+
+Route::post('saleslogin', [SalesAuthController::class, 'login']);
+Route::post('saleslogout', [SalesAuthController::class, 'logout']);
 
 
 Route::post('refresh', [AuthController::class, 'refresh']);

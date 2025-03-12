@@ -57,6 +57,8 @@ class AuthController extends Controller
     }
     
 
+
+    
     public function register(Request $request)
     {
         $validator = Validator::make($request->all(), 
@@ -242,7 +244,7 @@ $userdata = DB::table('tbl_orders')
      */
     public function logout(Request $request)
     {
-        Auth::guard('customer')->logout();
+        Auth::gaurd('customer')->logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
     
@@ -253,6 +255,8 @@ $userdata = DB::table('tbl_orders')
     }
     
 
+
+    
     /**
      * Refresh a token.
      *

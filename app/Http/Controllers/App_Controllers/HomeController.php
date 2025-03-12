@@ -225,13 +225,14 @@ class HomeController extends Controller
             foreach ($records as $v) {
                 foreach ($v->PackageItem as $key => $value) {
                     $value->coupondata = Coupon::where('id', $value->coupon_id)->first();
-                    $value->hoteldata = Hotel::where('id', $value->hotel_id)->first();
 
                     $hlocation = Hotel::select('location')->where('id', $value->hotel_id)->first();
                     $v->location = $hlocation->location;
                     $v->rating = 4;
                 }
             }
+            $records->mobile = Hotel::select('mobile')->where('id', $value->hotel_id)->first();
+
             if ($records) {
                 $success = true;
                 $data = $records;

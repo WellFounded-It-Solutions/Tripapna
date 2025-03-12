@@ -40,15 +40,18 @@ return [
             'driver' => 'session',
             'provider' => 'users',
         ],
+        'api'=>[
+            'driver' => 'session',
+            'provider' => 'users',
+        ],
         'hotel' => [
             'driver' => 'session',
             'provider' => 'hotels',
         ],
-       
         'customer' => [
             'driver' => 'session',
             'provider' => 'customers',
-        ],
+        ]
        
     ],
     'providers' => [
@@ -60,7 +63,7 @@ return [
     'customers' => [
         'driver' => 'eloquent',
         'model' => App\Models\Customer::class,
-    ],
+    ]
 ],
     /*
     |--------------------------------------------------------------------------
@@ -91,7 +94,7 @@ return [
         'customers' => [
             'driver' => 'eloquent',
             'model' => App\Models\Customer::class,
-        ],
+        ]
         // 'users' => [
         //     'driver' => 'database',
         //     'table' => 'users',
@@ -131,7 +134,7 @@ return [
             'table' => 'password_resets',
             'expire' => 60,
             'throttle' => 60,
-        ],
+        ]
     ],
 
     /*
