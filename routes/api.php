@@ -4,7 +4,7 @@ use App\Http\Controllers\App_Controllers\HomeController;
 use App\Http\Controllers\App_Controllers\CartController;
 use App\Http\Controllers\App_Controllers\AuthController;
 use App\Http\Controllers\App_Controllers\SalesAuthController;
-
+use App\Http\Controllers\App_Controllers\MailController;
 
 /*
 |--------------------------------------------------------------------------
@@ -18,13 +18,9 @@ use App\Http\Controllers\App_Controllers\SalesAuthController;
 */
 // authentication routes
 
+//User API
 Route::post('login', [AuthController::class, 'login']);
 Route::post('logout', [AuthController::class, 'logout']);
-
-Route::post('saleslogin', [SalesAuthController::class, 'login']);
-Route::post('saleslogout', [SalesAuthController::class, 'logout']);
-
-
 Route::post('refresh', [AuthController::class, 'refresh']);
 Route::get('user-profile', [AuthController::class, 'me']);
 Route::post('user-register', [AuthController::class, 'register']);
@@ -39,7 +35,7 @@ Route::post('addtocart', [CartController::class, 'addtocart']);
 Route::post('removeCart', [CartController::class, 'removeCart']);
 Route::get('viewCart', [CartController::class, 'viewCart']);
 
-// Order API
+
 
 // Order API
 Route::post('orderPlace', [OrderController::class, 'orderPlace']);
@@ -60,3 +56,25 @@ Route::post('getCouponDetails', [HomeController::class, 'getCouponDetails']);
 Route::post('addtowish', [WishListController::class, 'add']);
 Route::post('removewishlist', [WishListController::class, 'remove']);
 Route::get('mywishlist', [WishListController::class, 'view']);
+
+
+//Invite API
+Route::get('inviteLink', [SalesAuthController::class, 'inviteLink']);         // Table affetcted cart
+Route::post('inviteForm',[SalesAuthController::class, 'inviteForm']);
+
+//Track Sales API
+
+
+
+//Wallet API
+Route::get('getwallet', [WishListController::class, 'get']);    // Table wallet , commision 
+Route::post('updatewallet', [WishListController::class,'update']);
+Route::get('commisionswallet', [WishListController::class,'commisions']);
+
+
+//Sales Profile API 
+Route::post('saleslogin', [SalesAuthController::class, 'login']);   // Table users
+Route::post('saleslogout', [SalesAuthController::class, 'logout']);
+Route::post('salesUpdateProfile', [SalesAuthController::class, 'update_profile']);
+Route::post('updatePassword', [SalesAuthController::class, 'update_password']);
+
