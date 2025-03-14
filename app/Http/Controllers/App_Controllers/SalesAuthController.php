@@ -126,7 +126,7 @@ class SalesAuthController extends Controller
         $input['customer_id'] = Auth::id;
         $input['qty'] = 1;
         $input['coupon_id'] = $request->input('package_id');
-        $input['amount'] = $record->amount;
+        $input['amount'] = $request->input('amount');
         $input['type'] = 'package';
 
         $create_record = Cart::create($input);
@@ -173,7 +173,12 @@ class SalesAuthController extends Controller
             return response()->json(['error' => $validator->errors()], 401);
         }
 
-
+        $input = [];
+        $input['customer_id'] = Auth::id;
+        $input['qty'] = 1;
+        $input['coupon_id'] = $request->input('package_id');
+        $input['amount'] = $request->input('amount');
+        $input['type'] = 'package';
         $create_record = Cart::create($input);
     
         if ($create_record) {
