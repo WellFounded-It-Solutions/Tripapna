@@ -5,6 +5,7 @@ namespace App\Http\Controllers\App_Controllers;
 use App\Http\Controllers\Controller;
 use App\Models\Customer;
 use App\Models\Order;
+use App\Mail\inviteEmail;
 use App\Models\Cart;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -171,8 +172,13 @@ public function update_password(Request $request) {
                 $tempmsg = 'Welcome to Tripapana. Here are your account details: Email: ' . $request->input('email') . ', Password: 12345678. Please change it within 1 hour.';
                 $tempsubject = 'Invite link From Tripapana';
     
-                sendEmail($request->input('email'), $tempmsg, $tempsubject);
-    
+                
+                try {
+                    Mail::to($request->input('email'))->send(new InviteEmail($tempmsg, $tempsubject));
+                } catch (\Exception $e) {
+                    \Log::error('Email sending failed: ' . $e->getMessage());
+                }
+            
                 return response()->json([
                     'success' => true,
                     'message' => __('api.cart.success'),
@@ -258,11 +264,6 @@ public function update_password(Request $request) {
         }
     }
   
-public function sendEmail($to, $msg, $subject) {
-    try {
-        Mail::to($to)->send(new InviteEmail($msg, $subject));
-    } catch (\Exception $e) {
-        \Log::error('Email sending failed: ' . $e->getMessage());
-    }
-}
+
+ 
 }
