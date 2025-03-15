@@ -241,18 +241,18 @@ $userdata = DB::table('tbl_orders')
      * Log the user out (Invalidate the token).
      *
      * @return \Illuminate\Http\JsonResponse
-     */
-    public function logout(Request $request)
-    {
-        Auth::guard('customer')->logout();
-        $request->session()->invalidate();
-        $request->session()->regenerateToken();
-    
-        return response()->json([
-            'message' => 'Logout successful',
-            'success' => true,
-        ]);
-    }
+     */public function logout(Request $request)
+{
+    Auth::guard('customer')->logout();
+
+    $request->session()->invalidate();
+    $request->session()->regenerateToken();
+
+    return response()->json([
+        'message' => 'Logout successful',
+        'success' => true,
+    ])->withCookie(cookie()->forget(config('session.cookie')));
+}
     
 
 
