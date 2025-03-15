@@ -136,12 +136,18 @@ class CartController extends Controller
 
     public function viewCart(Request $request)
     {
+          // Validate input
+    $request->validate([
+        'user_id' => 'required',
+    ], [
+        'user_id.required' => 'Wallet amount is required',
+    ]);
         $success = false;
         $message = '';
         $data = null;
         try {
-            $auth = Auth::user();
-            $records = Cart::where('customer_id', $auth->id)->with(['coupons','Package'])->get();
+            $auth = $request->input("user_id");
+            $records = Cart::where('customer_id', $auth)->with(['coupons','Package'])->get();
             if ($records) {
                 $success = true;
                 $data = $records;

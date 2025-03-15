@@ -33,7 +33,7 @@ Route::get('getCoupon', [HomeController::class, 'getCoupon']);
 
 Route::post('addtocart', [CartController::class, 'addtocart']);
 Route::post('removeCart', [CartController::class, 'removeCart']);
-Route::get('viewCart', [CartController::class, 'viewCart']);
+Route::post('viewCart', [CartController::class, 'viewCart']);
 
 
 
