@@ -63,7 +63,7 @@ class SalesAuthController extends Controller
 
   
 public function update_profile(Request $request) {
-    $id = Auth::id(); // Fixed Auth::id() usage
+    $id = Auth::gaurd("web")->id(); // Fixed Auth::id() usage
 
     // Validate input
     $request->validate([
@@ -99,7 +99,7 @@ public function update_profile(Request $request) {
 }
     
 public function update_password(Request $request) {
-    $id = Auth::id(); // Fixed Auth::id() usage
+    $id =  Auth::gaurd("web")->id(); // Fixed Auth::id() usage
 
     // Validate input
     $request->validate([
@@ -155,11 +155,12 @@ public function update_password(Request $request) {
     
         try {
             $input = [];
-            $input['customer_id'] = Auth::id();  // Fix Auth::id() usage
+            $input['customer_id'] =  Auth::gaurd("web")->id();  // Fix Auth::id() usage
             $input['qty'] = 1;
             $input['coupon_id'] = $request->input('package_id');
             $input['amount'] = $request->input('amount');
             $input['type'] = 'package';
+            dd($input);
     
             $create_record = Cart::create($input);
     
@@ -217,7 +218,7 @@ public function update_password(Request $request) {
     
         try {
             $input = [
-                'customer_id' => Auth::id(), // Fixed Auth::id() usage
+                'customer_id' =>  Auth::gaurd("web")->id(), // Fixed Auth::id() usage
                 'qty' => 1,
                 'coupon_id' => $request->input('package_id'),
                 'amount' => $request->input('amount'),
