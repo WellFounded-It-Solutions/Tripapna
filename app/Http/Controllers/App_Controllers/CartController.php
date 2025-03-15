@@ -70,7 +70,7 @@ class CartController extends Controller
             } elseif ($request->input('type') == 'package') {
                 $record = Package::where(['id' => $request->input('coupon_id'), 'status' => 'Active'])->first();
                 if ($record) {
-                    $auth = Auth::user();
+                    $auth = $request->input("user_id");
                     $input = [];
                     $input['coupon_id'] = $request->input('coupon_id');
                     $input['qty'] = $request->input('qty');
