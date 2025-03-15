@@ -142,6 +142,7 @@ public function update_password(Request $request) {
             'email' => 'required|email',
             'mode_of_pay' => 'required',
             'amount' => 'required',
+            'customer_id' => 'required'
         ], [
             'hotel_id.required' => 'Hotel is required',
             'package_id.required' => 'Package is required',
@@ -151,17 +152,19 @@ public function update_password(Request $request) {
             'email.email' => 'Enter a valid email address',
             'mode_of_pay.required' => 'Mode of pay is required',
             'amount.required' => 'Amount is required',
+            'customer_id'=> 'Customer is required',
         ]);
     
         try {
             $input = [];
-            $input['customer_id'] =  Auth::guard("web")->id();  // Fix Auth::id() usage
+            $input['customer_id'] =  Auth::guard('web')->id();  // Fix Auth::id() usage
             $input['qty'] = 1;
             $input['coupon_id'] = $request->input('package_id');
             $input['amount'] = $request->input('amount');
             $input['type'] = 'package';
-            dd($input);
-    
+            $input['customer_id'] = $request->input('customer_id');
+           
+            
             $create_record = Cart::create($input);
     
             if ($create_record) {
