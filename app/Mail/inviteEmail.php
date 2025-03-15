@@ -20,11 +20,11 @@ class inviteEmail extends Mailable
      *
      * @return void
      */
-    public function __construct($msg,$subject)
+    public function __construct($msg,$sub)
     {
         //
         $this->msg = $msg;
-        $this->sub = $subject;
+        $this->sub = $sub;
     }
 
     /**

@@ -169,21 +169,16 @@ public function update_password(Request $request) {
             $create_record = Cart::create($input);
     
             if ($create_record) {
-                $tempmsg = 'Welcome to Tripapana. Here are your account details: Email: ' . $request->input('email') . ', Password: 12345678. Please change it within 1 hour.';
-                $tempsubject = 'Invite link From Tripapana';
+                $msg = 'Welcome to Tripapana. Here are your account details: Email: ' . $request->input('email') . ', Password: 12345678. Please change it within 1 hour.';
+                $sub = 'Invite link From Tripapana';
     
-                
-                try {
-                    Mail::to($request->input('email'))->send(new InviteEmail($tempmsg, $tempsubject));
-                } catch (\Exception $e) {
-                    \Log::error('Email sending failed: ' . $e->getMessage());
-                }
-            
+                Mail::to($request->input('email'))->send(new InviteEmail($msg, $sub));
+             
                 return response()->json([
                     'success' => true,
                     'message' => __('api.cart.success'),
-                    'data' => $create_record
-                ], 200);
+                    'data' => $create_record,
+               ], 200);
             }
     
             return response()->json([

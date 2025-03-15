@@ -8,6 +8,6 @@
 </head>
 <body>
     <h2>{{$msg}}</h2>
-    <p>{{$subject}}</p>
+    <p>{{$sub}}</p>
 </body>
 </html>
