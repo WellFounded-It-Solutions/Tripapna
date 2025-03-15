@@ -26,13 +26,14 @@ class CartController extends Controller
             'qty' => 'required',
             'coupon_id' => 'required',
             'type' => 'required|string|in:package,coupon',
+            'user_id'=>'required'
         ]);
         if ($validator->fails()) {
             return response()->json(['error' => $validator->errors()], 401);
         }
         try {
-                    $auth = Auth::user();
-                    $check_record = Cart::where('customer_id',$auth->id)->first();
+                    $auth = $request->input("user_id");
+                    $check_record = Cart::where('customer_id',$auth)->first();
                     if($check_record!=null){
                         if($check_record->type!=$request->input('type')){
                             $success = false;
@@ -52,7 +53,7 @@ class CartController extends Controller
                     $input['qty'] = $request->input('qty');
                     $input['amount'] = $record->amount;
                     $input['type'] = 'coupon';
-                    $input['customer_id'] = $auth->id;
+                    $input['customer_id'] = $auth;
                     $create_record = Cart::create($input);
                     if ($create_record) {
                         $success = true;
@@ -75,7 +76,7 @@ class CartController extends Controller
                     $input['qty'] = $request->input('qty');
                     $input['amount'] = $record->amount;
                     $input['type'] = 'package';
-                    $input['customer_id'] = $auth->id;
+                    $input['customer_id'] = $auth;
                     $create_record = Cart::create($input);
                     if ($create_record) {
                         $success = true;
