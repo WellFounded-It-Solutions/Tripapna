@@ -89,7 +89,7 @@ class CartController extends Controller
                 } else {
                     $success = true;
                     $message = __('api.cart.record_not_found');
-                }
+                } 
             }
         } catch(Exception $e) {
             $success = false;

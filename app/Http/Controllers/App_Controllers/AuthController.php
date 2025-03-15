@@ -244,7 +244,7 @@ $userdata = DB::table('tbl_orders')
      */
     public function logout(Request $request)
     {
-        Auth::gaurd('customer')->logout();
+        Auth::guard('customer')->logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
     

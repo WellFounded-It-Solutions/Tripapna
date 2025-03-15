@@ -20,7 +20,7 @@ use App\Http\Controllers\App_Controllers\WalletController;
 
 //User API
 Route::post('login', [AuthController::class, 'login']);
-Route::post('logout', [AuthController::class, 'logout']);
+Route::get('logout', [AuthController::class, 'logout']);
 Route::post('refresh', [AuthController::class, 'refresh']);
 Route::get('user-profile', [AuthController::class, 'me']);
 Route::post('user-register', [AuthController::class, 'register']);
