@@ -63,7 +63,7 @@ class SalesAuthController extends Controller
 
   
 public function update_profile(Request $request) {
-    $id = Auth::gaurd("web")->id(); // Fixed Auth::id() usage
+    $id = Auth::guard("web")->id(); // Fixed Auth::id() usage
 
     // Validate input
     $request->validate([
@@ -99,7 +99,7 @@ public function update_profile(Request $request) {
 }
     
 public function update_password(Request $request) {
-    $id =  Auth::gaurd("web")->id(); // Fixed Auth::id() usage
+    $id =  Auth::guard("web")->id(); // Fixed Auth::id() usage
 
     // Validate input
     $request->validate([
@@ -218,7 +218,7 @@ public function update_password(Request $request) {
     
         try {
             $input = [
-                'customer_id' =>  Auth::gaurd("web")->id(), // Fixed Auth::id() usage
+                'customer_id' =>  Auth::guard("web")->id(), // Fixed Auth::id() usage
                 'qty' => 1,
                 'coupon_id' => $request->input('package_id'),
                 'amount' => $request->input('amount'),
