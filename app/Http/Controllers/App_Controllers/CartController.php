@@ -25,9 +25,7 @@ class CartController extends Controller
         $validator = Validator::make($request->all(), [
             'qty' => 'required',
             'coupon_id' => 'required',
-            'ty
-            
-            pe' => 'required|string|in:package,coupon',
+            'type' => 'required|string|in:package,coupon',
         ]);
         if ($validator->fails()) {
             return response()->json(['error' => $validator->errors()], 401);
