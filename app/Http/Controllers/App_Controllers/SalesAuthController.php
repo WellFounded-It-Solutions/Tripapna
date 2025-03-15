@@ -155,7 +155,7 @@ public function update_password(Request $request) {
     
         try {
             $input = [];
-            $input['customer_id'] =  Auth::gaurd("web")->id();  // Fix Auth::id() usage
+            $input['customer_id'] =  Auth::guard("web")->id();  // Fix Auth::id() usage
             $input['qty'] = 1;
             $input['coupon_id'] = $request->input('package_id');
             $input['amount'] = $request->input('amount');
