@@ -4,7 +4,7 @@ use App\Http\Controllers\App_Controllers\HomeController;
 use App\Http\Controllers\App_Controllers\CartController;
 use App\Http\Controllers\App_Controllers\AuthController;
 use App\Http\Controllers\App_Controllers\SalesAuthController;
-use App\Http\Controllers\App_Controllers\MailController;
+use App\Http\Controllers\App_Controllers\WalletController;
 
 /*
 |--------------------------------------------------------------------------
@@ -59,7 +59,7 @@ Route::get('mywishlist', [WishListController::class, 'view']);
 
 
 //Invite API
-Route::get('inviteLink', [SalesAuthController::class, 'inviteLink']);         // Table affetcted cart
+Route::post('inviteLink', [SalesAuthController::class, 'inviteLink']);         // Table affetcted cart
 Route::post('inviteForm',[SalesAuthController::class, 'inviteForm']);
 
 //Track Sales API
@@ -67,9 +67,9 @@ Route::post('inviteForm',[SalesAuthController::class, 'inviteForm']);
 
 
 //Wallet API
-Route::get('getwallet', [WishListController::class, 'get']);    // Table wallet , commision 
-Route::post('updatewallet', [WishListController::class,'update']);
-Route::get('commisionswallet', [WishListController::class,'commisions']);
+Route::get('getwallet', [WalletController::class, 'get']);    // Table wallet , commision 
+Route::post('updatewallet', [WalletController::class,'update']);
+Route::get('commisionswallet', [WalletController::class,'commisions']);
 
 
 //Sales Profile API 
