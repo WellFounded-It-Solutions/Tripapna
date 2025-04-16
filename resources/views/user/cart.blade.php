@@ -477,7 +477,7 @@
                         <input type="checkbox" id="accept_terms" name="accept_terms" value="accept_terms">
                         <label for="accept_terms">I agree with terms and conditions</label>
                     </p>
-                    <a onclick="orderPlace()" class="default-btn">Proceed to Checkout</a>
+                    <a onclick="orderPlace()" class="btn btn-primary" role="button">Proceed to Checkout</a>
                 </div>
             </div>
         </div>
@@ -523,8 +523,13 @@
             },
             success: function(response) {
                 console.log(response);
+                alert("Please wait your is being created you will be redirect Soon.");
                 if (response.success)
-                    window.location.href = "{{ route('myOrder') }}";
+                dump(response);
+                window.location.href = "{{ route('myOrder') }}";
+            },
+            error : function(xhr,status,error){
+                  alert(xhr.responseText);
             }
         })
     }

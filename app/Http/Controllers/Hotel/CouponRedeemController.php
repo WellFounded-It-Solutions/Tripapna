@@ -6,11 +6,14 @@ use App\Http\Controllers\Controller;
 use App\Models\OrderDetails;
 use App\Models\Hotel;
 use App\Models\Order;
+use App\Models\PackageItem;
+use App\Models\Coupon_Combinations;
 use Illuminate\Http\Request;
 use App\Models\HotelModulePermission;
 use App\Models\HotelRolePermission;
 use Illuminate\Support\Facades\Auth;
 use Validator;
+use function Safe\error_log;
 
 class CouponRedeemController extends Controller
 {
@@ -51,7 +54,6 @@ class CouponRedeemController extends Controller
 				$response['html'] = view('hotelpanel.coupon_redeem.list', ['records' => $records])->render();
 				$response['pagination'] = view('admin.pagination', ['page' => $records])->render();
 				return response()->json($response);
-				exit;
 			}
 		}
 		else
@@ -60,19 +62,25 @@ class CouponRedeemController extends Controller
 			$response['message'] = "You don't have permission";
 		}
 		return response()->json($response);
-		exit;
+		
 	}
 	public function get_list(Request $request, $id=null)
 	{
-		$records = OrderDetails::where(['order_id' => $id])->get();
+		$data = OrderDetails::where(['order_id' => $id])->get();
+		$records = $data->map(function($record) {
+			$package = $record->package_id;
+			$coupon = $record->coupon_id;
+			$hotel  = $record->hotel_id;
+			$quantity = PackageItem::where('hotel_id', $hotel)->where('package_id', $package)->Where('coupon_id',$coupon)->first();
+			$record->quantity = optional($quantity)->quantity ?? 0;
+			return $record;
+		});
+		
 		$response['success'] = true;
 		$response['html'] = view('hotelpanel.coupon_redeem.coupon_details', ['records' => $records, 'id' => $id])->render();
 
 		return response()->json($response);
-		exit;
 
-		return response()->json($response);
-		exit;
 	}
 	// public function get_list(Request $request)
 	// {
@@ -116,9 +124,8 @@ class CouponRedeemController extends Controller
 	{
 		$check = $this->check($request, 'cr-reedem', 'ajax');
 		if ($check) {
-			$update['status'] = $status;
-			
-			$user = OrderDetails::where('id', $id)->update($update);
+			$user = OrderDetails::where('id', $id)->update(['status'=>$status]);
+ 		
 			$response['success'] = true;
 			$response['message'] = 'Status Changed SuccessFully';
 		}else{
@@ -126,26 +133,66 @@ class CouponRedeemController extends Controller
 			$response['message'] = "You don't have permission";
 		}
 		return response()->json($response);
-		exit;
+	
 	}
 	public function change_status_multiple(Request $request)
 	{
 		$check = $this->check($request, 'cr-reedem', 'ajax');
 		$row_check = $request->input('row-check');
+		
+		
 		if ($check && !empty($row_check)) {
-			foreach($row_check as $key => $value) {
-				$update['status'] = "Redeem";
-				$user = OrderDetails::where('id', $value)->update($update);
+			$couponIds = [];
+			$orderData = [];
+
+			$decodedFirst = json_decode($row_check[0], true);
+			$package_id = $decodedFirst['package_id'];
+			
+			// Step 1: Decode input and collect coupon_ids and corresponding order ids
+			foreach ($row_check as $item) {
+				$decoded = json_decode($item, true);
+				$orderData[] = $decoded;
+				$couponIds[] = $decoded['coupon_id'];
+				
 			}
-			$response['success'] = true;
-			$response['message'] = 'Status Changed SuccessFully';
-		}else{
-			$response['success'] = false;
-			$response['message'] = "You don't have permission";
+	
+			// Step 2: Check every pair for conflicts using the CouponCombinations model
+			for ($i = 0; $i < count($couponIds); $i++) {
+				for ($j = $i + 1; $j < count($couponIds); $j++) {
+					$id1 = $couponIds[$i];
+					$id2 = $couponIds[$j];
+	
+					$conflict = Coupon_Combinations::where('package_id',$package_id)->where(function ($query) use ($id1, $id2) {
+							$query->where('coupon_id', $id1)
+								  ->where('cannot_combine_id', $id2);
+						})
+						->orWhere(function ($query) use ($id1, $id2) {
+							$query->where('coupon_id', $id2)
+								  ->where('cannot_combine_id', $id1);
+						})
+						->exists();
+	
+					if ($conflict) {
+						return redirect()->back()->withErrors([
+							'error' => 'Please change your selections. Some selected coupons cannot be combined.'
+						]);
+					}
+				}
+			}
+	
+			// Step 3: No conflicts — update status
+			foreach ($orderData as $data) {
+				OrderDetails::where('id', $data['id'])->update([
+					'status' => 'Redeem'
+				]);
+			}
+	
+			return redirect()->back()->with('success', 'Status changed successfully for all selected orders.');
 		}
-		// return response()->json($response);
-		// exit;
-	   return redirect()->back();
-		exit;
+	
+		return redirect()->back()->withErrors([
+			'error' => "You don't have permission or no items selected."
+		]);
 	}
+	
 }

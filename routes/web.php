@@ -10,7 +10,6 @@ use App\Http\Controllers\Admin\multiplePackageController;
 use App\Http\Controllers\Admin\PermissionController;
 use App\Http\Controllers\Admin\singlePackageController;
 use App\Http\Controllers\Admin\UsersController;
-use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\Hotel\HotelPanelController;
 use App\Http\Controllers\Hotel\HotelPanelCouponController;
 use App\Http\Controllers\Hotel\HotelPanelDashboardController;
@@ -115,6 +114,8 @@ Route::group(['middleware' => 'role:admin'], function () {
     Route::post('/administrator/single-package/clone', [singlePackageController::class, 'clone'])->name('administrator_single_package_clone');
     Route::get('/administrator/single-package/clone/{id}', [singlePackageController::class, 'get_record_by_id_clone'])->name('administrator_single_package_clone_id');
     Route::get('/administrator/single-package/getCoupon/{id}', [singlePackageController::class, 'getCoupon'])->name('administrator_single_package_getCoupon');
+    Route::get('administrator/single-package/combine/{id}', [singlePackageController::class, 'combine'])->name('administrator_single_package_combine');
+    Route::post('administrator/single-package/combinations',[singlePackageController::class,'store_combinations'])->name('coupon-combinations');
 
     Route::get('/administrator/multiple-package', [multiplePackageController::class, 'index'])->name('administrator_multiple_package');
     Route::get('/administrator/multiple-package/new', [multiplePackageController::class, 'new'])->name('administrator_multiple_package_new');
@@ -455,7 +456,7 @@ Route::post("/register", [AuthController::class, 'register_post'])->name('custmo
 // Route::post('removeCart', 'CartController@removeCart');
 // Route::get('viewCart', 'CartController@viewCart');
 // // Order API
-// Route::post('orderPlace', 'OrderController@orderPlace');
+// Route::post('orderPlace', [OrderController::class , 'orderPlace']);
 // Route::get('myOrder', 'OrderController@myOrder');
 // Route::post('getorderbyid', 'OrderController@getorderbyid');
 // Route::post('orderDetails', 'OrderController@orderDetails');

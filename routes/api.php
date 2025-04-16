@@ -22,6 +22,7 @@ use App\Http\Controllers\App_Controllers\WalletController;
 Route::post('login', [AuthController::class, 'login']);
 Route::get('logout', [AuthController::class, 'logout']);
 Route::post('refresh', [AuthController::class, 'refresh']);
+Route::post("user", [AuthController::class, 'get_user']);
 Route::get('user-profile', [AuthController::class, 'me']);
 Route::post('user-register', [AuthController::class, 'register']);
 Route::post('update-profile', [AuthController::class, 'update_profile']);

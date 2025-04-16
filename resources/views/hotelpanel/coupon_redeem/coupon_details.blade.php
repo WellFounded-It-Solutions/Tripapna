@@ -1,7 +1,11 @@
 <?php
 if (($records->count() > 0)) {
+    // {{ dump($records); }}
     foreach ($records as $key => $value) {
+        
         $coupon_data = ($value->coupon_data);
+        $quantity = $value->quantity;
+     
         // $coupon_data = json_decode($value->coupon_data);
         $category_id = isset($coupon_data->category_id) ? $coupon_data->category_id : '';
         $category_detail = getCouponCategory($category_id);
@@ -17,11 +21,16 @@ if (($records->count() > 0)) {
         $label = "No";
         ?>
         <tr>
-            <td><input type="checkbox" name="row-check[]" value="{{ $value->id }}"></td>
+            <td>
+                <input 
+                    type="checkbox" 
+                    name="row-check[]" 
+                    value='@json(["id" => $value->id, "coupon_id" => $value->coupon_id , 'package_id' => $value->package_id])'>
+            </td>
             <td><?php echo ($value->coupon) ?></td>
             <td><div style="width: 200px !important;text-overflow: ellipsis;overflow: hidden;white-space: nowrap;"><?php echo ucfirst($value->coupon_data->description) ?></div></td>
             <td><?php echo isset($category_detail->title) ? $category_detail->title : ''; ?></td>
-            <td><input type="number" min="1" value="1" style="width: 50px;" class="form-control"/> </td>
+            <td class="d-flex flex-row align-items-center"><input type="number" min="1" value="1" max = {{ $quantity }}  style="width: 50px;" class="form-control" name="quantity" />/{{$quantity}}</td> 
             <td><?php echo ucfirst($value->visit_type) ?></td>
             <td>
                 
@@ -38,7 +47,6 @@ if (($records->count() > 0)) {
                     <?php } ?>
                 </div>
             </td>
-            <td><?php echo date("d-m-Y", strtotime($value->created_at)) ?></td>
 
         </tr>
     <?php }

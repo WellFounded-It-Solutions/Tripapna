@@ -2,6 +2,7 @@
 <?php
 if (($records->count() > 0)) {
     foreach ($records as $key => $value) {
+		$id = $value->id;
         if ($value->status == "Active") {
             $class = "success";
         } else if ($value->status == "Inactive") {
@@ -41,6 +42,14 @@ if (($records->count() > 0)) {
 			<button type="button" class="btn btn-block btn-primary btn-sm" data-toggle="tooltip" data-placement="bottom" title="Edit" onClick="editRecord(<?php echo $value->id ?>)"><i class="fas fa-pencil-alt"></i></button>	
 		 </li>
 		 &nbsp;
+		 <li>
+			<button type="button" class="btn btn-block btn-danger btn-sm" 
+				data-toggle="tooltip" data-placement="bottom" title="Combine" 
+				onclick="window.location.href='{{ route('administrator_single_package_combine', ['id' => $id]) }}'">
+				<i class="fas fa-plus"></i>
+			</button>
+		</li>
+		&nbsp;
 		<li>
 			<button type="button" class="btn btn-block btn-danger btn-sm" data-toggle="tooltip" data-placement="bottom" title="Delete" onClick="deleteRecord(<?php echo $value->id ?>)"><i class="far fa-trash-alt"></i></button>	
 		</li>

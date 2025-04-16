@@ -32,9 +32,7 @@ if (($records->count() > 0)) {
 
 			<td>{{ $value->created_at->diffForHumans() }}</td>
 		 	<td><ul class="list-unstyled d-flex mb-0">
-
 				<li>
-
 					<button type="button" class="btn btn-block btn-info btn-sm" data-toggle="tooltip" data-placement="bottom" title="Details" onClick="viewRecord(<?php echo $singleOrder->id ?>)">View Details</button>
 				 </li>
 			</ul></td>

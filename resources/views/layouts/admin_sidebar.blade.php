@@ -21,6 +21,7 @@ if (auth()->check() && auth()->user()->hasRole('admin')) {
     $singlePakcage = url('/administrator') . '/single-package';
     $multiplePakcage = url('/administrator') . '/multiple-package';
     $orderUrl = url('/administrator') . '/orders';
+    $combineUrl = url('/administrator') . '/combine';
 } else if (auth()->check() && auth()->user()->hasRole('subadmin')) {
     $hotelUrl = url('/subadmin') . '/hotels';
     $dashboardUrl = url('/subadmin') . '/dashboard';

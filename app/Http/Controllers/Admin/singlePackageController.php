@@ -8,6 +8,7 @@ use App\Models\Coupon;
 use App\Models\Hotel;
 use App\Models\Package;
 use App\Models\PackageItem;
+use App\Models\Coupon_Combinations;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Validator;
@@ -443,4 +444,38 @@ class singlePackageController extends Controller
 
         return response()->json($response);
     }
+
+    public function combine($id)
+    {
+        $packageItems = PackageItem::where('package_id', $id)->get();
+    
+        $coupons = $packageItems->map(function ($item) {
+            // Assuming your PackageItem model has a 'coupon_id' field
+            return Coupon::find($item->coupon_id);
+        })->filter(); // Use filter() to remove any null values if a coupon_id doesn't exist
+        $coupons->package_id = $id;
+        return view('singlepackage.combine', ["coupons" => $coupons]);
+    }
+    public function store_combinations(Request $request)
+    {
+        foreach ($request->input('coupons') as $couponData) {
+            $couponId = $couponData['coupon_id'];
+            $packageId = $couponData['package_id'];
+            $cannotCombineIds = $couponData['cannot_combine_ids'] ?? [];
+    
+            foreach ($cannotCombineIds as $cannotCombineId) {
+                Coupon_Combinations::updateOrCreate(
+                    [
+                        'coupon_id' => $couponId,
+                        'package_id' => $packageId,
+                        'cannot_combine_id' => $cannotCombineId,
+                    ],
+                    []
+                );
+            }
+        }
+    
+        return redirect()->back()->with('success', 'Coupon combinations saved successfully.');
+    }
+    
 }
