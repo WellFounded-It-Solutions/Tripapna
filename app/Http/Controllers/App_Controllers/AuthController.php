@@ -101,7 +101,7 @@ class AuthController extends Controller
         ]);
 
         try {
-            $record = Customer::where('id', $request->input('customer_id'))->first();
+            $record = Customer::where('id', $request->input('customer_id'))->get();
 
             if (!$record) {
                 return response()->json([
@@ -155,7 +155,6 @@ class AuthController extends Controller
             $request->image->storeAs('public/uploads', $imageName); // Store image in storage/app/public/uploads
             $update['image'] = $imageName;
         }
-
         // Update user profile
         Customer::where('id', $user->id)->update($update);
         $updatedUser = Customer::find($user->id);

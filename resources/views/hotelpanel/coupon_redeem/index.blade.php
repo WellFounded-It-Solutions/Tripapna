@@ -301,6 +301,7 @@ function changeSatus(id, status) {
                 beforeSend: function() {},
                 complete: function() {},
                 success: function(json) {
+                     console.log(json);
                     if(json.success) {
                         window.location.reload();
                         getList();

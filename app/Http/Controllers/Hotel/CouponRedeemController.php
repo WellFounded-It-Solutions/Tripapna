@@ -127,6 +127,7 @@ class CouponRedeemController extends Controller
 			$user = OrderDetails::where('id', $id)->update(['status'=>'Redeem']);
 			$response['success'] = true;
 			$response['message'] = 'Status Changed SuccessFully';
+			$response['data'] = $user;
 		}else{
 			$response['success'] = false;
 			$response['message'] = "You don't have permission";
