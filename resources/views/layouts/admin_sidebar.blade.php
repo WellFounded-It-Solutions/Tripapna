@@ -9,6 +9,7 @@ $customerUrl = '';
 $singlePakcage = '';
 $multiplePakcage = '';
 $orderUrl = '';
+$fakeurl = '';
 $permissionUrl = url('/administrator') . '/permission';
 if (auth()->check() && auth()->user()->hasRole('admin')) {
     $hotelUrl = url('/administrator') . '/hotels';
@@ -21,6 +22,7 @@ if (auth()->check() && auth()->user()->hasRole('admin')) {
     $singlePakcage = url('/administrator') . '/single-package';
     $multiplePakcage = url('/administrator') . '/multiple-package';
     $orderUrl = url('/administrator') . '/orders';
+    $fakeurl =  url('/administrator') . '/fakeorder';
     $combineUrl = url('/administrator') . '/combine';
 } else if (auth()->check() && auth()->user()->hasRole('subadmin')) {
     $hotelUrl = url('/subadmin') . '/hotels';
@@ -248,7 +250,7 @@ if (auth()->check() && auth()->user()->hasRole('admin')) {
                 @endif
                 @if(auth()->user()->hasRole('admin'))
                 <li class="nav-item">
-                    <a href="<?php echo $orderUrl ?>" class="nav-link {{ Route::is(Auth::user()->roles['0']->params.'_order') ? 'active' : '' }}">
+                    <a href="<?php echo $orderUrl ?>" class="nav-link {{ Route::is(Auth::user()->roles['0']->params.'_wallet') ? 'active' : '' }}">
                         <i class="fas fa-wallet nav-icon"></i>
                         <p>
                             Wallet Management
@@ -268,7 +270,7 @@ if (auth()->check() && auth()->user()->hasRole('admin')) {
                 @endif
                 @if(auth()->user()->hasRole('admin'))
                 <li class="nav-item">
-                    <a href="<?php echo $orderUrl ?>" class="nav-link {{ Route::is(Auth::user()->roles['0']->params.'_order') ? 'active' : '' }}">
+                    <a href="<?php echo $fakeurl ?>" class="nav-link {{ Route::is(Auth::user()->roles['0']->params.'_fakeorder') ? 'active' : '' }}">
                         <i class="fas fa-ban nav-icon"></i>
                         <p>
                             Fake Orders

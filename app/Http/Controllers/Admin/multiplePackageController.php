@@ -447,4 +447,15 @@ class multiplePackageController extends Controller
 
         return response()->json($response);
     }
+    public function combine($id)
+    {
+        $packageItems = PackageItem::where('package_id', $id)->get();
+    
+        $coupons = $packageItems->map(function ($item) {
+            // Assuming your PackageItem model has a 'coupon_id' field
+            return Coupon::find($item->coupon_id);
+        })->filter(); // Use filter() to remove any null values if a coupon_id doesn't exist
+        $coupons->package_id = $id;
+        return view('multiplepackage.combine', ["coupons" => $coupons]);
+    }
 }

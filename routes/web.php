@@ -21,6 +21,8 @@ use App\Http\Controllers\HotelController;
 use App\Http\Controllers\User\AuthController;
 use App\Http\Controllers\User\UserController;
 use App\Http\Controllers\Admin\SaleExecutiveController;
+use App\Http\Controllers\Admin\OrderController;
+use App\Http\Controllers\Admin\FakeController;
 
 
 use App\Http\Controllers\User\CartController;
@@ -129,10 +131,16 @@ Route::group(['middleware' => 'role:admin'], function () {
     Route::post('/administrator/multiple-package/clone', [multiplePackageController::class, 'clone'])->name('administrator_multiple_package_clone');
     Route::get('/administrator/multiple-package/clone/{id}', [multiplePackageController::class, 'get_record_by_id_clone'])->name('administrator_multiple_package_clone_id');
     Route::get('/administrator/multiple-package/getCoupon/{id}', [multiplePackageController::class, 'getCoupon'])->name('administrator_multiple_package_getCoupon');
+    Route::get('administrator/multiple-package/combine/{id}', [multiplePackageController::class, 'combine'])->name('administrator_single_package_combine');
 
     Route::get('/administrator/orders', [OrderController::class, 'index'])->name('administrator_order');
     Route::get('/administrator/orderlist', [OrderController::class, 'get_list'])->name('administrator_order_list');
     Route::get('/administrator/order/details/{id}', [OrderController::class, 'details'])->name('administrator_order_details');
+
+    Route::get('/administrator/fakeorder', [FakeController::class, 'index'])->name('administrator_fakeorder');
+    Route::get('/administrator/fakeorderlist', [FakeController::class, 'get_list'])->name('administrator_order_list');
+    Route::get('/administrator/fakeorder/details/{id}', [FakeController::class, 'details'])->name('administrator_order_details');
+
 });
 
 // Subadmin Routes

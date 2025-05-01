@@ -87,42 +87,35 @@ class AuthController extends Controller
         $input['password'] = Hash::make($input['password']);
         unset($input['c_password']);
         $user = Customer::create($input);
-        $success['token'] = Auth::attempt(['email' => request('email'), 'password' => request('password')]);
+        $success['token'] = Auth::guard('customer')->attempt(['email' => request('email'), 'password' => request('password')]);
         $success['name'] = $user->name;
 
         return response()->json(['success' => $success], 200);
     }
-    public function get_user(Request $request)
-    {
-        $request->validate([
-            'customer_id' => 'required'
-        ], [
-            'customer_id.required' => 'Customer is required',
-        ]);
+  
+public function get_user(Request $request)
+{
+    $request->validate([
+        'customer_id' => 'required|exists:customers,id',
+    ]);
 
-        try {
-            $record = Customer::where('id', $request->input('customer_id'))->get();
+    try {
+        $record = Customer::find($request->customer_id);
 
-            if (!$record) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Customer not found',
-                ], 404);
-            }
+        return response()->json([
+            'success' => true,
+            'message' => 'Customer found',
+            'data' => $record,
+        ], 200);
 
-            return response()->json([
-                'success' => true,
-                'message' => __('api.cart.success'),
-                'data' => $record,
-            ], 200);
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => __('api.cart.fail'),
-                'error' => $e->getMessage(),
-            ], 500);
-        }
+    } catch (\Exception $e) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Something went wrong',
+            'error' => $e->getMessage(),
+        ], 500);
     }
+}
     public function update_profile(Request $request)
     {
         $user = Auth::user();
