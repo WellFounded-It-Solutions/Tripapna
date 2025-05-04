@@ -12,21 +12,23 @@
     <section class="content">
         <div class="container-fluid">
             <div class="row">
+                <button type="button" class="btn btn-info" onclick="window.location.href='{{ route('fakeorder_new') }}'">Create Fake Orders</button>
                 <div class="col-12">
                     <div class="callout callout-info">
                         <div class="row">
-                            <div class="col-3">
+                            <div class="col-4">
                                 <input type="text" class="form-control" placeholder="Search by title" id="title">
                             </div>
-                            <div class="col-3">
+                            <div class="col-1">
 
                             </div>
-                            <div class="col-3">
-
+                            <div class="col-1">
                             </div>
                             <div class="col-3">
                                 <button type="button" class="btn btn-info" onclick="getList()">Search</button>
                             </div>
+                         
+                            
                         </div>
                     </div>
                     <div class="card">

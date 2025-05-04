@@ -8,6 +8,7 @@ $profileUrl = '';
 $customerUrl = '';
 $singlePakcage = '';
 $multiplePakcage = '';
+$holidayPakcage = '';
 $orderUrl = '';
 $fakeurl = '';
 $permissionUrl = url('/administrator') . '/permission';
@@ -21,6 +22,7 @@ if (auth()->check() && auth()->user()->hasRole('admin')) {
     $customerUrl = url('/administrator') . '/customer';
     $singlePakcage = url('/administrator') . '/single-package';
     $multiplePakcage = url('/administrator') . '/multiple-package';
+    $holidayPakcage = url('/administrator') . '/holiday-package';
     $orderUrl = url('/administrator') . '/orders';
     $fakeurl =  url('/administrator') . '/fakeorder';
     $combineUrl = url('/administrator') . '/combine';
@@ -238,7 +240,7 @@ if (auth()->check() && auth()->user()->hasRole('admin')) {
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="<?php echo $singlePakcage ?>" class="nav-link {{ Route::is(Auth::user()->roles['0']->params.'_holiday_package') ? 'active' : '' }}">
+                            <a href="<?php echo $holidayPakcage ?>" class="nav-link {{ Route::is(Auth::user()->roles['0']->params.'_holiday_package') ? 'active' : '' }}">
                                 <i class="far fa-circle nav-icon"></i>
                                 <p>
                                     Holiday Package

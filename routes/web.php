@@ -23,6 +23,8 @@ use App\Http\Controllers\User\UserController;
 use App\Http\Controllers\Admin\SaleExecutiveController;
 use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\Admin\FakeController;
+use App\Http\Controllers\Admin\HolidayPackageController;
+
 
 
 use App\Http\Controllers\User\CartController;
@@ -133,6 +135,10 @@ Route::group(['middleware' => 'role:admin'], function () {
     Route::get('/administrator/multiple-package/getCoupon/{id}', [multiplePackageController::class, 'getCoupon'])->name('administrator_multiple_package_getCoupon');
     Route::get('administrator/multiple-package/combine/{id}', [multiplePackageController::class, 'combine'])->name('administrator_single_package_combine');
 
+    Route::get('/administrator/holiday-package', [HolidayPackageController::class, 'index'])->name('administrator_holiday_package');
+  
+
+
     Route::get('/administrator/orders', [OrderController::class, 'index'])->name('administrator_order');
     Route::get('/administrator/orderlist', [OrderController::class, 'get_list'])->name('administrator_order_list');
     Route::get('/administrator/order/details/{id}', [OrderController::class, 'details'])->name('administrator_order_details');
@@ -140,6 +146,8 @@ Route::group(['middleware' => 'role:admin'], function () {
     Route::get('/administrator/fakeorder', [FakeController::class, 'index'])->name('administrator_fakeorder');
     Route::get('/administrator/fakeorderlist', [FakeController::class, 'get_list'])->name('administrator_order_list');
     Route::get('/administrator/fakeorder/details/{id}', [FakeController::class, 'details'])->name('administrator_order_details');
+    Route::get('/administrator/fakeorder/new', [FakeController::class, 'new'])->name('fakeorder_new');
+
 
 });
 
@@ -420,6 +428,8 @@ Route::group(['middleware' => 'auth:hotel'], function () {
 // USER ROUTES
 Route::get("/", [UserController::class, 'index'])->name('home');
 Route::get("/all-stores", [UserController::class, 'allStores'])->name('allStores');
+Route::get("/holiday", [UserController::class,"holiday"])->name("holiday");
+Route::post('/requestform', [UserController::class, 'submitRequest'])->name('holiday.request.submit');
 
 Route::get("/stores-details/{id}", [UserController::class, 'storeDetails'])->name('stores-details');
 Route::get("/deals-details/{id}", [UserController::class, 'dealDetails'])->name('deals-details');

@@ -31,4 +31,16 @@ class FakeController extends Controller
             return view('fakeorders.index', compact('page_name'));
         }
     }
+    public function new(Request $request)
+    {
+        $check = $this->check($request, 'view-orders', 'view');
+        if ($check) {
+            $page_name = 'Package';
+            // $hotelRecord = Hotel::where('status', 'Active')->get();
+            // $couponRecord = Coupon::where('status', 'Active')->get();
+            // $Categories = Categories::where('status', 'Active')->get();
+
+            return view('fakeorders.addpackage');
+        }
+    }
 }

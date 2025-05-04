@@ -1594,6 +1594,8 @@
                     <li class="nav-item"><a href="/coming-soon" class="nav-link"  >Hotel </a></li>
                     <li class="nav-item"><a href="/coming-soon" class="nav-link"  >Taxi </a></li>
                     <li class="nav-item"><a href="{{url('all-stores')}}" class="nav-link"  >Hotel Package </a></li>
+                    <li class="nav-item"><a href="{{url('holiday')}}" class="nav-link"  >Holiday </a></li>
+
                     <!-- <li class="nav-item megamenu"><a href="javascript:void(0)" class="dropdown-toggle nav-link">Deals</a>
                         <ul class="dropdown-menu">
                             <li class="nav-item">

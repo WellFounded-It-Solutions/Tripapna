@@ -4,6 +4,7 @@ namespace App\Http\Controllers\User;
 
 use App\Models\Categories;
 use App\Models\Coupon;
+use App\Models\Holiday_Package;
 use App\Models\Hotel;
 use App\Models\HotelCategory;
 use App\Models\HotelCoupon;
@@ -399,4 +400,28 @@ class UserController extends Controller
 
         return response()->json($response, 200);
     }
+    public function holiday(){
+        return view('user.holiday');
+    }
+    public function submitRequest(Request $request)
+{
+    $validated = $request->validate([
+        'name' => 'required|string|max:255',
+        'email' => 'required|email',
+        'phone' => 'required|string|max:20',
+        'destination' => 'required|string|max:255',
+        'travel_date' => 'required|date',
+        'duration' => 'required|integer|min:1',
+        'travelers' => 'required|integer|min:1',
+        'budget' => 'required|numeric|min:0',
+        'preferences' => 'nullable|string',
+    ]);
+
+
+    // Save the request to the database or send an email
+    Holiday_Package::create($validated);
+
+    return redirect()->back()->with('success', 'Your holiday request has been submitted successfully!');
+}
+
 }
