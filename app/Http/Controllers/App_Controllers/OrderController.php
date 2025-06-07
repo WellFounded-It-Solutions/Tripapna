@@ -1,6 +1,7 @@
 <?php
+namespace App\Http\Controllers\App_Controllers;
 
-namespace App\Http\Controllers;
+use App\Http\Controllers\Controller;
 
 use App\Models\Cart;
 use App\Models\Coupon;

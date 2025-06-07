@@ -310,6 +310,8 @@ Route::group(['middleware' => 'role:manager'], function () {
 
     Route::resource('sales_boy_offers', SalesBoyOfferController::class);
 
+
+
 });
 
 // Agent Route
@@ -373,8 +375,9 @@ Route::group(['middleware' => 'role:agent'], function () {
     Route::get('/agent/multiple-package/getCoupon/{id}', [multiplePackageController::class, 'getCoupon'])->name('agent_multiple_package_getCoupon');
 
     Route::get('/agent/orders', [OrderController::class, 'index'])->name('agent_order');
-    Route::get('/agent/orderlist', [OrderController::class, 'get_list'])->name('agent_order_list');
-    Route::get('/agent/order/details/{id}', [OrderController::class, 'details'])->name('agent_order_details');
+    Route::get('/agent/orderlist', [OrderController::class, 'get_list'])->name('agent_order_list');    Route::get('/agent/order/details/{id}', [OrderController::class, 'details'])->name('agent_order_details');
+
+
 });
 
 // Hotel Routes

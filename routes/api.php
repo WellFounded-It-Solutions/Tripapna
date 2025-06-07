@@ -5,6 +5,8 @@ use App\Http\Controllers\App_Controllers\CartController;
 use App\Http\Controllers\App_Controllers\AuthController;
 use App\Http\Controllers\App_Controllers\SalesAuthController;
 use App\Http\Controllers\App_Controllers\WalletController;
+use App\Http\Controllers\App_Controllers\InviteController;
+use App\Http\Controllers\App_Controllers\OrderController;
 
 /*
 |--------------------------------------------------------------------------
@@ -63,7 +65,8 @@ Route::get('mywishlist', [WishListController::class, 'view']);
 //Invite API
 Route::post('inviteLink', [SalesAuthController::class, 'inviteLink']);         // Table affetcted cart
 Route::post('inviteForm',[SalesAuthController::class, 'inviteForm']);
-
+Route::post('invite',[InviteController::class, 'index']); // Table invite
+Route::put('inviteUpdate',[InviteController::class, 'update']); // Table invite
 //Track Sales API
 
 

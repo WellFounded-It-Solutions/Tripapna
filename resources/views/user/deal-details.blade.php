@@ -602,7 +602,7 @@
                     </ul>
                 </div>
                 <div class="deals-details-desc">
-                    <p>{{$productdata->description}}</p>
+                    <div>{!!  $productdata->description !!}</div>
                     <!-- <p><strong>1.</strong> Complimentary ground shipping within 1 to 7 business days<br>
                         <strong>2.</strong> In-store collection available within 1 to 7 business days<br>
                         <strong>3.</strong> Next-day and Express delivery options also available<br>
@@ -662,7 +662,7 @@
                             <span *ngIf="termsStatus"><i class="fa fa-minus"></i></span>
                         </div>
                         <p>
-                            {{$productdata->term_conditions}}
+                            {!! $productdata->term_conditions !!}
                         </p>
                     </div>
                 </div>
