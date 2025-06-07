@@ -68,7 +68,7 @@ class InviteController extends Controller
         )
         ->join('carts', 'invites.cart_id', '=', 'carts.id')
         ->join('customers', 'carts.customer_id', '=', 'customers.id')
-        ->where('invites.sales_id', $salesId)
+        ->where('invite_link.sales_id', $salesId)
         ->get();
 
     return response()->json([
