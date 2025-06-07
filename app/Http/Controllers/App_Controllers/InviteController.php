@@ -47,7 +47,7 @@ class InviteController extends Controller
     if (!$request->has('sales_id')) {
         return response()->json([
             'success' => false,
-            'message' => 'sales_id is required'
+            'message' => 'sales_id is reuired'
         ], 422);
     }
 
