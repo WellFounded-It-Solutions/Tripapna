@@ -54,8 +54,8 @@ class InviteController extends Controller
     $salesId = $request->sales_id;
 
     $invites = Invite::select(
-            'invites.id as invite_id',
-            'invites.status as invite_status',
+            'invite_link.id as invite_id',
+            'invite_link.status as invite_status',
             'carts.id as cart_id',
             'carts.amount as cart_amount',
             'carts.qty as cart_qty',
