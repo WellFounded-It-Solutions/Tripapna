@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\App_Controllers;
 
 use App\Http\Controllers\Controller;
-
 use Illuminate\Http\Request;
 use App\Models\Invite;
 use Illuminate\Support\Facades\Validator;
@@ -41,5 +40,60 @@ class InviteController extends Controller
             'invite'  => $invite
         ]);
     }
-}
 
+    // Fetch Invites
+    public function list(Request $request)
+    {
+        $invites = Invite::query();
+
+        if ($request->has('sales_id')) {
+            $invites->where('sales_id', $request->sales_id);
+        }
+
+        if ($request->has('status')) {
+            $invites->where('status', $request->status);
+        }
+
+        if ($request->has('cart_id')) {
+            $invites->where('cart_id', $request->cart_id);
+        }
+
+        return response()->json([
+            'success' => true,
+            'invites' => $invites->get()
+        ]);
+    }
+
+    // Update Invite Status
+    public function updateStatus(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'status' => 'required|string|max:400',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'errors'  => $validator->errors()
+            ], 422);
+        }
+
+        $invite = Invite::find($request->id);
+
+        if (!$invite) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Invite not found'
+            ], 404);
+        }
+
+        $invite->status = $request->status;
+        $invite->save();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Status updated successfully',
+            'invite'  => $invite
+        ]);
+    }
+}

@@ -67,6 +67,7 @@ Route::post('inviteLink', [SalesAuthController::class, 'inviteLink']);         /
 Route::post('inviteForm',[SalesAuthController::class, 'inviteForm']);
 Route::post('invite',[InviteController::class, 'index']); // Table invite
 Route::put('inviteUpdate',[InviteController::class, 'update']); // Table invite
+Route::post('inviteList', [InviteController::class, 'list']); // Table invite
 //Track Sales API
 
 
