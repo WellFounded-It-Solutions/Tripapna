@@ -66,7 +66,7 @@ class InviteController extends Controller
             'customers.mobile as customer_mobile',
             'customers.address as customer_address'
         )
-        ->join('carts', 'invites.cart_id', '=', 'carts.id')
+        ->join('carts', 'invite_link.cart_id', '=', 'carts.id')
         ->join('customers', 'carts.customer_id', '=', 'customers.id')
         ->where('invite_link.sales_id', $salesId)
         ->get();
