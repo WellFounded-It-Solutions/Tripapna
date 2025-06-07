@@ -42,27 +42,41 @@ class InviteController extends Controller
     }
 
     // Fetch Invites
-    public function list(Request $request)
-    {
-        $invites = Invite::query();
-
-        if ($request->has('sales_id')) {
-            $invites->where('sales_id', $request->sales_id);
-        }
-
-        if ($request->has('status')) {
-            $invites->where('status', $request->status);
-        }
-
-        if ($request->has('cart_id')) {
-            $invites->where('cart_id', $request->cart_id);
-        }
-
+  public function list(Request $request)
+{
+    if (!$request->has('sales_id')) {
         return response()->json([
-            'success' => true,
-            'invites' => $invites->get()
-        ]);
+            'success' => false,
+            'message' => 'sales_id is required'
+        ], 422);
     }
+
+    $salesId = $request->sales_id;
+
+    $invites = Invite::select(
+            'invites.id as invite_id',
+            'invites.status as invite_status',
+            'carts.id as cart_id',
+            'carts.amount as cart_amount',
+            'carts.qty as cart_qty',
+            'carts.type as cart_type',
+            'customers.id as customer_id',
+            'customers.name as customer_name',
+            'customers.email as customer_email',
+            'customers.mobile as customer_mobile',
+            'customers.address as customer_address'
+        )
+        ->join('carts', 'invites.cart_id', '=', 'carts.id')
+        ->join('customers', 'carts.customer_id', '=', 'customers.id')
+        ->where('invites.sales_id', $salesId)
+        ->get();
+
+    return response()->json([
+        'success' => true,
+        'invites' => $invites
+    ]);
+}
+
 
     // Update Invite Status
     public function updateStatus(Request $request)
