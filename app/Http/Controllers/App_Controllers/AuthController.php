@@ -33,27 +33,18 @@ class AuthController extends Controller
             'password.required' => 'Password is required',
             'email.email' => 'Please enter a valid email'
         ]);
+$customer = Customer::where('email', $request->email)->first();
+    if (!$customer || !Hash::check($request->password, $customer->password)) {
+        return response()->json(['message'=>'Invalid credentials','success'=>false],401);
+    }
 
-        $credentials = $request->only('email', 'password');
-
-        // Use the 'customer' guard
-        if (Auth::guard('customer')->attempt($credentials)) {
-            // Regenerate session to prevent session fixation attack
-            // $request->session()->regenerate();
-
-            return response()->json([
-                'data' => Auth::guard('customer')->user(),
-                'message' => 'Login successful',
-                'success' => true,
-            ]);
-        }
-
-        // If authentication fails
-        return response()->json([
-            'data' => null,
-            'message' => 'Invalid credentials',
-            'success' => false,
-        ], 401);
+    $token = $customer->createToken('customer-token')->plainTextToken;
+    return response()->json([
+        'success'      => true,
+        'access_token' => $token,
+        'token_type'   => 'Bearer',
+        'user'         => $customer,
+    ], 200);
     }
 
 
@@ -84,13 +75,17 @@ class AuthController extends Controller
             return response()->json(['error' => $validator->errors()], 401);
         }
         $input = $request->all();
-        $input['password'] = Hash::make($input['password']);
-        unset($input['c_password']);
-        $user = Customer::create($input);
-        $success['token'] = Auth::guard('customer')->attempt(['email' => request('email'), 'password' => request('password')]);
-        $success['name'] = $user->name;
+       $input['password'] = Hash::make($request->password);
+    unset($input['c_password']);
+    $customer = Customer::create($input);
 
-        return response()->json(['success' => $success], 200);
+    $token = $customer->createToken('customer-token')->plainTextToken;
+    return response()->json([
+        'success'      => true,
+        'access_token' => $token,
+        'token_type'   => 'Bearer',
+        'user'         => $customer,
+    ], 200);
     }
   
 public function get_user(Request $request)

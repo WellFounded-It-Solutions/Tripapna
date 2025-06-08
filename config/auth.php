@@ -49,7 +49,7 @@ return [
             'provider' => 'hotels',
         ],
         'customer' => [
-            'driver' => 'session',
+            'driver' => 'jwt',
             'provider' => 'customers',
         ]
        

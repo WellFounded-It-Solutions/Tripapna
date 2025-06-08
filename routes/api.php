@@ -21,6 +21,7 @@ use App\Http\Controllers\App_Controllers\OrderController;
 // authentication routes
 
 //User API
+Route::group(['middleware' => ['auth:customer']], function () {
 Route::post('login', [AuthController::class, 'login']);
 Route::get('logout', [AuthController::class, 'logout']);
 Route::post('refresh', [AuthController::class, 'refresh']);
@@ -30,7 +31,7 @@ Route::get('user-profile', [AuthController::class, 'me']);
 Route::post('user-register', [AuthController::class, 'register']);
 Route::post('update-profile', [AuthController::class, 'update_profile']);
 Route::post('update-password', [AuthController::class, 'update_password']);
-
+});
 Route::get('hotel_list', [HomeController::class, 'hotel_list']);
 Route::get('getPackage', [HomeController::class, 'packages']);
 Route::get('getCoupon', [HomeController::class, 'getCoupon']);
