@@ -28,24 +28,33 @@ class OrderController extends Controller
         $success = false;
         $message = '';
         $data = null;
+        $user_id = $request->input('id');
+        $name = $request->input('name');
+        $email = $request->input('email');
+        $mobile = $request->input('mobile');
+
         $validator = Validator::make($request->all(), [
             'trans_id' => 'required',
+            'id' => 'required',
+            'name'=> 'required',
+            'email'=> 'required|email',
+            'mobile'=> 'required|numeric',
         ]);
         if ($validator->fails()) {
             return response()->json(['error' => $validator->errors()], 401);
         }
         try {
-            $auth = Auth::user();
-            $cart = Cart::where('customer_id', $auth->id)->get();
+            // $auth = Auth::user();
+            $cart = Cart::where('customer_id', $user_id)->get();
             $amount = 0;
             $order['order_id'] = orderCode();
-            $order['user_id'] = $auth->id;
+            $order['user_id'] = $user_id;
             $order['amount'] = $amount;
             $order['trans_id'] = $request->input('trans_id');
             $order['type'] = 'package';
-            $order['user_name'] = $auth->name;
-            $order['user_email'] = $auth->email;
-            $order['user_phone'] = $auth->mobile;
+            $order['user_name'] = $name;
+            $order['user_email'] = $email;
+            $order['user_phone'] = $mobile;
             $order_create = Order::create($order);
             foreach ($cart as $key => $value) {
                 $amount += $value->amount;
@@ -70,7 +79,7 @@ class OrderController extends Controller
                                 $orderItems['hotel_data'] = json_encode($hotel_data);
                                 $orderItems['valid_date'] = Carbon::now()->addYears(5);
                                 $orderItems['visit_type'] = $coupon_data->visit_type;
-                                $orderItems['mobile_number'] = $auth->mobile;
+                                $orderItems['mobile_number'] = $mobile;
                                 $order_details_create = OrderDetails::create($orderItems);
                             }
                             $update_to_package = [];
@@ -108,7 +117,7 @@ class OrderController extends Controller
                                 $orderItems['hotel_data'] = json_encode($hotel_data);
                                 $orderItems['valid_date'] = Carbon::now()->addYears(5);
                                 $orderItems['visit_type'] = $coupon_data->visit_type;
-                                $orderItems['mobile_number'] = $auth->mobile;
+                                $orderItems['mobile_number'] = $mobile;
                                 $orderItems['package_id'] = $record->id;
                                 $orderItems['type'] = 'Package';
                                 $order_details_create = OrderDetails::create($orderItems);
@@ -168,11 +177,11 @@ class OrderController extends Controller
                         $orderItems['hotel_data'] = json_encode($hotel_data);
                         $orderItems['valid_date'] = $coupon_data->valid_date;
                         $orderItems['visit_type'] = $coupon_data->visit_type;
-                        $orderItems['mobile_number'] = $auth->mobile;
+                        $orderItems['mobile_number'] = $mobile;
                         $orderItems['type'] = 'Coupon';
                         $order_details_create = OrderDetails::create($orderItems);
 
-                        Cart::where('customer_id', $auth->id)->delete();
+                        Cart::where('customer_id', $user_id)->delete();
                         $success = true;
                         $message = __('api.order.success');
                     } else {
@@ -181,7 +190,7 @@ class OrderController extends Controller
                     }
                 }
             }
-            Cart::where('customer_id', $auth->id)->delete();
+            Cart::where('customer_id', $user_id)->delete();
             $success = true;
             $message = __('api.order.success');
             $update_order['amount'] = $amount;

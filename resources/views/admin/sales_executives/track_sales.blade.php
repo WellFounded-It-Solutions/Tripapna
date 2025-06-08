@@ -1,5 +1,6 @@
 @extends('layouts.admin_design')
 @section('content')
+{{-- {{ dd($invites) }} --}}
 <div class="content-wrapper pl-3 pb-2">
     <section class="content-header">
         <div class="container-fluid">
@@ -31,29 +32,29 @@
                         <th>SrNo</th>
                         <th>Package Name</th>
                         <th>Customer Name</th>
-                        <th>Sales Boy Name</th>
+                        <th>Sales Boy ID</th>
                         <th>Amount</th>
                         <th>Payment Method</th>
-                        <th>Payment Complete</th>
+                        <th>Payment Status</th>
                     </tr>
                 </thead>
-                {{-- <tbody>
-                    @foreach ($salesExecutives as $salesExecutive)
+                <tbody>
+                    @forelse ($invites as $index => $invite)
                         <tr>
-                            <td>{{ $salesExecutive->name }}</td>
-                            <td>{{ $salesExecutive->email }}</td>
-                            <td>{{ $salesExecutive->mobile }}</td>
-                            <td>
-                                <a href="{{ route('sales_executives.show', $salesExecutive->id) }}" class="btn btn-warning">Edit</a>
-                                <form action="{{ route('sales_executives.destroy', $salesExecutive->id) }}" method="POST" style="display:inline;">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="btn btn-danger">Delete</button>
-                                </form>
-                            </td>
+                            <td>{{ $index + 1 }}</td>
+                            <td>{{ ucfirst($invite->cart_type) ?? 'N/A' }}</td>
+                            <td>{{ $invite->customer_name }}</td>
+                            <td>{{ $invite->invite_sales_id ?? 'N/A' }}</td>
+                            <td>{{ $invite->cart_amount }}</td>
+                            <td>{{ $invite->payment_method ?? 'N/A' }}</td>
+                            <td>{{ $invite->invite_status }}</td>
                         </tr>
-                    @endforeach
-                </tbody> --}}
+                    @empty
+                        <tr>
+                            <td colspan="7" class="text-center">No records found.</td>
+                        </tr>
+                    @endforelse
+                </tbody>
             </table>
         </div>
     </section>

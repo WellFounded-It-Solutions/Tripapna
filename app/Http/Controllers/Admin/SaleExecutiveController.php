@@ -5,6 +5,7 @@ use App\Http\Controllers\Controller;
 use App\Models\SaleExecutive;
 use App\Models\User;
 use App\Models\Hotel;
+use App\Models\Invite;
 use App\Models\Package;
 use App\Models\UserRoles;
 use App\Models\UserWallet;
@@ -47,9 +48,35 @@ class SaleExecutiveController extends Controller
         error_log($assignedPackage);
         return view('admin.sales_executives.offer_sales',compact('assignedPackage'));
     }
-    public function track_sales(){
-        return view('admin.sales_executives.track_sales');
+  public function track_sales(Request $request)
+{
+    $salesId = $request->sales_id;
+
+    $query = Invite::select(
+            'invite_link.id as invite_id',
+            'invite_link.status as invite_status',
+            'invite_link.sales_id as invite_sales_id',
+            'carts.id as cart_id',
+            'carts.amount as cart_amount',
+            'carts.qty as cart_qty',
+            'carts.type as cart_type',
+            'customers.id as customer_id',
+            'customers.name as customer_name',
+            'customers.email as customer_email',
+            'customers.mobile as customer_mobile',
+            'customers.address as customer_address'
+        )
+        ->join('carts', 'invite_link.cart_id', '=', 'carts.id')
+        ->join('customers', 'carts.customer_id', '=', 'customers.id');
+
+    // Only filter by sales_id if it's present
+    if ($salesId) {
+        $query->where('invite_link.sales_id', $salesId);
     }
+
+    $invites = $query->get();
+        return view('admin.sales_executives.track_sales',compact('invites'));
+}
 
     public function payment(){
         return view('admin.sales_executives.pay_sales');
