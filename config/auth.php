@@ -41,7 +41,7 @@ return [
             'provider' => 'users',
         ],
         'api'=>[
-            'driver' => 'session',
+            'driver' => 'jwt',
             'provider' => 'users',
         ],
         'hotel' => [
@@ -49,7 +49,7 @@ return [
             'provider' => 'hotels',
         ],
         'customer' => [
-            'driver' => 'jwt',
+            'driver' => 'session',
             'provider' => 'customers',
         ]
        
