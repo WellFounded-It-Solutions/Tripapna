@@ -19,26 +19,27 @@ use App\Http\Controllers\App_Controllers\OrderController;
 |
 */
 // authentication routes
-
-//User API
-Route::group(['middleware' => ['auth:api']], function () {
 Route::post('login', [AuthController::class, 'login']);
 Route::get('logout', [AuthController::class, 'logout']);
+Route::post('user-register', [AuthController::class, 'register']);
+//User API
+Route::group(['middleware' => ['auth:api']], function () {
+
 Route::post('refresh', [AuthController::class, 'refresh']);
 Route::post("user", [AuthController::class, 'get_user']);
 
 Route::get('user-profile', [AuthController::class, 'me']);
-Route::post('user-register', [AuthController::class, 'register']);
 Route::post('update-profile', [AuthController::class, 'update_profile']);
 Route::post('update-password', [AuthController::class, 'update_password']);
+Route::post('addtocart', [CartController::class, 'addtocart']);
+Route::post('removeCart', [CartController::class, 'removeCart']);
+Route::post('viewCart', [CartController::class, 'viewCart']);
+
 });
 Route::get('hotel_list', [HomeController::class, 'hotel_list']);
 Route::get('getPackage', [HomeController::class, 'packages']);
 Route::get('getCoupon', [HomeController::class, 'getCoupon']);
 
-Route::post('addtocart', [CartController::class, 'addtocart']);
-Route::post('removeCart', [CartController::class, 'removeCart']);
-Route::post('viewCart', [CartController::class, 'viewCart']);
 
 
 
