@@ -21,7 +21,7 @@ use App\Http\Controllers\App_Controllers\OrderController;
 // authentication routes
 
 //User API
-Route::group(['middleware' => ['auth:customer']], function () {
+Route::group(['middleware' => ['auth:api']], function () {
 Route::post('login', [AuthController::class, 'login']);
 Route::get('logout', [AuthController::class, 'logout']);
 Route::post('refresh', [AuthController::class, 'refresh']);
