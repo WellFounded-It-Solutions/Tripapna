@@ -10,10 +10,10 @@ use OwenIt\Auditing\Contracts\Auditable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use Tymon\JWTAuth\Contracts\JWTSubject;
 
-class Customer extends Authenticatable implements Auditable
+class Customer extends Authenticatable implements JWTSubject
 {
-    use AuditableTrait,Searchable,HasApiTokens, HasFactory;
 
     protected $guarded = [];
 
@@ -43,4 +43,11 @@ class Customer extends Authenticatable implements Auditable
         ];
     }
     
+      public function getJWTIdentifier() {
+        return $this->getKey();
+    }
+
+    public function getJWTCustomClaims() {
+        return [];
+    }
 }

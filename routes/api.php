@@ -26,7 +26,7 @@ Route::post('user-register', [AuthController::class, 'register']);
 Route::group(['middleware' => ['auth:api']], function () {
 
 Route::post('refresh', [AuthController::class, 'refresh']);
-Route::post("user", [AuthController::class, 'get_user']);
+Route::post("user", [AuthController::class, 'me']);
 
 Route::get('user-profile', [AuthController::class, 'me']);
 Route::post('update-profile', [AuthController::class, 'update_profile']);
