@@ -14,9 +14,10 @@ class WalletController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function get()
+    public function get(Request $request)
     {
-        $id = Auth::guard('api')->id();
+        $id = $request->input('id');
+    
         $wallet = UserWallet::where('user_id', $id)->get();
 
         return response()->json($wallet, 200);
@@ -30,8 +31,8 @@ class WalletController extends Controller
      */
     public function update(Request $request)
     {
-        $id = Auth::guard('api')->id();
-
+    $id = $request->input('id');
+    
         // Validate input
         $request->validate([
             'wallet_amount' => 'required|numeric',
