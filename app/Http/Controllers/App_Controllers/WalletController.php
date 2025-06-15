@@ -16,7 +16,7 @@ class WalletController extends Controller
      */
     public function get()
     {
-        $id = Auth::id();
+        $id = Auth::guard('api')->id();
         $wallet = UserWallet::where('user_id', $id)->get();
 
         return response()->json($wallet, 200);
@@ -30,7 +30,7 @@ class WalletController extends Controller
      */
     public function update(Request $request)
     {
-        $id = Auth::id();
+        $id = Auth::guard('api')->id();
 
         // Validate input
         $request->validate([
