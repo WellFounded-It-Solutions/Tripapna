@@ -9,6 +9,7 @@ use App\Models\Invite;
 use App\Models\Package;
 use App\Models\UserRoles;
 use App\Models\UserWallet;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
@@ -40,14 +41,26 @@ class SaleExecutiveController extends Controller
 
         return view('admin.sales_executives.create',compact('assignPackage'));
     }
-
-    public function create_offer(){
+public function create_offer(){
         $manager = Auth::user()->id;
+    $assignedUsers = User::select('package_id', 'id', 'name')
+        ->where('maneger_id', $manager)
+        ->get();
 
-        $assignedPackage = User::select('package_id','id','name')->where('maneger_id',$manager)->get();
-        error_log($assignedPackage);
-        return view('admin.sales_executives.offer_sales',compact('assignedPackage'));
+    foreach ($assignedUsers as $user) {
+        $packageIds = collect(explode(',', $user->package_id))
+            ->map(fn($id) => trim($id))       // Remove whitespace
+            ->filter(fn($id) => is_numeric($id)) // Remove any non-numeric values
+            ->all();
+
+        $packageTitles = Package::whereIn('id', $packageIds)->pluck('title')->toArray();
+        $user->package_titles =  $packageTitles;// if you want a string
     }
+
+    return view('admin.sales_executives.offer_sales', [
+        'assignedPackages' => $assignedUsers
+    ]);
+}
   public function track_sales(Request $request)
 {
     $salesId = $request->sales_id;

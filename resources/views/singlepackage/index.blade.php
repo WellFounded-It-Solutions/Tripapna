@@ -118,7 +118,12 @@
                                 </select>
                             </div>
                         </div>
-                        
+                         <div class="form-group row">
+                            <label class="col-sm-3 text-right control-label col-form-label">Coupon Quantities</label>
+                            <div class="col-sm-9">
+                                <div id="couponQuantities" class="d-flex flex-wrap"></div>
+                            </div>
+                        </div>
                         <div class="form-group row">
                             <label for="fname" class="col-sm-3 text-right control-label col-form-label">Limit</label>
                             <div class="col-sm-9">
@@ -459,46 +464,56 @@
         })
     }
 
-    function editRecord(id) {
-        $.ajax({
-            url: baseUrl + "single-package/get_record_by_id/" + id,
-            type: 'get',
-            dataType: 'json',
-            beforeSend: function() {},
-            complete: function() {},
-            success: function(json) {
-                if (json.success) {
-                    $('#utitle').val(json.data.title);
-                    $('#ulimit').val(json.data.limit);
-                    $('#uamount').val(json.data.amount);
-                    // $('#utnc').val(json.data.term_conditions);
-                    // $('#udescription').val(json.data.description);
-                    $('#udescription').summernote('code', json.data.description);
-                    $('#utnc').summernote('code', json.data.term_conditions);
-                    $('#uvalid_date').val(json.data.valid_date);
-                    $('#uvalid_date').val(json.data.valid_date);
-                    $('#udiscount').val(json.data.discount);
-                    $('#ucategory_id').val(json.items['0'].category_id);
-                    var Values = new Array();
-                    json.items.forEach((number, index) => {
-                        Values.push(number.coupon_id);
-                    });
-                    $("#ucoupon_id").val(Values).trigger('change');
-                    $('#_id').val(json.data.id);
-                    $('#editFromPopup').modal('show');
-                } else {
-                    Swal.fire(
-                        'Warning!',
-                        json.message,
-                        'error'
-                    )
-                }
-            },
-            error: function(xhr, ajaxOptions, thrownError) {
-                console.log(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+function editRecord(id) {
+    $.ajax({
+        url: baseUrl + "single-package/get_record_by_id/" + id,
+        type: 'get',
+        dataType: 'json',
+        success: function(json) {
+            if (json.success) {
+                $('#utitle').val(json.data.title);
+                $('#ulimit').val(json.data.limit);
+                $('#uamount').val(json.data.amount);
+                $('#udescription').summernote('code', json.data.description);
+                $('#utnc').summernote('code', json.data.term_conditions);
+                $('#uvalid_date').val(json.data.valid_date);
+                $('#udiscount').val(json.data.discount);
+                $('#uhotel_id').val(json.items['0'].hotel_id);
+                $('#ucategory_id').val(json.items['0'].category_id);
+                var Values = [];
+                json.items.forEach((item) => {
+                    Values.push(item.coupon_id);
+                });
+                $("#ucoupon_id").val(Values).trigger('change');
+                updateCouponQuantities($('#ucoupon_id')); // Trigger quantities update
+                $('#_id').val(json.data.id);
+                $('#editFromPopup').modal('show');
+            } else {
+                Swal.fire('Warning!', json.message, 'error');
             }
+        },
+        error: function(xhr, ajaxOptions, thrownError) {
+            console.log(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+        }
+    });
+}
+function updateCouponQuantities(select) {
+    var selectedCoupons = $(select).val();
+    var quantityContainer = $(select).closest('.form-group').siblings().find('#couponQuantities, #couponQuantitiesClone');
+    quantityContainer.html("");
+    if (selectedCoupons && selectedCoupons.length > 0) {
+        selectedCoupons.forEach(function(couponId) {
+            var couponTitle = $(select).find("option[value='" + couponId + "']").text();
+            var inputHtml = `
+                <div class="form-group mr-4">
+                    <label>${couponTitle}</label>
+                    <input type="number" class="form-control" name="quantity[${couponId}]" placeholder="Enter quantity">
+                </div>
+            `;
+            quantityContainer.append(inputHtml);
         });
     }
+}
 
     function cloneRecord(id) {
         $.ajax({

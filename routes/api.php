@@ -34,6 +34,7 @@ Route::post('update-password', [AuthController::class, 'update_password']);
 Route::post('addtocart', [CartController::class, 'addtocart']);
 Route::post('removeCart', [CartController::class, 'removeCart']);
 Route::post('viewCart', [CartController::class, 'viewCart']);
+Route::post('profileImage', [AuthController::class, 'profileImage']);
 
 });
 Route::get('hotel_list', [HomeController::class, 'hotel_list']);
@@ -68,7 +69,7 @@ Route::get('mywishlist', [WishListController::class, 'view']);
 Route::post('inviteLink', [SalesAuthController::class, 'inviteLink']);         // Table affetcted cart
 Route::post('inviteForm',[SalesAuthController::class, 'inviteForm']);
 Route::post('invite',[InviteController::class, 'index']); // Table invite
-Route::put('inviteUpdate',[InviteController::class, 'update']); // Table invite
+Route::put('inviteUpdate',[InviteController::class, 'updateStatus']); // Table invite
 Route::post('inviteList', [InviteController::class, 'list']); // Table invite
 //Track Sales API
 
@@ -78,6 +79,7 @@ Route::post('inviteList', [InviteController::class, 'list']); // Table invite
 Route::get('getwallet', [WalletController::class, 'get']);    // Table wallet , commision 
 Route::post('updatewallet', [WalletController::class,'update']);
 Route::get('commisionswallet', [WalletController::class,'commisions']);
+Route::post('newwallet', [WalletController::class,'store']);
 
 
 //Sales Profile API 

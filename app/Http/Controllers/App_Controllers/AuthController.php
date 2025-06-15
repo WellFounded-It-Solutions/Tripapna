@@ -71,6 +71,32 @@ class AuthController extends Controller
         return $this->respondWithToken(Auth::refresh());
     }
 
+    public function profileImage(Request $request)
+    {
+        $user = auth('api')->user();
+        $validator = Validator::make($request->all(), [
+            'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['error' => $validator->errors()], 422);
+        }
+
+        if ($request->hasFile('image')) {
+            $image = $request->file('image');
+            $filename = time() . '.' . $image->getClientOriginalExtension();
+            $path = public_path('uploads/profile_images');
+            $image->move($path, $filename);
+
+            // Update user profile image
+            $user->profile_image = 'uploads/profile_images/' . $filename;
+            $user->save();
+
+            return response()->json(['success' => true, 'message' => 'Profile image updated successfully', 'data' => $user]);
+        }
+
+        return response()->json(['success' => false, 'message' => 'Image upload failed'], 500);
+    }
     protected function respondWithToken($token)
     {
         return response()->json([
@@ -80,4 +106,5 @@ class AuthController extends Controller
             'user' => auth('api')->user(),
         ]);
     }
+
 }
