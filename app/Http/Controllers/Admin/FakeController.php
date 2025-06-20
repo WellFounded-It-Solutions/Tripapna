@@ -3,17 +3,15 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\Order;
-
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Hash;
 use Carbon\Carbon;
-
+use App\Models\Customer;
 
 class FakeController extends Controller
 {
-    //
     private function check($request, $module, $response_type)
     {
         if ($request->user()->can($module)) {
@@ -22,7 +20,6 @@ class FakeController extends Controller
             if ($response_type == 'view') {
                 abort(404);
             }
-
             return false;
         }
     }
@@ -32,31 +29,25 @@ class FakeController extends Controller
         $check = $this->check($request, 'view-orders', 'view');
         if ($check) {
             $page_name = 'Fake Orders';
-
             return view('fakeorders.index', compact('page_name'));
         }
     }
 
-  public function create()
+    public function create()
     {
         $page_name = 'Create Fake Order';
-        // Fetch users, packages, coupons, and hotels for dropdowns
-        $users = DB::table('users')->select('id', 'name')->get();
+        // Fetch packages, coupons, and hotels for dropdowns
         $packages = DB::table('packages')->select('id', 'title')->get();
         $coupons = DB::table('coupons')->select('id', 'title')->get();
         $hotels = DB::table('hotels')->select('id', 'name')->get();
-        return view('fakeorders.create', compact('page_name', 'users', 'packages', 'coupons', 'hotels'));
+        return view('fakeorders.create', compact('page_name', 'packages', 'coupons', 'hotels'));
     }
 
-    /**
-     * Store a newly created fake order.
-     */
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'user_id' => 'required|exists:users,id',
             'name' => 'required|string|max:255',
-            'email' => 'required|email|max:255',
+            'email' => 'required|email|max:255|unique:users,email',
             'mobile' => 'required|numeric|digits_between:10,15',
             'trans_id' => 'required|string|max:200',
             'type' => 'required|in:package,coupon',
@@ -76,18 +67,24 @@ class FakeController extends Controller
 
         DB::beginTransaction();
         try {
+            // Create a new user with fixed password
+            $user = Customer::create([
+                'name' => $request->input('name'),
+                'email' => $request->input('email'),
+                'password' => Hash::make('123456789'),
+                'mobile' => $request->input('mobile')
+            ]);
+
             // Create order in tbl_orders
             $orderData = [
                 'order_code' => orderCode(), // Assumed helper function
-                'user_id' => $request->input('user_id'),
+                'user_id' => $user->id,
                 'amount' => $request->input('amount'),
                 'trans_id' => $request->input('trans_id'),
                 'type' => $request->input('type'),
                 'user_name' => $request->input('name'),
                 'user_email' => $request->input('email'),
-                'user_phone' => $request->input('mobile'),
-                'created_at' => now(),
-                'updated_at' => now(),
+                'user_phone' => $request->input('mobile')
             ];
             $orderId = DB::table('tbl_orders')->insertGetId($orderData);
 
@@ -115,9 +112,7 @@ class FakeController extends Controller
                 'status' => $request->input('status'),
                 'type' => ucfirst($request->input('type')),
                 'package_id' => $packageId,
-                'category_id' => $request->input('category_id') ?: ($couponData->category_id ?? null),
-                'created_at' => now(),
-                'updated_at' => now(),
+                'category_id' => $request->input('category_id') ?: ($couponData->category_id ?? null)
             ];
             DB::table('order_details')->insert($orderDetailData);
 
@@ -141,10 +136,6 @@ class FakeController extends Controller
         }
     }
 
-
-    /**
-     * Fetch order list for AJAX table.
-     */
     public function orderList(Request $request)
     {
         $query = DB::table('tbl_orders')
@@ -152,7 +143,7 @@ class FakeController extends Controller
             ->leftJoin('user_wallets', 'users.id', '=', 'user_wallets.user_id')
             ->select(
                 'tbl_orders.id',
-                'tbl_orders.order_code', // Assuming order_code is the token (e.g., TRPE001)
+                'tbl_orders.order_code',
                 'tbl_orders.user_id',
                 'users.name as user_name',
                 'tbl_orders.amount',
@@ -160,7 +151,6 @@ class FakeController extends Controller
                 'tbl_orders.created_at'
             );
 
-        // Apply search filter
         if ($request->has('title') && $request->title != '') {
             $search = $request->title;
             $query->where(function ($q) use ($search) {
@@ -170,11 +160,9 @@ class FakeController extends Controller
             });
         }
 
-        // Paginate results
         $perPage = 10;
         $orders = $query->orderBy('tbl_orders.created_at', 'desc')->paginate($perPage);
 
-        // Build HTML for table body
         $html = '';
         foreach ($orders as $order) {
             $html .= '<tr>';
@@ -187,7 +175,6 @@ class FakeController extends Controller
             $html .= '</tr>';
         }
 
-        // Generate pagination links
         $pagination = $orders->links()->toHtml();
 
         return response()->json([
@@ -197,12 +184,8 @@ class FakeController extends Controller
         ]);
     }
 
-    /**
-     * Fetch order details for modal.
-     */
     public function orderDetails($id)
     {
-        // Fetch order with user and wallet
         $order = DB::table('tbl_orders')
             ->leftJoin('users', 'tbl_orders.user_id', '=', 'users.id')
             ->leftJoin('user_wallets', 'users.id', '=', 'user_wallets.user_id')
@@ -229,7 +212,6 @@ class FakeController extends Controller
             ]);
         }
 
-        // Fetch order details
         $orderDetails = DB::table('order_details')
             ->leftJoin('hotels', 'order_details.hotel_id', '=', 'hotels.id')
             ->select(
@@ -245,7 +227,6 @@ class FakeController extends Controller
             ->where('order_details.order_id', $id)
             ->get();
 
-        // Build HTML for modal
         $html = '<div class="card">';
         $html .= '<div class="card-header"><h3 class="card-title">Order: ' . ($order->order_code ?? 'N/A') . '</h3></div>';
         $html .= '<div class="card-body">';
