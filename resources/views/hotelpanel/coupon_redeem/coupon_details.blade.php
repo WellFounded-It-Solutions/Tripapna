@@ -1,6 +1,8 @@
 <?php
 if (($records->count() > 0)) {
+
     // {{ dump($records); }}
+
     foreach ($records as $key => $value) {
         
         $coupon_data = ($value->coupon_data);
@@ -27,6 +29,7 @@ if (($records->count() > 0)) {
                     name="row-check[]" 
                     value='@json(["id" => $value->id, "coupon_id" => $value->coupon_id , 'package_id' => $value->package_id])'>
             </td>
+<td><img src="{{ 'https://www.tripapna.in/' . $value->coupon_data->image }}" alt="Coupon Image" /></td>
             <td><?php echo ($value->coupon) ?></td>
             <td><div style="width: 200px !important;text-overflow: ellipsis;overflow: hidden;white-space: nowrap;"><?php echo ucfirst($value->coupon_data->description) ?></div></td>
             <td><?php echo isset($category_detail->title) ? $category_detail->title : ''; ?></td>

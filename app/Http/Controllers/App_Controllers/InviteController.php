@@ -17,6 +17,7 @@ class InviteController extends Controller
             'status'   => 'required|string|max:400',
             'sales_id' => 'required|integer',
             'order_id' => 'nullable|integer',
+            'card_id' => 'required'
         ]);
 
         if ($validator->fails()) {
@@ -32,6 +33,7 @@ class InviteController extends Controller
             'status'   => $request->status,
             'sales_id' => $request->sales_id,
             'order_id' => $request->order_id,
+            'card_Id' => $request->card_id
         ]);
 
         return response()->json([

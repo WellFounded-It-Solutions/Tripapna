@@ -1,0 +1,487 @@
+<?php
+
+namespace App\Http\Controllers\Admin;
+
+use App\Http\Controllers\Controller;
+use App\Models\Categories;
+use App\Models\Coupon;
+use App\Models\Hotel;
+use App\Models\HolidayPackages;
+use App\Models\PackageItem;
+use App\Models\Coupon_Combinations;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Validator;
+
+class HolidayPackagesController extends Controller
+{
+    private function check($request, $module, $response_type)
+    {
+        if ($request->user()->can($module)) {
+            return true;
+        } else {
+            if ($response_type == 'view') {
+                abort(404);
+            }
+
+            return false;
+        }
+    }
+
+    public function index(Request $request)
+    {
+        $check = $this->check($request, 'view-single-package', 'view');
+        if ($check) {
+            $page_name = ' Holiday Package';
+            $hotelRecord = Hotel::where('status', 'Active')->get();
+            $couponRecord = Coupon::where('status', 'Active')->get();
+            $Categories = Categories::where('status', 'Active')->get();
+
+            return view('holidaypackages.index', compact('page_name', 'hotelRecord', 'Categories', 'couponRecord'));
+        }
+    }
+
+    public function new(Request $request)
+    {
+        $check = $this->check($request, 'view-single-package', 'view');
+        if ($check) {
+            $page_name = 'Package';
+            $hotelRecord = Hotel::where('status', 'Active')->get();
+            $couponRecord = Coupon::where('status', 'Active')->get();
+            $Categories = Categories::where('status', 'Active')->get();
+
+            return view('holidaypackages.addpackage', compact('page_name', 'hotelRecord', 'Categories', 'couponRecord'));
+        }
+    }
+
+    public function get_list(Request $request)
+    {
+        $check = $this->check($request, 'view-single-package', 'ajax');
+        if ($check) {
+            if ($request->ajax()) {
+                if ($request->title != '') {
+                    $keyword = $_GET['title'];
+                    $records = HolidayPackages::where('title', 'like', '%'.$keyword.'%')->where('type', 'single')->paginate(15);
+                } else {
+                    $records = HolidayPackages::where('type', 'single')->paginate(15);
+                }
+                $response['success'] = true;
+                $response['html'] = view('holidaypackages.list', ['records' => $records])->render();
+                $response['pagination'] = view('admin.pagination', ['page' => $records])->render();
+
+                return response()->json($response);
+                exit;
+            }
+        }
+    }
+
+    public function get_record_by_id(Request $request, $id)
+    {
+        $check = $this->check($request, 'edit-single-package', 'ajax');
+        if ($check) {
+            $record = HolidayPackages::where(['id' => $id])->first();
+            $items = PackageItem::where(['package_id' => $id])->get();
+            if (! empty($record)) {
+                $response['success'] = true;
+                $response['data'] = $record->toarray();
+                $response['items'] = $items->toarray();
+            } else {
+                $response['success'] = false;
+            }
+        } else {
+            $response['success'] = false;
+            $response['message'] = "You don't have permission";
+        }
+
+        return response()->json($response);
+        
+    }
+
+    public function store(Request $request)
+    {
+        $check = $this->check($request, 'add-single-package', 'ajax');
+        if ($check) {
+            if ($request->isMethod('post')) {
+                $validation_array = [
+                    'title' => 'required',
+                    'hotel_id' => 'required',
+                    'coupon' => 'required|array',
+                    'limit' => 'required',
+                    'quantity' => 'required',
+                    'term_conditions' => 'required',
+                    'description' => 'required',
+                    'expire_type' => 'required',
+                    'amount' => 'required',
+                    'image' => 'required|image|mimes:jpeg,png,jpg|max:2048',
+                ];
+                if($request->input('expire_type')=="Fixed") {
+                    $validation_array['valid_date'] = 'required';
+                     $input['valid_date'] = $request->input('valid_date');
+                }else{
+                    $validation_array['variable_month'] = 'required';
+                     $input['variable_month'] = $request->input('variable_month');
+                }
+                $validator = Validator::make($request->all(), $validation_array);
+                if (! $validator->fails()) {
+                    try {
+                        $input['title'] = $request->input('title');
+                        $input['limit'] = $request->input('limit');
+                        $input['term_conditions'] = $request->input('term_conditions');
+                        $input['description'] = $request->input('description');
+                        if($request->has('discount')) {
+                            $dis = $request->input('discount')*$request->input('amount')/100;
+                            $input['amount'] = $request->input('amount') - $dis ;
+                            $input['discount'] = $request->input('discount');
+                        }else{
+                        $input['amount'] = $request->input('amount');
+                        }
+                        $input['owner_id'] = Auth::user()->id;
+                        $imageName = time().'.'.$request->image->extension();
+                        $request->image->move(public_path('package'), $imageName);
+                        $input['image'] = $imageName;
+                        $package_created = HolidayPackages::create($input);
+                        if ($package_created) {
+                            foreach ($request->input('coupon') as $key => $value) {
+                                $inputitems['package_id'] = $package_created->id;
+                                $inputitems['hotel_id'] = $request->input('hotel_id');
+                                $record = couponDetails($value);
+                                $inputitems['category_id'] = $record->category_id;
+                                $inputitems['coupon_id'] = $value;
+                                $inputitems['quantity'] = $request->input("quantity")[$value] ?? null;
+                                PackageItem::create($inputitems);
+                            }
+                        }
+                        $response['success'] = true;
+                        $response['message'] = 'Recored Store SuccessFully';
+                        $response['resetForm'] = true;
+                        $response['callBackFunction'] = 'addCallBack';
+                    } catch (exception $e) {
+                        $response['success'] = false;
+                        $response['message'] = 'There is some error please try after some time';
+                    }
+                } else {
+                    $response['success'] = false;
+                    $html = "<ol type='1'>";
+                    foreach ($validator->errors()->toarray() as $value) {
+                        $html .= '<li>'.$value['0'].'</li>';
+                    }
+                    $html .= '</ol>';
+                    $response['message'] = $html;
+                }
+            }
+        } else {
+            $response['success'] = false;
+            $response['message'] = "You don't have permission";
+        }
+
+        return response()->json($response);
+        exit;
+    }
+
+    public function update(Request $request)
+    {
+        $check = $this->check($request, 'edit-single-package', 'ajax');
+        if ($check) {
+            if ($request->isMethod('post')) {
+                $update = $request->all();
+                $validation_array = [
+                    'title' => 'required',
+                    'hotel_id' => 'required',
+                    'coupon' => 'required|array',
+                    'limit' => 'required',
+                    'term_conditions' => 'required',
+                    'description' => 'required',
+                ];
+                if($request->input('expire_type')=="Fixed") {
+                    $validation_array['valid_date'] = 'required';
+                     $update['valid_date'] = $request->input('valid_date');
+                }else{
+                    $validation_array['variable_month'] = 'required';
+                     $update['variable_month'] = $request->input('variable_month');
+                }
+                if ($request->hasFile('image') ) {
+                     $validation_array['image'] = 'required|image|mimes:jpeg,png,jpg|max:2048';
+                }
+                $validator = Validator::make($request->all(), $validation_array);
+                if (! $validator->fails()) {
+                    unset($update['_token']);
+                    unset($update['hotel_id']);
+                    unset($update['coupon']);
+                    unset($update['category_id']);
+                    if ($request->hasFile('image') ) {
+                        $imageName = time().'.'.$request->image->extension();
+                        $request->image->move(public_path('package'), $imageName);
+                        $update['image'] = $imageName;
+                    }else{
+                        unset($update['image']);
+                    }
+                    if($request->has('discount')) {
+                    $dis = $request->input('discount')*$request->input('amount')/100;
+                    $update['amount'] = $request->input('amount') - $dis ;
+                    $update['discount'] = $request->input('discount');
+                    }else{
+                    $update['amount'] = $request->input('amount');
+                    }
+                    $package_created = HolidayPackages::find($update['id'])->update($update);
+                    if ($package_created) {
+                        $affectedRows = PackageItem::where('package_id', $update['id'])->delete();
+                        foreach ($request->input('coupon') as $key => $value) {
+                            $inputitems['package_id'] = $update['id'];
+                            $inputitems['hotel_id'] = $request->input('hotel_id');
+                            $inputitems['coupon_id'] = $value;
+                            $record = couponDetails($value);
+                            $inputitems['category_id'] = $record->category_id;
+                            PackageItem::create($inputitems);
+                        }
+                    }
+                    $response['success'] = true;
+                    $response['message'] = 'Records Updated SuccessFully';
+                    $response['callBackFunction'] = 'updatedCallback';
+                } else {
+                    $response['success'] = false;
+                    $html = "<ol type='1'>";
+                    foreach ($validator->errors()->toarray() as $value) {
+                        $html .= '<li>'.$value['0'].'</li>';
+                    }
+                    $html .= '</ol>';
+                    $response['message'] = $html;
+                }
+
+                return response()->json($response);
+                exit;
+            }
+        } else {
+            $response['success'] = false;
+            $response['message'] = "You don't have permission";
+        }
+
+        return response()->json($response);
+        exit;
+    }
+
+    public function change_status(Request $request, $id, $status)
+    {
+        $check = $this->check($request, 'ai-single-package', 'ajax');
+        if ($check) {
+            $update['status'] = $status;
+            $user = HolidayPackages::find($id)->update($update);
+            $response['success'] = true;
+            $response['message'] = 'Status Changed SuccessFully';
+        } else {
+            $response['success'] = false;
+            $response['message'] = "You don't have permission";
+        }
+
+        return response()->json($response);
+        exit;
+    }
+
+    public function destroy(Request $request, $id)
+    {
+        $check = $this->check($request, 'delete-single-package', 'ajax');
+        if ($check) {
+            $affectedRows = HolidayPackages::find($id)->delete();
+            if ($affectedRows) {
+                $response['success'] = true;
+            } else {
+                $response['success'] = false;
+            }
+        } else {
+            $response['success'] = false;
+            $response['message'] = "You don't have permission";
+        }
+
+        return response()->json($response);
+        exit;
+    }
+
+   public function details($ids, Request $request)
+{
+    try {
+        // Initialize HTTP client
+        $client = new \GuzzleHttp\Client();
+
+        // Make API request
+        $response = $client->get(env('HOLIDAY_API_URL') . '/' . $ids, [
+            'headers' => [
+                'Authorization' => 'Bearer ' . env('HOLIDAY_API_TOKEN'),
+                'Accept' => 'application/json',
+            ],
+        ]);
+
+        // Decode API response
+        $apiData = json_decode($response->getBody(), true);
+
+        // Extract package data
+        $package = (object) $apiData['data'];
+
+        // Ensure relations (coupons, hotel) are included
+        $package->coupons = isset($apiData['data']['coupons']) ? collect($apiData['data']['coupons'])->map(function ($coupon) {
+            return (object) $coupon;
+        }) : [];
+        $package->hotel = isset($apiData['data']['hotel']) ? (object) $apiData['data']['hotel'] : null;
+
+        return view('user.holiday_package_details', compact('package'));
+    } catch (\Exception $e) {
+        \Log::error('API Error: ' . $e->getMessage());
+        return redirect()->route('holiday.packages')->with('error', 'Unable to load package details.');
+    }
+}
+
+    public function unlink($image)
+    {
+        unlink($_SERVER['DOCUMENT_ROOT'].'/'.$this->destination_image_path.$image);
+    }
+
+    public function clone(Request $request)
+    {
+        $check = $this->check($request, 'clone-single-package', 'ajax');
+        if ($check) {
+            if ($request->isMethod('post')) {
+                $validation_array = [
+                    'title' => 'required',
+                    'hotel_id' => 'required',
+                    'coupon' => 'required|array',
+                    'limit' => 'required',
+                    'term_conditions' => 'required',
+                    'description' => 'required',
+                ];
+                if($request->input('expire_type')=="Fixed") {
+                    $validation_array['valid_date'] = 'required';
+                     $input['valid_date'] = $request->input('valid_date');
+                }else{
+                    $validation_array['variable_month'] = 'required';
+                     $input['variable_month'] = $request->input('variable_month');
+                }
+                if ($request->hasFile('image') ) {
+                    $validation_array['image'] = 'required|image|mimes:jpeg,png,jpg|max:2048';
+                }
+                $validator = Validator::make($request->all(), $validation_array);
+                if (! $validator->fails()) {
+                    try {
+                        $input['title'] = $request->input('title');
+                        $input['limit'] = $request->input('limit');
+                        $input['term_conditions'] = $request->input('term_conditions');
+                        $input['description'] = $request->input('description');
+                    if($request->has('discount')) {
+                        $dis = $request->input('discount')*$request->input('amount')/100;
+                        $input['amount'] = $request->input('amount') - $dis ;
+                        $input['discount'] = $request->input('discount');
+                    }else{
+                         $input['amount'] = $request->input('amount');
+                    }
+                    if ($request->hasFile('image') ) {
+                        $imageName = time().'.'.$request->image->extension();
+                        $request->image->move(public_path('package'), $imageName);
+                        $input['image'] = $imageName;
+                    }
+                        $input['owner_id'] = Auth::user()->id;
+                        $package_created = HolidayPackages::create($input);
+                        if ($package_created) {
+                            foreach ($request->input('coupon') as $key => $value) {
+                                $inputitems['package_id'] = $package_created->id;
+                                $inputitems['hotel_id'] = $request->input('hotel_id');
+                                $inputitems['coupon_id'] = $value;
+                                $record = couponDetails($value);
+                                $inputitems['category_id'] = $record->category_id;
+                                PackageItem::create($inputitems);
+                            }
+                        }
+                        $response['success'] = true;
+                        $response['message'] = 'Recored Store SuccessFully';
+                        $response['resetForm'] = true;
+                        $response['callBackFunction'] = 'addCallBack';
+                    } catch (exception $e) {
+                        $response['success'] = false;
+                        $response['message'] = 'There is some error please try after some time';
+                    }
+                } else {
+                    $response['success'] = false;
+                    $html = "<ol type='1'>";
+                    foreach ($validator->errors()->toarray() as $value) {
+                        $html .= '<li>'.$value['0'].'</li>';
+                    }
+                    $html .= '</ol>';
+                    $response['message'] = $html;
+                }
+            }
+        } else {
+            $response['success'] = false;
+            $response['message'] = "You don't have permission";
+        }
+
+        return response()->json($response);
+        exit;
+    }
+
+    public function get_record_by_id_clone(Request $request, $id)
+    {
+        $check = $this->check($request, 'clone-single-package', 'ajax');
+        if ($check) {
+            $check = $this->check($request, 'clone-single-package', 'ajax');
+            if ($check) {
+                $record = HolidayPackages::where(['id' => $id])->first();
+                $items = PackageItem::where(['package_id' => $id])->get();
+                if (! empty($record)) {
+                    $response['success'] = true;
+                    $response['data'] = $record->toarray();
+                    $response['items'] = $items->toarray();
+                } else {
+                    $response['success'] = false;
+                }
+            } else {
+                $response['success'] = false;
+                $response['message'] = "You don't have permission";
+            }
+        }
+
+        return response()->json($response);
+        exit;
+    }
+
+    public function getCoupon($cate_id)
+    {
+        $couponRecord = Coupon::where('status', 'Active')->where('category_id', $cate_id)->get();
+        $html = '';
+        foreach ($couponRecord as $value) {
+            $html .= '<option value="'.$value->id.'">'.$value->title.'</option>';
+        }
+        $response['success'] = true;
+        $response['html'] = $html;
+
+        return response()->json($response);
+    }
+
+    public function combine($id)
+    {
+        $packageItems = PackageItem::where('package_id', $id)->get();
+    
+        $coupons = $packageItems->map(function ($item) {
+            return Coupon::find($item->coupon_id);
+        })->filter();
+        $coupons->package_id = $id;
+        return view('holidaypackages.combine', ["coupons" => $coupons]);
+    }
+
+    public function store_combinations(Request $request)
+    {
+        foreach ($request->input('coupons') as $couponData) {
+            $couponId = $couponData['coupon_id'];
+            $packageId = $couponData['package_id'];
+            $cannotCombineIds = $couponData['cannot_combine_ids'] ?? [];
+    
+            foreach ($cannotCombineIds as $cannotCombineId) {
+                Coupon_Combinations::updateOrCreate(
+                    [
+                        'coupon_id' => $couponId,
+                        'package_id' => $packageId,
+                        'cannot_combine_id' => $cannotCombineId,
+                    ],
+                    []
+                );
+            }
+        }
+    
+        return redirect()->back()->with('success', 'Coupon combinations saved successfully.');
+    }
+}

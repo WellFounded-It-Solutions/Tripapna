@@ -11,6 +11,7 @@ $multiplePakcage = '';
 $holidayPakcage = '';
 $orderUrl = '';
 $fakeurl = '';
+$walletUrl = '';
 $permissionUrl = url('/administrator') . '/permission';
 if (auth()->check() && auth()->user()->hasRole('admin')) {
     $hotelUrl = url('/administrator') . '/hotels';
@@ -26,6 +27,7 @@ if (auth()->check() && auth()->user()->hasRole('admin')) {
     $orderUrl = url('/administrator') . '/orders';
     $fakeurl =  url('/administrator') . '/fakeorder';
     $combineUrl = url('/administrator') . '/combine';
+    $walletUrl = url("/administrator").'/walletManagement';  
 } else if (auth()->check() && auth()->user()->hasRole('subadmin')) {
     $hotelUrl = url('/subadmin') . '/hotels';
     $dashboardUrl = url('/subadmin') . '/dashboard';
@@ -252,7 +254,7 @@ if (auth()->check() && auth()->user()->hasRole('admin')) {
                 @endif
                 @if(auth()->user()->hasRole('admin'))
                 <li class="nav-item">
-                    <a href="<?php echo $orderUrl ?>" class="nav-link {{ Route::is(Auth::user()->roles['0']->params.'_wallet') ? 'active' : '' }}">
+                    <a href="<?php echo $walletUrl ?>" class="nav-link {{ Route::is(Auth::user()->roles['0']->params.'_wallet') ? 'active' : '' }}">
                         <i class="fas fa-wallet nav-icon"></i>
                         <p>
                             Wallet Management

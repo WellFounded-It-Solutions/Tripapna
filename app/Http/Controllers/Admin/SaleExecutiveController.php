@@ -91,8 +91,96 @@ public function create_offer(){
         return view('admin.sales_executives.track_sales',compact('invites'));
 }
 
-    public function payment(){
-        return view('admin.sales_executives.pay_sales');
+  public function payment(Request $request)
+    {
+        // Get the logged-in manager
+        $manager = Auth::user();
+
+        // Base query with join
+        $query = DB::table('users')
+            ->leftJoin('user_wallets', 'users.id', '=', 'user_wallets.user_id')
+            ->where('users.maneger_id', $manager->id)
+            ->select(
+                'users.id',
+                'users.name',
+                'users.email',
+                'user_wallets.wallet_amount',
+                'user_wallets.updated_at'
+            )
+            ->orderBy('user_wallets.updated_at', 'desc');
+
+        // Apply search filter if provided
+        if ($request->has('search') && $request->search != '') {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('users.name', 'like', "%{$search}%")
+                  ->orWhere('users.email', 'like', "%{$search}%");
+            });
+        }
+
+        // Paginate results
+        $salesExecutives = $query->paginate(10);
+
+        return view('admin.sales_executives.pay_sales', compact('salesExecutives'));
+    }
+
+    /**
+     * Process wallet payment for a sales executive.
+     */
+    public function pay(Request $request, $id)
+    {
+        DB::beginTransaction();
+        try {
+            // Verify the sales executive is under the manager
+            $manager = Auth::user();
+            $salesExecutive = DB::table('users')
+                ->where('maneger_id', $manager->id)
+                ->where('id', $id)
+                ->select('id', 'name')
+                ->first();
+
+            if (!$salesExecutive) {
+                return redirect()->back()->with('error', 'Sales executive not found or not under your management.');
+            }
+
+            // Fetch the wallet
+            $wallet = DB::table('user_wallets')
+                ->where('user_id', $salesExecutive->id)
+                ->first();
+
+            if (!$wallet) {
+                return redirect()->back()->with('error', 'Wallet not found for this sales executive.');
+            }
+
+            // Check if wallet has sufficient balance
+            if ($wallet->wallet_amount <= 0) {
+                return redirect()->back()->with('error', 'Insufficient wallet balance.');
+            }
+
+            // Deduct the entire wallet amount
+            $deductedAmount = $wallet->wallet_amount;
+            DB::table('user_wallets')
+                ->where('user_id', $salesExecutive->id)
+                ->update([
+                    'wallet_amount' => 0,
+                    'updated_at' => now(),
+                ]);
+
+            // Log the transaction (assuming a transactions table exists)
+            // You may need to adjust this based on your actual transaction table
+            // DB::table('transactions')->insert([
+            //     'wallet_id' => $wallet->id,
+            //     'amount' => $deductedAmount,
+            //     'type' => 'deduction',
+            //     'created_at' => now(),
+            // ]);
+
+            DB::commit();
+            return redirect()->back()->with('success', "Successfully deducted {$deductedAmount} from {$salesExecutive->name}'s wallet.");
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->back()->with('error', 'Failed to process payment: ' . $e->getMessage());
+        }
     }
 
     public function store(Request $request)

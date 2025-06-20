@@ -12,6 +12,9 @@ use App\Models\Package;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Validator;
+use App\Models\HolidayPackages;
+use function PHPUnit\Framework\returnArgument;
+
 
 class UserController extends Controller
 {
@@ -400,9 +403,11 @@ class UserController extends Controller
 
         return response()->json($response, 200);
     }
-    public function holiday(){
-        return view('user.holiday');
-    }
+  public function holiday()
+{
+    $holidayPackages = HolidayPackages::where('status', 'Active')->get();
+    return view('user.holiday', compact('holidayPackages'));
+}
     public function submitRequest(Request $request)
 {
     $validated = $request->validate([
@@ -413,7 +418,6 @@ class UserController extends Controller
         'travel_date' => 'required|date',
         'duration' => 'required|integer|min:1',
         'travelers' => 'required|integer|min:1',
-        'budget' => 'required|numeric|min:0',
         'preferences' => 'nullable|string',
     ]);
 
@@ -423,5 +427,25 @@ class UserController extends Controller
 
     return redirect()->back()->with('success', 'Your holiday request has been submitted successfully!');
 }
+ public function holiday_customize(){
+    return view('user.customize_holiday');
+ }
+
+
+    public function get_record_by_id(Request $request, $id)
+    {
+      
+            $record = HolidayPackages::where(['id' => $id])->first();
+            if (! empty($record)) {
+                $response['success'] = true;
+                $response['data'] = $record->toarray();
+            } else {
+                $response['success'] = false;
+            }
+     
+
+        return view("user.holiday_package_details",compact('response'));
+        
+    }
 
 }

@@ -1,4 +1,6 @@
-@extends('layouts.admin_design') @section('title','Fake Orders') @section('content')
+@extends('layouts.admin_design')
+@section('title', 'Fake Orders')
+@section('content')
 <div class="content-wrapper">
     <section class="content-header">
         <div class="container-fluid">
@@ -12,68 +14,65 @@
     <section class="content">
         <div class="container-fluid">
             <div class="row">
-                <button type="button" class="btn btn-info" onclick="window.location.href='{{ route('fakeorder_new') }}'">Create Fake Orders</button>
+                <button type="button" class="btn btn-info mb-3" onclick="window.location.href='{{ route('fakeorder_new') }}'">Create Fake Orders</button>
                 <div class="col-12">
                     <div class="callout callout-info">
                         <div class="row">
                             <div class="col-4">
-                                <input type="text" class="form-control" placeholder="Search by title" id="title">
-                            </div>
-                            <div class="col-1">
-
-                            </div>
-                            <div class="col-1">
+                                <input type="text" class="form-control" placeholder="Search by order code, user, or trans ID" id="title">
                             </div>
                             <div class="col-3">
                                 <button type="button" class="btn btn-info" onclick="getList()">Search</button>
                             </div>
-                         
-                            
                         </div>
                     </div>
                     <div class="card">
                         <div class="card-header">
-                            <h3 class="card-title">Users</h3>
+                            <h3 class="card-title">Fake Orders</h3>
                         </div>
                         <div class="card-body table-responsive p-0" style="height: 600px;">
                             <table class="table table-head-fixed text-nowrap">
                                 <thead>
                                     <tr>
-                                        <th>Order id</th>
+                                        <th>Order Code</th>
                                         <th>User</th>
                                         <th>Amount</th>
-                                        <th>Transaction id</th>
+                                        <th>Transaction ID</th>
                                         <th>Created</th>
                                         <th>Action</th>
                                     </tr>
                                 </thead>
                                 <tbody class="customtable">
-
+                                    <!-- Populated via AJAX -->
                                 </tbody>
                             </table>
                         </div>
-                        <div class="pagnation"></div>
+                        <div class="card-footer pagnation">
+                            <!-- Populated via AJAX -->
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </section>
 </div>
-<div class="modal fade " id="viewFromPopup" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true ">
-    <div class="modal-dialog modal-lg" role="document ">
+<div class="modal fade" id="viewFromPopup" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Details</h5>
+                <h5 class="modal-title" id="exampleModalLabel">Order Details</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true ">&times;</span>
-            </button>
+                    <span aria-hidden="true">×</span>
+                </button>
             </div>
             <div class="modal-body htmlcontent">
-
+                <!-- Populated via AJAX -->
             </div>
         </div>
     </div>
 </div>
+@endsection
+@push('scripts')
 <script type="text/javascript">
     $(document).ready(function() {
         getList();
@@ -85,10 +84,9 @@
     });
 
     function getList() {
-        var name = $('#title').val();
-        var end = $('#hidden_end_date').val();
+        var title = $('#title').val();
         $.ajax({
-            url: baseUrl + "orderlist?title=" + name,
+            url: "{{ url('orderlist') }}?title=" + title,
             type: 'get',
             dataType: 'json',
             beforeSend: function() {
@@ -98,8 +96,8 @@
                 $('.lodding').css('display', 'none');
             },
             success: function(json) {
-                $('.customtable').html(json.html)
-                $('.pagnation').html(json.pagination)
+                $('.customtable').html(json.html);
+                $('.pagnation').html(json.pagination);
             },
             error: function(xhr, ajaxOptions, thrownError) {
                 console.log(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
@@ -110,7 +108,7 @@
     function fetch_date(page) {
         var title = $('#title').val();
         $.ajax({
-            url: baseUrl + "orderlist?title=" + title + '&page=' + page,
+            url: "{{ url('orderlist') }}?title=" + title + '&page=' + page,
             type: 'get',
             dataType: 'json',
             beforeSend: function() {
@@ -120,8 +118,8 @@
                 $('.lodding').css('display', 'none');
             },
             success: function(json) {
-                $('.customtable').html(json.html)
-                $('.pagnation').html(json.pagination)
+                $('.customtable').html(json.html);
+                $('.pagnation').html(json.pagination);
             },
             error: function(xhr, ajaxOptions, thrownError) {
                 console.log(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
@@ -129,10 +127,9 @@
         });
     }
 
-
     function viewRecord(id) {
         $.ajax({
-            url: baseUrl + "order/details/" + id,
+            url: "{{ url('order/details') }}/" + id,
             type: 'get',
             dataType: 'json',
             beforeSend: function() {},
@@ -142,11 +139,7 @@
                     $('#viewFromPopup').modal('show');
                     $('.htmlcontent').html(json.html);
                 } else {
-                    Swal.fire(
-                        'Warning!',
-                        json.message,
-                        'error'
-                    )
+                    Swal.fire('Warning!', json.message, 'error');
                 }
             },
             error: function(xhr, ajaxOptions, thrownError) {
@@ -154,8 +147,9 @@
             }
         });
     }
+
     $(document).ajaxComplete(function() {
         $("[data-toggle='tooltip']").tooltip();
     });
 </script>
-@endsection
+@endpush
