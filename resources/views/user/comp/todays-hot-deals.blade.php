@@ -1,7 +1,7 @@
 <div class="container">
-    <div class="row">
+    <div class="row py-4 ">
         <div class="col-lg-9 col-md-12">
-            <div class="section-title text-start">
+            <div class="section-title text-start ">
                 <h2>Today´s Hottest Discount Coupons</h2>
                 <p>Buy the best hotel coupons at the best price</p>
             </div>

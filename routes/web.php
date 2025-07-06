@@ -11,6 +11,7 @@ use App\Http\Controllers\Admin\PermissionController;
 use App\Http\Controllers\Admin\singlePackageController;
 use App\Http\Controllers\Admin\UsersController;
 use App\Http\Controllers\Admin\WalletManagementController;
+use App\Http\Controllers\GenericController;
 use App\Http\Controllers\Hotel\HotelPanelController;
 use App\Http\Controllers\Hotel\HotelPanelCouponController;
 use App\Http\Controllers\Hotel\HotelPanelDashboardController;
@@ -26,7 +27,7 @@ use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\Admin\FakeController;
 use App\Http\Controllers\Admin\HolidayPackageController;
 use App\Http\Controllers\Admin\HolidayPackagesController;
-
+use App\Http\Controllers\Admin\PromoCodeController;
 
 
 use App\Http\Controllers\User\CartController;
@@ -121,7 +122,7 @@ Route::group(['middleware' => 'role:admin'], function () {
     Route::get('/administrator/single-package/clone/{id}', [singlePackageController::class, 'get_record_by_id_clone'])->name('administrator_single_package_clone_id');
     Route::get('/administrator/single-package/getCoupon/{id}', [singlePackageController::class, 'getCoupon'])->name('administrator_single_package_getCoupon');
     Route::get('administrator/single-package/combine/{id}', [singlePackageController::class, 'combine'])->name('administrator_single_package_combine');
-    Route::post('administrator/single-package/combinations',[singlePackageController::class,'store_combinations'])->name('coupon-combinations');
+    Route::post('administrator/single-package/combinations', [singlePackageController::class, 'store_combinations'])->name('coupon-combinations');
 
     Route::get('/administrator/multiple-package', [multiplePackageController::class, 'index'])->name('administrator_multiple_package');
     Route::get('/administrator/multiple-package/new', [multiplePackageController::class, 'new'])->name('administrator_multiple_package_new');
@@ -138,21 +139,21 @@ Route::group(['middleware' => 'role:admin'], function () {
     Route::get('administrator/multiple-package/combine/{id}', [multiplePackageController::class, 'combine'])->name('administrator_single_package_combine');
 
     Route::get('/administrator/holidaypackage', [HolidayPackageController::class, 'index'])->name('administrator_holiday_package');
-  
-Route::get('/administrator/holiday-package', [HolidayPackagesController::class, 'index'])->name('administrator_holiday_package');
-Route::get('/administrator/holiday-packagelist/new', [HolidayPackagesController::class, 'new'])->name('administrator_holiday_package_new');
-Route::get('/administrator/holiday-packagelist', [HolidayPackagesController::class, 'get_list'])->name('administrator_holiday_package_list');
-Route::get('/administrator/holiday-package/get_record_by_id/{id}', [HolidayPackagesController::class, 'get_record_by_id'])->name('administrator_holiday_package_get_record_by_id');
-Route::get('/administrator/holiday-package/change_status/{id}/{status}', [HolidayPackagesController::class, 'change_status'])->name('administrator_holiday_package_change_status');
-Route::post('/administrator/holiday-package/store', [HolidayPackagesController::class, 'store'])->name('administrator_holiday_package_store');
-Route::post('/administrator/holiday-package/update', [HolidayPackagesController::class, 'update'])->name('administrator_holiday_package_update');
-Route::get('/administrator/holiday-package/delete/{ids}', [HolidayPackagesController::class, 'destroy'])->name('administrator_holiday_package_delete');
-Route::get('/administrator/holiday-package/details/{ids}', [HolidayPackagesController::class, 'details'])->name('administrator_holiday_package_details');
-Route::post('/administrator/holiday-package/clone', [HolidayPackagesController::class, 'clone'])->name('administrator_holiday_package_clone');
-Route::get('/administrator/holiday-package/clone/{id}', [HolidayPackagesController::class, 'get_record_by_id_clone'])->name('administrator_holiday_package_clone_id');
-Route::get('/administrator/holiday-package/getCoupon/{id}', [HolidayPackagesController::class, 'getCoupon'])->name('administrator_holiday_package_getCoupon');
-Route::get('administrator/holiday-package/combine/{id}', [HolidayPackagesController::class, 'combine'])->name('administrator_holiday_package_combine');
-Route::post('administrator/holiday-package/combinations', [HolidayPackagesController::class, 'store_combinations'])->name('holiday_coupon_combinations');
+
+    Route::get('/administrator/holiday-package', [HolidayPackagesController::class, 'index'])->name('administrator_holiday_package');
+    Route::get('/administrator/holiday-packagelist/new', [HolidayPackagesController::class, 'new'])->name('administrator_holiday_package_new');
+    Route::get('/administrator/holiday-packagelist', [HolidayPackagesController::class, 'get_list'])->name('administrator_holiday_package_list');
+    Route::get('/administrator/holiday-package/get_record_by_id/{id}', [HolidayPackagesController::class, 'get_record_by_id'])->name('administrator_holiday_package_get_record_by_id');
+    Route::get('/administrator/holiday-package/change_status/{id}/{status}', [HolidayPackagesController::class, 'change_status'])->name('administrator_holiday_package_change_status');
+    Route::post('/administrator/holiday-package/store', [HolidayPackagesController::class, 'store'])->name('administrator_holiday_package_store');
+    Route::post('/administrator/holiday-package/update', [HolidayPackagesController::class, 'update'])->name('administrator_holiday_package_update');
+    Route::get('/administrator/holiday-package/delete/{ids}', [HolidayPackagesController::class, 'destroy'])->name('administrator_holiday_package_delete');
+    Route::get('/administrator/holiday-package/details/{ids}', [HolidayPackagesController::class, 'details'])->name('administrator_holiday_package_details');
+    Route::post('/administrator/holiday-package/clone', [HolidayPackagesController::class, 'clone'])->name('administrator_holiday_package_clone');
+    Route::get('/administrator/holiday-package/clone/{id}', [HolidayPackagesController::class, 'get_record_by_id_clone'])->name('administrator_holiday_package_clone_id');
+    Route::get('/administrator/holiday-package/getCoupon/{id}', [HolidayPackagesController::class, 'getCoupon'])->name('administrator_holiday_package_getCoupon');
+    Route::get('administrator/holiday-package/combine/{id}', [HolidayPackagesController::class, 'combine'])->name('administrator_holiday_package_combine');
+    Route::post('administrator/holiday-package/combinations', [HolidayPackagesController::class, 'store_combinations'])->name('holiday_coupon_combinations');
 
     Route::get('/administrator/orders', [OrderController::class, 'index'])->name('administrator_order');
     Route::get('/administrator/orderlist', [OrderController::class, 'get_list'])->name('administrator_order_list');
@@ -161,11 +162,16 @@ Route::post('administrator/holiday-package/combinations', [HolidayPackagesContro
     Route::get('/administrator/fakeorder', [FakeController::class, 'index'])->name('administrator_fakeorder');
     Route::get('/administrator/fakeorderlist', [FakeController::class, 'orderList'])->name('orderlist');
     Route::get('/administrator/fakeorder/details/{id}', [FakeController::class, 'orderDetails'])->name('order.details');
-Route::get('/administrator/fakeorder/new', [FakeController::class, 'create'])->name('fakeorder_new');
-Route::post('/administrator/fakeorder/store', [FakeController::class, 'store'])->name('fakeorder_store');
+    Route::get('/administrator/fakeorder/new', [FakeController::class, 'create'])->name('fakeorder_new');
+    Route::post('/administrator/fakeorder/store', [FakeController::class, 'store'])->name('fakeorder_store');
 
- Route::get('/administrator/walletManagement', [WalletManagementController::class, 'index'])->name('administrator_wallet');
-   Route::get('/administrator/wallet/pay/{id}', [WalletManagementController::class, 'pay'])->name('administrator_wallet_pay');
+    Route::get('/administrator/walletManagement', [WalletManagementController::class, 'index'])->name('administrator_wallet');
+    Route::get('/administrator/wallet/pay/{id}', [WalletManagementController::class, 'pay'])->name('administrator_wallet_pay');
+
+    Route::get('/administrator/promocode', [PromoCodeController::class, 'index'])->name('promocode_list');
+    Route::get('/administrator/promocode/new', [PromoCodeController::class, 'create'])->name('promocode_new');
+    Route::post('/administrator/promocode/store', [PromoCodeController::class, 'store'])->name('promocode_store');
+    Route::delete('/administrator/promocode/delete/{id}', [PromoCodeController::class, 'destroy'])->name('promocode_delete');
 
 });
 
@@ -318,12 +324,12 @@ Route::group(['middleware' => 'role:manager'], function () {
     Route::get('/manager/order/details/{id}', [OrderController::class, 'details'])->name('manager_order_details');
     // Amrita
     Route::resource('sales_executives', SaleExecutiveController::class);
-    
+
     Route::get('/assignHotel', [SaleExecutiveController::class, 'assignHotel'])->name('assignHotel')->middleware('role:manager');
-    Route::get('/manager/track-sales', [SaleExecutiveController::class,'track_sales'])->name('sales_executive_show');
-    Route::get('/mangaer/offer-sales-boy', [SaleExecutiveController::class,'create_offer'])->name('sales_executive_offers');
-    Route::get('/mangaer/sales-boy-payment', [SaleExecutiveController::class,'payment'])->name('sales_executive_payment');
-Route::get('/manager/sales-boy-payment/pay/{id}', [SaleExecutiveController::class, 'pay'])->name('sales_executive.pay');
+    Route::get('/manager/track-sales', [SaleExecutiveController::class, 'track_sales'])->name('sales_executive_show');
+    Route::get('/mangaer/offer-sales-boy', [SaleExecutiveController::class, 'create_offer'])->name('sales_executive_offers');
+    Route::get('/mangaer/sales-boy-payment', [SaleExecutiveController::class, 'payment'])->name('sales_executive_payment');
+    Route::get('/manager/sales-boy-payment/pay/{id}', [SaleExecutiveController::class, 'pay'])->name('sales_executive.pay');
 
 
     Route::resource('sales_boy_offers', SalesBoyOfferController::class);
@@ -393,7 +399,8 @@ Route::group(['middleware' => 'role:agent'], function () {
     Route::get('/agent/multiple-package/getCoupon/{id}', [multiplePackageController::class, 'getCoupon'])->name('agent_multiple_package_getCoupon');
 
     Route::get('/agent/orders', [OrderController::class, 'index'])->name('agent_order');
-    Route::get('/agent/orderlist', [OrderController::class, 'get_list'])->name('agent_order_list');    Route::get('/agent/order/details/{id}', [OrderController::class, 'details'])->name('agent_order_details');
+    Route::get('/agent/orderlist', [OrderController::class, 'get_list'])->name('agent_order_list');
+    Route::get('/agent/order/details/{id}', [OrderController::class, 'details'])->name('agent_order_details');
 
 
 });
@@ -449,9 +456,9 @@ Route::group(['middleware' => 'auth:hotel'], function () {
 // USER ROUTES
 Route::get("/", [UserController::class, 'index'])->name('home');
 Route::get("/all-stores", [UserController::class, 'allStores'])->name('allStores');
-Route::get("/holiday", [UserController::class,"holiday"])->name("holiday");
-Route::get("/holiday/customize", [UserController::class,"holiday_customize"])->name("holidayCustomize");
-Route::get("/holiday-package-details/{id}", [UserController::class,"get_record_by_id"])->name("holidayDetail");
+Route::get("/holiday", [UserController::class, "holiday"])->name("holiday");
+Route::get("/holiday/customize", [UserController::class, "holiday_customize"])->name("holidayCustomize");
+Route::get("/holiday-package-details/{id}", [UserController::class, "get_record_by_id"])->name("holidayDetail");
 
 Route::post('/requestform', [UserController::class, 'submitRequest'])->name('holiday.request.submit');
 
@@ -464,7 +471,7 @@ Route::group(['middleware' => 'auth:customer'], function () {
     Route::post('addtocart', [CartController::class, 'addtocart'])->name('addtocart');
     Route::get('/removeCart/{id}', [CartController::class, 'removeCart'])->name('removeCart');
     Route::post('/updateCart', [CartController::class, 'updateCart'])->name('updateCart');
-
+    Route::post('/applyCoupon', [CartController::class, 'applyCoupon'])->name('applyCoupon');   
     Route::get("/dashboard", [AuthController::class, 'me'])->name('dashboard');
     Route::get("/profile", [AuthController::class, 'update_profile'])->name('update_profile');
     Route::post("/update-profile", [AuthController::class, 'update_profile_post'])->name('customer.profile.update');
@@ -486,7 +493,7 @@ Route::post("/login", [AuthController::class, 'login_post'])->name('custmor_logi
 Route::get("/register", [AuthController::class, 'register'])->name('custmor_register');
 Route::post("/register", [AuthController::class, 'register_post'])->name('custmor_register_post');
 
-
+Route::get("/coming-soon", [GenericController::class, 'comming_soon'])->name('comming_soon');
 // /////////////////////
 // Route::post('refresh', 'AuthController@refresh');
 // Route::get('user-profile', 'AuthController@me');

@@ -249,7 +249,7 @@
                     <ul class="users-list clearfix">
                     @foreach ($latest_hotel as $v )
                       <li>
-                        <img src="<?php echo url('/')  ?>/logo/{{ $v->logo }}" alt="User Image" style="height:128px">
+                        <img src="<?php echo url('/')  ?>/{{ $v->logo }}" alt="User Image" style="height:128px">
                         <a class="users-list-name" href="javascript:">{{ ucfirst($v->name) }}</a>
                         <span class="users-list-date">{{ ucfirst($v->location) }}</span>
                       </li>

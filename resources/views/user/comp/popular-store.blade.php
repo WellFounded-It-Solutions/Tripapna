@@ -305,11 +305,9 @@
 </style>
 
 
-<div class="container mt-4">
-    <div class="popular-store-inner">
-        <div class="row">
-
-
+<div class="container my-5">
+    <div class="popular-store-inner  ">
+        <div class="row ">
             <div class="col-lg-4 col-md-6 col-sm-12">
                 <div class="popular-store-content" style="background-image: url('{{asset('user/img/TripApna/hotel.jpg')}}')">
                     <div class="content">

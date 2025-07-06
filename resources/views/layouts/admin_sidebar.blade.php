@@ -12,6 +12,7 @@ $holidayPakcage = '';
 $orderUrl = '';
 $fakeurl = '';
 $walletUrl = '';
+$promocodeurl = '';
 $permissionUrl = url('/administrator') . '/permission';
 if (auth()->check() && auth()->user()->hasRole('admin')) {
     $hotelUrl = url('/administrator') . '/hotels';
@@ -28,6 +29,7 @@ if (auth()->check() && auth()->user()->hasRole('admin')) {
     $fakeurl =  url('/administrator') . '/fakeorder';
     $combineUrl = url('/administrator') . '/combine';
     $walletUrl = url("/administrator").'/walletManagement';  
+    $promocodeurl = url("/administrator").'/promocode';
 } else if (auth()->check() && auth()->user()->hasRole('subadmin')) {
     $hotelUrl = url('/subadmin') . '/hotels';
     $dashboardUrl = url('/subadmin') . '/dashboard';
@@ -278,6 +280,16 @@ if (auth()->check() && auth()->user()->hasRole('admin')) {
                         <i class="fas fa-ban nav-icon"></i>
                         <p>
                             Fake Orders
+                        </p>
+                    </a>
+                </li>
+                @endif
+                      @if(auth()->user()->hasRole('admin'))
+                <li class="nav-item">
+                    <a href="<?php echo $promocodeurl ?>" class="nav-link {{ Route::is(Auth::user()->roles['0']->params.'_promocode') ? 'active' : '' }}">
+                            <i class="fa fa-percent px-2" ></i>         
+               <p>
+                            Promo Codes 
                         </p>
                     </a>
                 </li>

@@ -320,9 +320,8 @@
         <div class="container">
             <div class="row align-items-center">
                 <div class="col-lg-6 col-md-6 col-sm-6">
-                    <p>Copyright @{{ marxaYear }} <strong>Tripapna</strong> is Proudly Powered by Tripapna</p>
-                </div>
-
+                    <p>Copyright {{ date('Y') }} <strong>Tripapna</strong> is Proudly Powered by Tripapna</p> 
+               </div>
                 <div class="col-lg-6 col-md-6 col-sm-6">
                     <ul>
                         <li><a routerLink="/customer-service">Privacy Policy</a></li>
