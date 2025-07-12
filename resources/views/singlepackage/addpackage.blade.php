@@ -9,9 +9,9 @@
             <h4 class="mb-0">Add New Package</h4>
         </div>
         <div class="card-body">
+            <form class="form-horizontal ajax_form" Uppercase
             <form class="form-horizontal ajax_form" action="{{ route(Auth::user()->roles[0]->params.'_single_package_store') }}" method="post" id="user">
                 {{ csrf_field() }}
-                
                 <div class="row">
                     <div class="col-md-6">
                         <div class="form-group">
@@ -31,7 +31,6 @@
                         </div>
                     </div>
                 </div>
-                
                 <div class="row">
                     <div class="col-md-6">
                         <div class="form-group">
@@ -53,7 +52,6 @@
                         </div>
                     </div>
                 </div>
-
                 <div class="row">
                     <div class="col-md-6">
                         <div class="form-group">
@@ -68,7 +66,6 @@
                         </div>
                     </div>
                 </div>
-
                 <div class="row">
                     <div class="col-md-6">
                         <div class="form-group">
@@ -83,19 +80,31 @@
                         </div>
                     </div>
                 </div>
-
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Sales Commission</label>
+                            <input type="number" class="form-control" name="sales_commission" placeholder="Sales Commission">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Manager Commission</label>
+                            <input type="number" class="form-control" name="manager_commission" placeholder="Manager Commission">
+                        </div>
+                    </div>
+                </div>
                 <div class="row">
                     <div class="col-md-6">
                         <div class="form-group">
                             <label>Expire Type</label>
                             <div class="d-flex align-items-center">
-                                <input type="radio" name="expire_type" value="Fixed" checked onchange="checkDate(this)"> Date  
+                                <input type="radio" name="expire_type" value="Fixed" checked onchange="checkDate(this)"> Date
                                 <input type="radio" name="expire_type" value="variable" onchange="checkDate(this)"> Non-date
                             </div>
                         </div>
                     </div>
                 </div>
-
                 <div class="row expire_type">
                     <div class="col-md-6">
                         <div class="form-group">
@@ -104,7 +113,6 @@
                         </div>
                     </div>
                 </div>
-
                 <div class="row d-none variable_month">
                     <div class="col-md-6">
                         <div class="form-group">
@@ -119,22 +127,18 @@
                         </div>
                     </div>
                 </div>
-
                 <div class="form-group">
                     <label>Terms and Conditions</label>
                     <textarea rows="4" class="form-control summernote" name="term_conditions" placeholder="Terms and Conditions"></textarea>
                 </div>
-
                 <div class="form-group">
                     <label>Description</label>
                     <textarea rows="4" class="form-control summernote" name="description" placeholder="Description"></textarea>
                 </div>
-
                 <div class="form-group">
                     <label>Image</label>
                     <input type="file" class="form-control" name="image">
                 </div>
-
                 <div class="text-right">
                     <button type="submit" class="btn btn-info">Submit</button>
                 </div>
@@ -164,12 +168,12 @@
     }
 
     function updateCouponQuantities(select) {
-        var selectedCoupons = $(select).val(); 
+        var selectedCoupons = $(select).val();
         var quantityContainer = $("#couponQuantities");
         quantityContainer.html("");
         if (selectedCoupons.length > 0) {
-            selectedCoupons.forEach(function (couponId) {
-                var couponTitle = $(select).find("option[value='" + couponId + "']").text(); 
+            selectedCoupons.forEach(function(couponId) {
+                var couponTitle = $(select).find("option[value='" + couponId + "']").text();
                 var inputHtml = `
                     <div class="form-group mr-4">
                         <label>${couponTitle}</label>

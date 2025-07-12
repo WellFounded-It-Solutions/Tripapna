@@ -164,6 +164,8 @@ Route::group(['middleware' => 'role:admin'], function () {
     Route::get('/administrator/fakeorder/details/{id}', [FakeController::class, 'orderDetails'])->name('order.details');
     Route::get('/administrator/fakeorder/new', [FakeController::class, 'create'])->name('fakeorder_new');
     Route::post('/administrator/fakeorder/store', [FakeController::class, 'store'])->name('fakeorder_store');
+Route::get('/administrator/fakeorder/import', [App\Http\Controllers\Admin\FakeController::class, 'importForm'])->name('fakeorder_import_form');
+Route::post('/administrator/fakeorder/import', [App\Http\Controllers\Admin\FakeController::class, 'import'])->name('fakeorder_import');
 
     Route::get('/administrator/walletManagement', [WalletManagementController::class, 'index'])->name('administrator_wallet');
     Route::get('/administrator/wallet/pay/{id}', [WalletManagementController::class, 'pay'])->name('administrator_wallet_pay');

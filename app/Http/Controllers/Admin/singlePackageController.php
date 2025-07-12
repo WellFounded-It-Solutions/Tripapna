@@ -54,7 +54,6 @@ class singlePackageController extends Controller
         }
     }
 
-
     public function get_list(Request $request)
     {
         $check = $this->check($request, 'view-single-package', 'ajax');
@@ -114,13 +113,15 @@ class singlePackageController extends Controller
                     'expire_type' => 'required',
                     'amount' => 'required',
                     'image' => 'required|image|mimes:jpeg,png,jpg|max:2048',
+                    'sales_commission' => 'required|integer|min:0',
+                    'manager_commission' => 'required|integer|min:0',
                 ];
                 if($request->input('expire_type')=="Fixed") {
                     $validation_array['valid_date'] = 'required';
-                     $input['valid_date'] = $request->input('valid_date');
-                }else{
+                    $input['valid_date'] = $request->input('valid_date');
+                } else {
                     $validation_array['variable_month'] = 'required';
-                     $input['variable_month'] = $request->input('variable_month');
+                    $input['variable_month'] = $request->input('variable_month');
                 }
                 $validator = Validator::make($request->all(), $validation_array);
                 if (! $validator->fails()) {
@@ -129,12 +130,14 @@ class singlePackageController extends Controller
                         $input['limit'] = $request->input('limit');
                         $input['term_conditions'] = $request->input('term_conditions');
                         $input['description'] = $request->input('description');
+                        $input['sales_commission'] = $request->input('sales_commission');
+                        $input['manager_commission'] = $request->input('manager_commission');
                         if($request->has('discount')) {
                             $dis = $request->input('discount')*$request->input('amount')/100;
-                            $input['amount'] = $request->input('amount') - $dis ;
+                            $input['amount'] = $request->input('amount') - $dis;
                             $input['discount'] = $request->input('discount');
-                        }else{
-                        $input['amount'] = $request->input('amount');
+                        } else {
+                            $input['amount'] = $request->input('amount');
                         }
                         $input['owner_id'] = Auth::user()->id;
                         $imageName = time().'.'.$request->image->extension();
@@ -153,7 +156,7 @@ class singlePackageController extends Controller
                             }
                         }
                         $response['success'] = true;
-                        $response['message'] = 'Recored Store SuccessFully';
+                        $response['message'] = 'Record Stored Successfully';
                         $response['resetForm'] = true;
                         $response['callBackFunction'] = 'addCallBack';
                     } catch (exception $e) {
@@ -185,7 +188,6 @@ class singlePackageController extends Controller
         if ($check) {
             if ($request->isMethod('post')) {
                 $update = $request->all();
-                // pr($update); die;
                 $validation_array = [
                     'title' => 'required',
                     'hotel_id' => 'required',
@@ -193,16 +195,18 @@ class singlePackageController extends Controller
                     'limit' => 'required',
                     'term_conditions' => 'required',
                     'description' => 'required',
+                    'sales_commission' => 'required|integer|min:0',
+                    'manager_commission' => 'required|integer|min:0',
                 ];
                 if($request->input('expire_type')=="Fixed") {
                     $validation_array['valid_date'] = 'required';
-                     $update['valid_date'] = $request->input('valid_date');
-                }else{
+                    $update['valid_date'] = $request->input('valid_date');
+                } else {
                     $validation_array['variable_month'] = 'required';
-                     $update['variable_month'] = $request->input('variable_month');
+                    $update['variable_month'] = $request->input('variable_month');
                 }
-                if ($request->hasFile('image') ) {
-                     $validation_array['image'] = 'required|image|mimes:jpeg,png,jpg|max:2048';
+                if ($request->hasFile('image')) {
+                    $validation_array['image'] = 'required|image|mimes:jpeg,png,jpg|max:2048';
                 }
                 $validator = Validator::make($request->all(), $validation_array);
                 if (! $validator->fails()) {
@@ -210,19 +214,21 @@ class singlePackageController extends Controller
                     unset($update['hotel_id']);
                     unset($update['coupon']);
                     unset($update['category_id']);
-                    if ($request->hasFile('image') ) {
+                    $update['sales_commission'] = $request->input('sales_commission');
+                    $update['manager_commission'] = $request->input('manager_commission');
+                    if ($request->hasFile('image')) {
                         $imageName = time().'.'.$request->image->extension();
                         $request->image->move(public_path('package'), $imageName);
                         $update['image'] = $imageName;
-                    }else{
+                    } else {
                         unset($update['image']);
                     }
                     if($request->has('discount')) {
-                    $dis = $request->input('discount')*$request->input('amount')/100;
-                    $update['amount'] = $request->input('amount') - $dis ;
-                    $update['discount'] = $request->input('discount');
-                    }else{
-                    $update['amount'] = $request->input('amount');
+                        $dis = $request->input('discount')*$request->input('amount')/100;
+                        $update['amount'] = $request->input('amount') - $dis;
+                        $update['discount'] = $request->input('discount');
+                    } else {
+                        $update['amount'] = $request->input('amount');
                     }
                     $package_created = Package::find($update['id'])->update($update);
                     if ($package_created) {
@@ -237,7 +243,7 @@ class singlePackageController extends Controller
                         }
                     }
                     $response['success'] = true;
-                    $response['message'] = 'Records Updated SuccessFully';
+                    $response['message'] = 'Records Updated Successfully';
                     $response['callBackFunction'] = 'updatedCallback';
                 } else {
                     $response['success'] = false;
@@ -268,7 +274,7 @@ class singlePackageController extends Controller
             $update['status'] = $status;
             $user = Package::find($id)->update($update);
             $response['success'] = true;
-            $response['message'] = 'Status Changed SuccessFully';
+            $response['message'] = 'Status Changed Successfully';
         } else {
             $response['success'] = false;
             $response['message'] = "You don't have permission";
@@ -278,19 +284,12 @@ class singlePackageController extends Controller
         exit;
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function destroy(Request $request, $id)
     {
         $check = $this->check($request, 'delete-single-package', 'ajax');
         if ($check) {
             $affectedRows = Package::find($id)->delete();
             if ($affectedRows) {
-                //$this->unlink($record->image);
                 $response['success'] = true;
             } else {
                 $response['success'] = false;
@@ -341,15 +340,17 @@ class singlePackageController extends Controller
                     'limit' => 'required',
                     'term_conditions' => 'required',
                     'description' => 'required',
+                    'sales_commission' => 'required|integer|min:0',
+                    'manager_commission' => 'required|integer|min:0',
                 ];
                 if($request->input('expire_type')=="Fixed") {
                     $validation_array['valid_date'] = 'required';
-                     $input['valid_date'] = $request->input('valid_date');
-                }else{
+                    $input['valid_date'] = $request->input('valid_date');
+                } else {
                     $validation_array['variable_month'] = 'required';
-                     $input['variable_month'] = $request->input('variable_month');
+                    $input['variable_month'] = $request->input('variable_month');
                 }
-                if ($request->hasFile('image') ) {
+                if ($request->hasFile('image')) {
                     $validation_array['image'] = 'required|image|mimes:jpeg,png,jpg|max:2048';
                 }
                 $validator = Validator::make($request->all(), $validation_array);
@@ -359,18 +360,20 @@ class singlePackageController extends Controller
                         $input['limit'] = $request->input('limit');
                         $input['term_conditions'] = $request->input('term_conditions');
                         $input['description'] = $request->input('description');
-                    if($request->has('discount')) {
-                        $dis = $request->input('discount')*$request->input('amount')/100;
-                        $input['amount'] = $request->input('amount') - $dis ;
-                        $input['discount'] = $request->input('discount');
-                    }else{
-                         $input['amount'] = $request->input('amount');
-                    }
-                    if ($request->hasFile('image') ) {
-                        $imageName = time().'.'.$request->image->extension();
-                        $request->image->move(public_path('package'), $imageName);
-                        $input['image'] = $imageName;
-                    }
+                        $input['sales_commission'] = $request->input('sales_commission');
+                        $input['manager_commission'] = $request->input('manager_commission');
+                        if($request->has('discount')) {
+                            $dis = $request->input('discount')*$request->input('amount')/100;
+                            $input['amount'] = $request->input('amount') - $dis;
+                            $input['discount'] = $request->input('discount');
+                        } else {
+                            $input['amount'] = $request->input('amount');
+                        }
+                        if ($request->hasFile('image')) {
+                            $imageName = time().'.'.$request->image->extension();
+                            $request->image->move(public_path('package'), $imageName);
+                            $input['image'] = $imageName;
+                        }
                         $input['owner_id'] = Auth::user()->id;
                         $package_created = Package::create($input);
                         if ($package_created) {
@@ -384,7 +387,7 @@ class singlePackageController extends Controller
                             }
                         }
                         $response['success'] = true;
-                        $response['message'] = 'Recored Store SuccessFully';
+                        $response['message'] = 'Record Stored Successfully';
                         $response['resetForm'] = true;
                         $response['callBackFunction'] = 'addCallBack';
                     } catch (exception $e) {
@@ -450,12 +453,12 @@ class singlePackageController extends Controller
         $packageItems = PackageItem::where('package_id', $id)->get();
     
         $coupons = $packageItems->map(function ($item) {
-            // Assuming your PackageItem model has a 'coupon_id' field
             return Coupon::find($item->coupon_id);
-        })->filter(); // Use filter() to remove any null values if a coupon_id doesn't exist
+        })->filter();
         $coupons->package_id = $id;
         return view('singlepackage.combine', ["coupons" => $coupons]);
     }
+
     public function store_combinations(Request $request)
     {
         foreach ($request->input('coupons') as $couponData) {
@@ -477,5 +480,4 @@ class singlePackageController extends Controller
     
         return redirect()->back()->with('success', 'Coupon combinations saved successfully.');
     }
-    
 }

@@ -1,64 +1,75 @@
-
 <?php
 if (($records->count() > 0)) {
     foreach ($records as $key => $value) {
-		$id = $value->id;
+        $id = $value->id;
         if ($value->status == "Active") {
             $class = "success";
         } else if ($value->status == "Inactive") {
             $class = "danger";
         } else {
             $class = "primary";
-        }?>
+        }
+?>
         <?php 
             $newClass = 'danger';
             $label = "No";
-         ?>
+        ?>
 <tr>
-	<td><?php echo ucfirst($value->title) ?></td>
-	<td><?php echo ucfirst($value->limit) ?></td>
-	<td><?php echo ucfirst($value->amount) ?></td>
-	<td><?php echo ucfirst($value->valid_date) ?></td>
-
-	<td><div class="btn-group">
-		<button type="button" class="btn btn-<?php echo $class ?>"><?php echo ucfirst($value->status) ?></button>
-		<button type="button" class="btn btn-light dropdown-toggle dropdown-toggle-split border" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <span class="sr-only">Toggle Dropdown</span> </button>
-		<div class="dropdown-menu">
-			<a class="dropdown-item" href="javascript:" onClick="changeSatus(<?php echo $value->id ?>,'Active')">Active</a>
-			<a class="dropdown-item" href="javascript:" onClick="changeSatus(<?php echo $value->id ?>,'Inactive')">Inactive</a>
-		</div>
-	</div></td>	
-	<td><?php echo date("d-m-Y", strtotime($value->created_at)) ?></td>
- 	<td><ul class="list-unstyled d-flex mb-0">
-		<li>
-			<button type="button" class="btn btn-block btn-warning btn-sm" data-toggle="tooltip" data-placement="bottom" title="Clone" onClick="cloneRecord(<?php echo $value->id ?>)"><i class="fas fa-clone"></i></button>	
-		 </li>
-          &nbsp;
-		<li>
-			<button type="button" class="btn btn-block btn-info btn-sm" data-toggle="tooltip" data-placement="bottom" title="Details" onClick="viewRecord(<?php echo $value->id ?>)"><i class="fas fa-eye"></i></button>	
-		 </li>
-          &nbsp;
-		<li>
-			<button type="button" class="btn btn-block btn-primary btn-sm" data-toggle="tooltip" data-placement="bottom" title="Edit" onClick="editRecord(<?php echo $value->id ?>)"><i class="fas fa-pencil-alt"></i></button>	
-		 </li>
-		 &nbsp;
-		 <li>
-			<button type="button" class="btn btn-block btn-danger btn-sm" 
-				data-toggle="tooltip" data-placement="bottom" title="Combine" 
-				onclick="window.location.href='{{ route('administrator_single_package_combine', ['id' => $id]) }}'">
-				<i class="fas fa-plus"></i>
-			</button>
-		</li>
-		&nbsp;
-		<li>
-			<button type="button" class="btn btn-block btn-danger btn-sm" data-toggle="tooltip" data-placement="bottom" title="Delete" onClick="deleteRecord(<?php echo $value->id ?>)"><i class="far fa-trash-alt"></i></button>	
-		</li>
-	</ul></td>
+    <td><?php echo ucfirst($value->title) ?></td>
+    <td><?php echo ucfirst($value->limit) ?></td>
+    <td><?php echo ucfirst($value->amount) ?></td>
+    <td><?php echo ucfirst($value->valid_date) ?></td>
+    <td><?php echo ucfirst($value->sales_commission) ?></td>
+    <td><?php echo ucfirst($value->manager_commission) ?></td>
+    <td>
+        <div class="btn-group">
+            <button type="button" class="btn btn-<?php echo $class ?>"><?php echo ucfirst($value->status) ?></button>
+            <button type="button" class="btn btn-light dropdown-toggle dropdown-toggle-split border" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <span class="sr-only">Toggle Dropdown</span>
+            </button>
+            <div class="dropdown-menu">
+                <a class="dropdown-item" href="javascript:" onClick="changeSatus(<?php echo $value->id ?>,'Active')">Active</a>
+                <a class="dropdown-item" href="javascript:" onClick="changeSatus(<?php echo $value->id ?>,'Inactive')">Inactive</a>
+            </div>
+        </div>
+    </td>
+    <td><?php echo date("d-m-Y", strtotime($value->created_at)) ?></td>
+    <td>
+        <ul class="list-unstyled d-flex mb-0">
+            <li>
+                <button type="button" class="btn btn-block btn-warning btn-sm" data-toggle="tooltip" data-placement="bottom" title="Clone" onClick="cloneRecord(<?php echo $value->id ?>)">
+                    <i class="fas fa-clone"></i>
+                </button>
+            </li>
+            <li>
+                <button type="button" class="btn btn-block btn-info btn-sm" data-toggle="tooltip" data-placement="bottom" title="Details" onClick="viewRecord(<?php echo $value->id ?>)">
+                    <i class="fas fa-eye"></i>
+                </button>
+            </li>
+            <li>
+                <button type="button" class="btn btn-block btn-primary btn-sm" data-toggle="tooltip" data-placement="bottom" title="Edit" onClick="editRecord(<?php echo $value->id ?>)">
+                    <i class="fas fa-pencil-alt"></i>
+                </button>
+            </li>
+            <li>
+                <button type="button" class="btn btn-block btn-danger btn-sm" data-toggle="tooltip" data-placement="bottom" title="Combine" onclick="window.location.href='{{ route('administrator_single_package_combine', ['id' => $id]) }}'">
+                    <i class="fas fa-plus"></i>
+                </button>
+            </li>
+            <li>
+                <button type="button" class="btn btn-block btn-danger btn-sm" data-toggle="tooltip" data-placement="bottom" title="Delete" onClick="deleteRecord(<?php echo $value->id ?>)">
+                    <i class="far fa-trash-alt"></i>
+                </button>
+            </li>
+        </ul>
+    </td>
 </tr>
-<?php }} else {?>
+<?php }} else { ?>
 <tr>
-	<td colspan="10"><div class="alert alert-warning" role="alert" style="text-align: center;">
-		No Records Found !!
-	</div>
+    <td colspan="10">
+        <div class="alert alert-warning" role="alert" style="text-align: center;">
+            No Records Found !!
+        </div>
+    </td>
 </tr>
-<?php }?>
+<?php } ?>

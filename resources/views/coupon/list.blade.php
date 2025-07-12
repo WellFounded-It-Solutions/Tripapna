@@ -19,7 +19,7 @@ if (($records->count() > 0)) {
 	<td><?php echo ucfirst($value->title) ?></td>
 	<td><?php echo ucfirst($value->category->title) ?></td>
 	<td><?php echo ucfirst($value->description) ?></td>
-	<td><img src="{{ url('/').'/coupon/'.$value->image }}" height="200" width="200"/></td>
+	<td><img src="{{ url('/').$value->image }}" height="200" width="200"/></td>
 	<td><?php echo ucfirst($value->visit_type) ?></td>
 	<td><?php echo ucfirst($value->note) ?></td>
 

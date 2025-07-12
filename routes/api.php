@@ -41,7 +41,7 @@ Route::get('hotel_list', [HomeController::class, 'hotel_list']);
 Route::get('getPackage', [HomeController::class, 'packages']);
 Route::get('getCoupon', [HomeController::class, 'getCoupon']);
 
-
+    Route::post('/applyCoupon', [CartController::class, 'applyCoupon'])->name('applyCoupon');   
 
 
 // Order API

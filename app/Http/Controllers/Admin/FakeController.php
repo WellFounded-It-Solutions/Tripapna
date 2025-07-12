@@ -7,40 +7,52 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Hash;
-use Carbon\Carbon;
 use App\Models\Customer;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Imports\FakeOrdersImport;
 
 class FakeController extends Controller
 {
-    private function check($request, $module, $response_type)
-    {
-        if ($request->user()->can($module)) {
-            return true;
-        } else {
-            if ($response_type == 'view') {
-                abort(404);
-            }
-            return false;
-        }
-    }
-
     public function index(Request $request)
     {
-        $check = $this->check($request, 'view-orders', 'view');
-        if ($check) {
-            $page_name = 'Fake Orders';
-            return view('fakeorders.index', compact('page_name'));
+        if (!$request->user()->can('view-orders')) {
+            abort(404);
         }
+        return view('fakeorders.index', ['page_name' => 'Fake Orders']);
     }
 
     public function create()
     {
-        $page_name = 'Create Fake Order';
-        // Fetch packages, coupons, and hotels for dropdowns
         $packages = DB::table('packages')->select('id', 'title')->get();
-        $coupons = DB::table('coupons')->select('id', 'title')->get();
         $hotels = DB::table('hotels')->select('id', 'name')->get();
-        return view('fakeorders.create', compact('page_name', 'packages', 'coupons', 'hotels'));
+        return view('fakeorders.create', [
+            'page_name' => 'Create Fake Order',
+            'packages' => $packages,
+            'hotels' => $hotels
+        ]);
+    }
+
+    public function importForm()
+    {
+        return view('fakeorders.import', ['page_name' => 'Import Fake Orders']);
+    }
+
+    public function import(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'file' => 'required|mimes:xlsx,xls,csv|max:2048',
+        ]);
+
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator)->withInput();
+        }
+
+        try {
+            Excel::import(new FakeOrdersImport, $request->file('file'));
+            return redirect()->route('administrator_fakeorder')->with('success', 'Fake orders imported successfully.');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Failed to import orders: ' . $e->getMessage());
+        }
     }
 
     public function store(Request $request)
@@ -49,16 +61,8 @@ class FakeController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|email|max:255|unique:users,email',
             'mobile' => 'required|numeric|digits_between:10,15',
-            'trans_id' => 'required|string|max:200',
-            'type' => 'required|in:package,coupon',
-            'amount' => 'required|numeric|min:0',
-            'package_id' => 'required_if:type,package|exists:packages,id',
-            'coupon_id' => 'required_if:type,coupon|exists:coupons,id',
-            'hotel_id' => 'required|exists:hotels,id',
-            'visit_type' => 'required|integer',
-            'valid_date' => 'required|date',
-            'status' => 'required|in:Pending,Redeem',
-            'category_id' => 'nullable|integer',
+            'package_id' => 'required|exists:packages,id',
+            'hotel_id' => 'required|exists:hotels,id'
         ]);
 
         if ($validator->fails()) {
@@ -67,72 +71,48 @@ class FakeController extends Controller
 
         DB::beginTransaction();
         try {
-            // Create a new user with fixed password
             $user = Customer::create([
-                'name' => $request->input('name'),
-                'email' => $request->input('email'),
-                'password' => Hash::make('123456789'),
-                'mobile' => $request->input('mobile')
+                'name' => $request->name,
+                'email' => $request->email,
+                'password' => Hash::make('password123'),
+                'mobile' => $request->mobile
             ]);
 
-            // Create order in tbl_orders
-            $orderData = [
-                'order_code' => orderCode(), // Assumed helper function
+            $orderId = DB::table('tbl_orders')->insertGetId([
+                'order_code' => 'ORD-' . rand(1000, 9999),
                 'user_id' => $user->id,
-                'amount' => $request->input('amount'),
-                'trans_id' => $request->input('trans_id'),
-                'type' => $request->input('type'),
-                'user_name' => $request->input('name'),
-                'user_email' => $request->input('email'),
-                'user_phone' => $request->input('mobile')
-            ];
-            $orderId = DB::table('tbl_orders')->insertGetId($orderData);
+                'amount' => rand(100, 1000),
+                'trans_id' => 'TXN-' . rand(10000, 99999),
+                'type' => 'package',
+                'user_name' => $request->name,
+                'user_email' => $request->email,
+                'user_phone' => $request->mobile,
+                'created_at' => now()
+            ]);
 
-            // Prepare order_details data
-            $couponId = $request->input('type') == 'package' ? 0 : $request->input('coupon_id');
-            $packageId = $request->input('type') == 'package' ? $request->input('package_id') : null;
+            $hotelData = DB::table('hotels')->where('id', $request->hotel_id)->select('id', 'name')->first() ?: 
+                (object)['id' => 0, 'name' => 'Fake Hotel'];
+            $packageData = DB::table('packages')->where('id', $request->package_id)->select('id', 'title')->first() ?: 
+                (object)['id' => 0, 'title' => 'Fake Package'];
 
-            // Fetch coupon/hotel data for JSON
-            $couponData = $request->input('type') == 'coupon' ? 
-                DB::table('coupons')->where('id', $couponId)->select('id', 'title', 'custom_coupon_id', 'category_id', 'visit_type')->first() : 
-                (object)['id' => 0, 'title' => 'Fake Package Coupon', 'custom_coupon_id' => 'FAKE-' . $orderId, 'category_id' => $request->input('category_id'), 'visit_type' => $request->input('visit_type')];
-            $hotelData = DB::table('hotels')->where('id', $request->input('hotel_id'))->select('id', 'name', 'location', 'mobile')->first() ?: 
-                (object)['id' => 0, 'name' => 'Fake Hotel', 'location' => 'N/A', 'mobile' => 'N/A'];
-
-            $orderDetailData = [
+            DB::table('order_details')->insert([
                 'order_id' => $orderId,
-                'coupon_id' => $couponId,
-                'hotel_id' => $request->input('hotel_id'),
-                'coupon' => $couponData->custom_coupon_id ?? 'FAKE-' . $orderId,
-                'coupon_data' => json_encode($couponData),
+                'hotel_id' => $request->hotel_id,
+                'coupon' => 'FAKE-' . $orderId,
                 'hotel_data' => json_encode($hotelData),
-                'valid_date' => $request->input('valid_date'),
-                'visit_type' => $request->input('visit_type'),
-                'mobile_number' => $request->input('mobile'),
-                'status' => $request->input('status'),
-                'type' => ucfirst($request->input('type')),
-                'package_id' => $packageId,
-                'category_id' => $request->input('category_id') ?: ($couponData->category_id ?? null)
-            ];
-            DB::table('order_details')->insert($orderDetailData);
+                'valid_date' => now()->addDays(rand(1, 30))->format('Y-m-d'),
+                'status' => ['Pending', 'Redeem'][rand(0, 1)],
+                'type' => 'Package',
+                'package_id' => $request->package_id,
+                'coupon_data' => json_encode(['title' => $packageData->title])
+            ]);
 
-            // Update package limits if package
-            if ($request->input('type') == 'package') {
-                $package = DB::table('packages')->where('id', $packageId)->first();
-                if ($package) {
-                    DB::table('packages')->where('id', $packageId)->update([
-                        'limit' => $package->limit - 1,
-                        'sold_count' => $package->sold_count + 1,
-                        'updated_at' => now(),
-                    ]);
-                }
-            }
-
+            DB::table('packages')->where('id', $request->package_id)->decrement('limit')->increment('sold_count');
             DB::commit();
-            return redirect()->route('administrator_fakeorder')->with('success', 'Fake order created successfully.');
+            return redirect()->route('administrator_fakeorder')->with('success', 'Fake order created.');
         } catch (\Exception $e) {
             DB::rollBack();
-            return redirect()->back()->with('error', 'Failed to create fake order: ' . $e->getMessage())->withInput();
+            return redirect()->back()->with('error', 'Failed to create order.')->withInput();
         }
     }
 
@@ -140,47 +120,40 @@ class FakeController extends Controller
     {
         $query = DB::table('tbl_orders')
             ->leftJoin('users', 'tbl_orders.user_id', '=', 'users.id')
-            ->leftJoin('user_wallets', 'users.id', '=', 'user_wallets.user_id')
+            ->leftJoin('order_details', 'tbl_orders.id', '=', 'order_details.order_id')
+            ->leftJoin('packages', 'order_details.package_id', '=', 'packages.id')
+            ->leftJoin('hotels', 'order_details.hotel_id', '=', 'hotels.id')
             ->select(
                 'tbl_orders.id',
                 'tbl_orders.order_code',
-                'tbl_orders.user_id',
                 'users.name as user_name',
-                'tbl_orders.amount',
-                'tbl_orders.trans_id',
-                'tbl_orders.created_at'
+                'packages.title as package_title',
+                'hotels.name as hotel_name'
             );
 
         if ($request->has('title') && $request->title != '') {
             $search = $request->title;
-            $query->where(function ($q) use ($search) {
-                $q->where('tbl_orders.order_code', 'like', "%{$search}%")
-                  ->orWhere('users.name', 'like', "%{$search}%")
-                  ->orWhere('tbl_orders.trans_id', 'like', "%{$search}%");
-            });
+            $query->where('tbl_orders.order_code', 'like', "%{$search}%")
+                  ->orWhere('users.name', 'like', "%{$search}%");
         }
 
-        $perPage = 10;
-        $orders = $query->orderBy('tbl_orders.created_at', 'desc')->paginate($perPage);
+        $orders = $query->orderBy('tbl_orders.created_at', 'desc')->paginate(10);
 
         $html = '';
         foreach ($orders as $order) {
             $html .= '<tr>';
             $html .= '<td>' . ($order->order_code ?? 'N/A') . '</td>';
             $html .= '<td>' . ($order->user_name ?? 'N/A') . '</td>';
-            $html .= '<td>' . number_format($order->amount ?? 0, 2) . '</td>';
-            $html .= '<td>' . ($order->trans_id ?? 'N/A') . '</td>';
-            $html .= '<td>' . ($order->created_at ? date('d/m/Y H:i', strtotime($order->created_at)) : 'N/A') . '</td>';
-            $html .= '<td><button class="btn btn-sm btn-info" onclick="viewRecord(' . $order->id . ')" data-toggle="tooltip" title="View Details">View</button></td>';
+            $html .= '<td>' . ($order->package_title ?? 'N/A') . '</td>';
+            $html .= '<td>' . ($order->hotel_name ?? 'N/A') . '</td>';
+            $html .= '<td><button class="btn btn-sm btn-info" onclick="viewRecord(' . $order->id . ')">View</button></td>';
             $html .= '</tr>';
         }
-
-        $pagination = $orders->links()->toHtml();
 
         return response()->json([
             'success' => true,
             'html' => $html,
-            'pagination' => $pagination,
+            'pagination' => $orders->links()->toHtml()
         ]);
     }
 
@@ -188,44 +161,27 @@ class FakeController extends Controller
     {
         $order = DB::table('tbl_orders')
             ->leftJoin('users', 'tbl_orders.user_id', '=', 'users.id')
-            ->leftJoin('user_wallets', 'users.id', '=', 'user_wallets.user_id')
+            ->leftJoin('order_details', 'tbl_orders.id', '=', 'order_details.order_id')
+            ->leftJoin('packages', 'order_details.package_id', '=', 'packages.id')
+            ->leftJoin('hotels', 'order_details.hotel_id', '=', 'hotels.id')
             ->select(
                 'tbl_orders.id',
                 'tbl_orders.order_code',
-                'tbl_orders.user_id',
                 'users.name as user_name',
                 'users.email as user_email',
-                'tbl_orders.amount',
-                'tbl_orders.trans_id',
-                'tbl_orders.created_at',
-                'tbl_orders.type',
                 'tbl_orders.user_phone',
-                'user_wallets.wallet_amount'
+                'packages.title as package_title',
+                'hotels.name as hotel_name',
+                'order_details.valid_date',
+                'order_details.status',
+                'order_details.coupon'
             )
             ->where('tbl_orders.id', $id)
             ->first();
 
         if (!$order) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Order not found.',
-            ]);
+            return response()->json(['success' => false, 'message' => 'Order not found.']);
         }
-
-        $orderDetails = DB::table('order_details')
-            ->leftJoin('hotels', 'order_details.hotel_id', '=', 'hotels.id')
-            ->select(
-                'order_details.coupon',
-                'order_details.coupon_data',
-                'order_details.hotel_data',
-                'order_details.valid_date',
-                'order_details.visit_type',
-                'order_details.status',
-                'order_details.type',
-                'order_details.package_id'
-            )
-            ->where('order_details.order_id', $id)
-            ->get();
 
         $html = '<div class="card">';
         $html .= '<div class="card-header"><h3 class="card-title">Order: ' . ($order->order_code ?? 'N/A') . '</h3></div>';
@@ -233,31 +189,13 @@ class FakeController extends Controller
         $html .= '<p><strong>User:</strong> ' . ($order->user_name ?? 'N/A') . '</p>';
         $html .= '<p><strong>Email:</strong> ' . ($order->user_email ?? 'N/A') . '</p>';
         $html .= '<p><strong>Phone:</strong> ' . ($order->user_phone ?? 'N/A') . '</p>';
-        $html .= '<p><strong>Amount:</strong> ' . number_format($order->amount ?? 0, 2) . '</p>';
-        $html .= '<p><strong>Transaction ID:</strong> ' . ($order->trans_id ?? 'N/A') . '</p>';
-        $html .= '<p><strong>Type:</strong> ' . ($order->type ?? 'N/A') . '</p>';
-        $html .= '<p><strong>Wallet Balance:</strong> ' . number_format($order->wallet_amount ?? 0, 2) . '</p>';
-        $html .= '<p><strong>Created At:</strong> ' . ($order->created_at ? date('d/m/Y H:i', strtotime($order->created_at)) : 'N/A') . '</p>';
-
-        $html .= '<h4>Order Details</h4>';
-        foreach ($orderDetails as $detail) {
-            $couponData = json_decode($detail->coupon_data, true);
-            $hotelData = json_decode($detail->hotel_data, true);
-            $html .= '<div class="card">';
-            $html .= '<div class="card-header"><h3 class="card-title">' . ($detail->type == 'Package' ? 'Package' : 'Coupon') . ': ' . ($couponData['title'] ?? 'N/A') . '</h3></div>';
-            $html .= '<div class="card-body">';
-            $html .= '<p><strong>Coupon Code:</strong> ' . ($detail->coupon ?? 'N/A') . '</p>';
-            $html .= '<p><strong>Hotel:</strong> ' . ($hotelData['name'] ?? 'N/A') . ' (' . ($hotelData['location'] ?? 'N/A') . ')</p>';
-            $html .= '<p><strong>Valid Date:</strong> ' . ($detail->valid_date ? date('d/m/Y', strtotime($detail->valid_date)) : 'N/A') . '</p>';
-            $html .= '<p><strong>Visit Type:</strong> ' . ($detail->visit_type ?? 'N/A') . '</p>';
-            $html .= '<p><strong>Status:</strong> <span class="badge ' . ($detail->status == 'Pending' ? 'bg-info' : 'bg-success') . '">' . ($detail->status ?? 'N/A') . '</span></p>';
-            $html .= '</div></div>';
-        }
+        $html .= '<p><strong>Package:</strong> ' . ($order->package_title ?? 'N/A') . '</p>';
+        $html .= '<p><strong>Hotel:</strong> ' . ($order->hotel_name ?? 'N/A') . '</p>';
+        $html .= '<p><strong>Coupon Code:</strong> ' . ($order->coupon ?? 'N/A') . '</p>';
+        $html .= '<p><strong>Valid Date:</strong> ' . ($order->valid_date ? date('d/m/Y', strtotime($order->valid_date)) : 'N/A') . '</p>';
+        $html .= '<p><strong>Status:</strong> <span class="badge ' . ($order->status == 'Pending' ? 'bg-info' : 'bg-success') . '">' . ($order->status ?? 'N/A') . '</span></p>';
         $html .= '</div></div>';
 
-        return response()->json([
-            'success' => true,
-            'html' => $html,
-        ]);
+        return response()->json(['success' => true, 'html' => $html]);
     }
 }
