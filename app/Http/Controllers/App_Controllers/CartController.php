@@ -197,28 +197,38 @@ class CartController extends Controller
         }
     
     }
-     public function applyCoupon(Request $request)
-    {
-        $validator = Validator::make($request->all(), [
-            'coupon_code' => 'required|string'
-        ]);
+    public function applyCoupon(Request $request)
+{
+    $validator = Validator::make($request->all(), [
+        'coupon_code' => 'required|string'
+    ]);
 
-        if ($validator->fails()) {
-            return response()->json(['success' => false, 'message' => $validator->errors()->first()], 400);
-        }
-
-        $couponCode = $request->coupon_code;
-        $promoCode = PromoCode::where('promo_code', $couponCode);
-
-        if (!$promoCode) {
-            return response()->json(['success' => false, 'message' => 'Invalid promo code'], 404);
-        }
-
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Promo code applied successfully',
-            'discount' => $promoCode,
-        ]);
+    if ($validator->fails()) {
+        return response()->json(['success' => false, 'message' => $validator->errors()->first()], 400);
     }
+
+    $couponCode = $request->coupon_code;
+
+    $promoCode = PromoCode::where('promo_code', $couponCode)->first();
+
+    if (!$promoCode) {
+        return response()->json(['success' => false, 'message' => 'Invalid promo code'], 404);
+    }
+
+   
+
+    // You need to perform the discount calculation here
+    // The following is an example, you'll need to adjust based on your promo code logic
+    // $originalPrice = 100; // Example original price
+    // $discountAmount = $promoCode->discount_value;
+    // $finalPrice = $originalPrice - $discountAmount;
+
+    return response()->json([
+        'success' => true,
+        'message' => 'Promo code applied successfully',
+        'promo_code' => $promoCode, // Change the key to match what you are returning
+        // 'discount_amount' => $discountAmount,
+        // 'final_price' => $finalPrice,
+    ]);
+}
 }
