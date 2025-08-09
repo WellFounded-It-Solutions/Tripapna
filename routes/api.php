@@ -35,13 +35,14 @@ Route::post('addtocart', [CartController::class, 'addtocart']);
 Route::post('removeCart', [CartController::class, 'removeCart']);
 Route::post('viewCart', [CartController::class, 'viewCart']);
 Route::post('profileImage', [AuthController::class, 'profileImage']);
+Route::post("createOrder",[CartController::class,'createOrder']);
 
 });
 Route::get('hotel_list', [HomeController::class, 'hotel_list']);
 Route::get('getPackage', [HomeController::class, 'packages']);
 Route::get('getCoupon', [HomeController::class, 'getCoupon']);
 
-    Route::post('/applyCoupon', [CartController::class, 'applyCoupon'])->name('applyCoupon');   
+Route::post('applyCoupon', [CartController::class, 'applyCoupon'])->name('applyCoupon');   
 
 
 // Order API

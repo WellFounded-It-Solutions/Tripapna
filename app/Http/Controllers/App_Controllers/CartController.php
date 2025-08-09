@@ -165,7 +165,39 @@ class CartController extends Controller
 
         return response()->json($response, 200);
     }
-      public function applyCoupon(Request $request)
+ 
+    public function createOrder(Request $reques){
+        $keyId = env('RAZORPAY_KEY');
+        $keySecret = env('RAZORPAY_SECRET');
+
+        $api = new Api($keyId, $keySecret);
+
+        $amount = $request->amount * 100;
+
+        try {
+            $order = $api->order->create([
+                'receipt'         => 'rcptid_' . uniqid(),
+                'amount'          => $amount,
+                'currency'        => 'INR',
+                'payment_capture' => 1, 
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'order_id' => $order['id'],
+                'amount' => $amount,
+                'currency' => 'INR',
+                'key' => $keyId
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage()
+            ], 500);
+        }
+    
+    }
+     public function applyCoupon(Request $request)
     {
         $validator = Validator::make($request->all(), [
             'coupon_code' => 'required|string'
@@ -176,32 +208,17 @@ class CartController extends Controller
         }
 
         $couponCode = $request->coupon_code;
-        $promoCode = PromoCode::where('promo_code', $couponCode)->first();
+        $promoCode = PromoCode::where('promo_code', $couponCode);
 
         if (!$promoCode) {
             return response()->json(['success' => false, 'message' => 'Invalid promo code'], 404);
         }
 
-        // Store the promo code in the session
-        $request->session()->put('applied_promo_code', [
-            'code' => $promoCode->promo_code,
-            'discount_percentage' => $promoCode->discount
-        ]);
-
-        // Calculate cart totals
-        $cartItems = $this->getCartItems();
-        $subtotal = collect($cartItems)->sum(function ($item) {
-            return $item->amount * $item->qty;
-        });
-        $discount = $subtotal * ($promoCode->discount / 100); // Percentage-based discount
-        $total = max(0, $subtotal - $discount); // Ensure total doesn't go negative
 
         return response()->json([
             'success' => true,
             'message' => 'Promo code applied successfully',
-            'subtotal' => $subtotal,
-            'discount' => $discount,
-            'total' => $total
+            'discount' => $promoCode,
         ]);
     }
 }
