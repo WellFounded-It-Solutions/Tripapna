@@ -166,37 +166,9 @@ class CartController extends Controller
         return response()->json($response, 200);
     }
  
-    public function createOrder(Request $reques){
-        $keyId = env('RAZORPAY_KEY');
-        $keySecret = env('RAZORPAY_SECRET');
-
-        $api = new Api($keyId, $keySecret);
-
-        $amount = $request->amount * 100;
-
-        try {
-            $order = $api->order->create([
-                'receipt'         => 'rcptid_' . uniqid(),
-                'amount'          => $amount,
-                'currency'        => 'INR',
-                'payment_capture' => 1, 
-            ]);
-
-            return response()->json([
-                'success' => true,
-                'order_id' => $order['id'],
-                'amount' => $amount,
-                'currency' => 'INR',
-                'key' => $keyId
-            ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => $e->getMessage()
-            ], 500);
-        }
+   
     
-    }
+
     public function applyCoupon(Request $request)
 {
     $validator = Validator::make($request->all(), [

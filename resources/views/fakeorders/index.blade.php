@@ -41,7 +41,6 @@
                                         <th>User</th>
                                         <th>Package</th>
                                         <th>Hotel</th>
-                                        <th>Action</th>
                                     </tr>
                                 </thead>
                                 <tbody class="customtable">
@@ -73,71 +72,87 @@
         </div>
     </div>
 </div>
-@endsection
-@push('scripts')
-<script>
+<script type = "text/javascript" >
     $(document).ready(function() {
-        getList();
+        getList(); 
+        console.log('Fetching order list...');
         $(document).on('click', '.pagination a', function(event) {
             event.preventDefault();
             var page = $(this).attr('href').split('page=')[1];
             fetch_date(page);
         });
-    });
-
-    function getList() {
-        var title = $('#title').val();
-        $.ajax({
-            url: "{{ url('orderlist') }}?title=" + title,
-            type: 'get',
-            dataType: 'json 
-            beforeSend: function() { $('.lodding').css('display', 'block'); },
-            complete: function() { $('.lodding').css('display', 'none'); },
-            success: function(json) {
-                $('.customtable').html(json.html);
-                $('.pagnation').html(json.pagination);
-            },
-            error: function(xhr, ajaxOptions, thrownError) {
-                console.log(thrownError + "\r\n" + xhr.statusText);
-            }
-        });
-    }
-
-    function fetch_date(page) {
-        var title = $('#title').val();
-        $.ajax({
-            url: "{{ url('orderlist') }}?title=" + title + '&page=' + page,
-            type: 'get',
-            dataType: 'json',
-            beforeSend: function() { $('.lodding').css('display', 'block'); },
-            complete: function() { $('.lodding').css('display', 'none'); },
-            success: function(json) {
-                $('.customtable').html(json.html);
-                $('.pagnation').html(json.pagination);
-            },
-            error: function(xhr, ajaxOptions, thrownError) {
-                console.log(thrownError + "\r\n" + xhr.statusText);
-            }
-        });
-    }
-
-    function viewRecord(id) {
-        $.ajax({
-            url: "{{ url('order/details') }}/" + id,
-            type: 'get',
-            dataType: 'json',
-            success: function(json) {
-                if (json.success) {
-                    $('#viewFromPopup').modal('show');
-                    $('.htmlcontent').html(json.html);
-                } else {
-                    Swal.fire('Warning!', json.message, 'error');
+        
+        function getList() {
+            console.log('Fetching order list...');
+            var title = $('#title').val() || ''; // Ensure title is not undefined
+            $.ajax({
+                url: "{{ route('administrator_fakeorder_list') }}?title=" + encodeURIComponent(title),                type: 'GET',
+                dataType: 'json', // Fix syntax error (removed stray character)
+                beforeSend: function() {
+                    $('.lodding').css('display', 'block');
+                },
+                complete: function() {
+                    $('.lodding').css('display', 'none');
+                },
+                success: function(json) {
+                    if (json.success) {
+                        $('.customtable').html(json.html);
+                        $('.pagnation').html(json.pagination);
+                        console.log('Order list fetched successfully');
+                    } else {
+                        console.log('No data returned from server');
+                    }
+                },
+                error: function(xhr, ajaxOptions, thrownError) {
+                    console.error('Error: ' + thrownError + ' - ' + xhr.statusText);
                 }
-            },
-            error: function(xhr, ajaxOptions, thrownError) {
-                console.log(thrownError + "\r\n" + xhr.statusText);
-            }
-        });
-    }
+            });
+        }
+        
+        function fetch_date(page) {
+            var title = $('#title').val() || '';
+            $.ajax({
+                url: "{{ url('administrator_fakeorder_list') }}?title=" + encodeURIComponent(title) + '&page=' + page,
+                type: 'GET',
+                dataType: 'json',
+                beforeSend: function() {
+                    $('.lodding').css('display', 'block');
+                },
+                complete: function() {
+                    $('.lodding').css('display', 'none');
+                },
+                success: function(json) {
+                    if (json.success) {
+                        $('.customtable').html(json.html);
+                        $('.pagnation').html(json.pagination);
+                    } else {
+                        console.log('No data returned from server');
+                    }
+                },
+                error: function(xhr, ajaxOptions, thrownError) {
+                    console.error('Error: ' + thrownError + ' - ' + xhr.statusText);
+                }
+            });
+        }
+        
+        function viewRecord(id) {
+            $.ajax({
+                url: "{{ url('order/details') }}/" + id,
+                type: 'GET',
+                dataType: 'json',
+                success: function(json) {
+                    if (json.success) {
+                        $('#viewFromPopup').modal('show');
+                        $('.htmlcontent').html(json.html);
+                    } else {
+                        Swal.fire('Warning!', json.message, 'error');
+                    }
+                },
+                error: function(xhr, ajaxOptions, thrownError) {
+                    console.error('Error: ' + thrownError + ' - ' + xhr.statusText);
+                }
+            });
+        }
+    });
 </script>
-@endpush
+@endsection

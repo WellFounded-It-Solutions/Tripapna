@@ -8,6 +8,10 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Hash;
 use App\Models\Customer;
+use App\Models\Order;
+use App\Models\OrderDetails;
+use App\Models\Hotel;
+use App\Models\Package;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Imports\FakeOrdersImport;
 
@@ -57,29 +61,29 @@ class FakeController extends Controller
 
     public function store(Request $request)
     {
+        
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
-            'email' => 'required|email|max:255|unique:users,email',
-            'mobile' => 'required|numeric|digits_between:10,15',
-            'package_id' => 'required|exists:packages,id',
-            'hotel_id' => 'required|exists:hotels,id'
+            'email' => 'required|email|max:255',
+            'mobile' => 'required|numeric',
+            'package_id' => 'required',
+            'hotel_id' => 'required'
         ]);
 
         if ($validator->fails()) {
             return redirect()->back()->withErrors($validator)->withInput();
         }
 
-        DB::beginTransaction();
         try {
-            $user = Customer::create([
+            $user = Customer::Create([
                 'name' => $request->name,
                 'email' => $request->email,
-                'password' => Hash::make('password123'),
-                'mobile' => $request->mobile
+                'password' => Hash::make('1234567890'),
+                'mobile' => $request->mobile,
             ]);
 
-            $orderId = DB::table('tbl_orders')->insertGetId([
-                'order_code' => 'ORD-' . rand(1000, 9999),
+            $orderId =  Order::create([
+                'order_id' => 'TORD-' . rand(1000, 9999),
                 'user_id' => $user->id,
                 'amount' => rand(100, 1000),
                 'trans_id' => 'TXN-' . rand(10000, 99999),
@@ -89,26 +93,32 @@ class FakeController extends Controller
                 'user_phone' => $request->mobile,
                 'created_at' => now()
             ]);
-
-            $hotelData = DB::table('hotels')->where('id', $request->hotel_id)->select('id', 'name')->first() ?: 
-                (object)['id' => 0, 'name' => 'Fake Hotel'];
-            $packageData = DB::table('packages')->where('id', $request->package_id)->select('id', 'title')->first() ?: 
-                (object)['id' => 0, 'title' => 'Fake Package'];
-
-            DB::table('order_details')->insert([
-                'order_id' => $orderId,
+            
+           
+            
+            $hotelData = Hotel::where('id', $request->hotel_id)->select('id', 'name')->first() ?: 
+            (object)['id' => 0, 'name' => ' Hotel'];
+            $packageData = Package::where('id', $request->package_id)->select('id', 'title')->first() ?: 
+            (object)['id' => 0, 'title' => ' Package'];
+            
+            $orderDetails = OrderDetails::insert([
+                'order_id' => $orderId->id,
                 'hotel_id' => $request->hotel_id,
-                'coupon' => 'FAKE-' . $orderId,
+                'coupon' => 'L' . $orderId,
                 'hotel_data' => json_encode($hotelData),
                 'valid_date' => now()->addDays(rand(1, 30))->format('Y-m-d'),
                 'status' => ['Pending', 'Redeem'][rand(0, 1)],
                 'type' => 'Package',
                 'package_id' => $request->package_id,
-                'coupon_data' => json_encode(['title' => $packageData->title])
+                'coupon_data' => json_encode(['title' => $packageData->title]),
+                'created_at' => now(),
+                'updated_at' => now()
             ]);
-
-            DB::table('packages')->where('id', $request->package_id)->decrement('limit')->increment('sold_count');
-            DB::commit();
+            if (!$orderDetails) {
+                return redirect()->back()->with('error', 'Failed to create order details.')->withInput();
+            }
+            // DB::table('packages')->where('id', $request->package_id)->decrement('limit')->increment('sold_count');
+            // DB::commit();
             return redirect()->route('administrator_fakeorder')->with('success', 'Fake order created.');
         } catch (\Exception $e) {
             DB::rollBack();
@@ -117,58 +127,60 @@ class FakeController extends Controller
     }
 
     public function orderList(Request $request)
-    {
-        $query = DB::table('tbl_orders')
-            ->leftJoin('users', 'tbl_orders.user_id', '=', 'users.id')
-            ->leftJoin('order_details', 'tbl_orders.id', '=', 'order_details.order_id')
-            ->leftJoin('packages', 'order_details.package_id', '=', 'packages.id')
-            ->leftJoin('hotels', 'order_details.hotel_id', '=', 'hotels.id')
-            ->select(
-                'tbl_orders.id',
-                'tbl_orders.order_code',
-                'users.name as user_name',
-                'packages.title as package_title',
-                'hotels.name as hotel_name'
-            );
+{
+    $query = DB::table('tbl_orders')
+        ->leftJoin('customers', 'tbl_orders.user_id', '=', 'customers.id')
+        ->leftJoin('order_details', 'tbl_orders.id', '=', 'order_details.order_id')
+        ->leftJoin('packages', 'order_details.package_id', '=', 'packages.id')
+        ->leftJoin('hotels', 'order_details.hotel_id', '=', 'hotels.id')
+        ->select(
+            'tbl_orders.id',
+            'tbl_orders.order_id as order_code', // Changed from order_code to order_id
+            'customers.name as user_name',
+            'packages.title as package_title',
+            'hotels.name as hotel_name'
+        )
+        ->where('tbl_orders.order_id', 'like', 'TORD-%'); // Filter for fake orders starting with TORD-
 
-        if ($request->has('title') && $request->title != '') {
-            $search = $request->title;
-            $query->where('tbl_orders.order_code', 'like', "%{$search}%")
-                  ->orWhere('users.name', 'like', "%{$search}%");
-        }
-
-        $orders = $query->orderBy('tbl_orders.created_at', 'desc')->paginate(10);
-
-        $html = '';
-        foreach ($orders as $order) {
-            $html .= '<tr>';
-            $html .= '<td>' . ($order->order_code ?? 'N/A') . '</td>';
-            $html .= '<td>' . ($order->user_name ?? 'N/A') . '</td>';
-            $html .= '<td>' . ($order->package_title ?? 'N/A') . '</td>';
-            $html .= '<td>' . ($order->hotel_name ?? 'N/A') . '</td>';
-            $html .= '<td><button class="btn btn-sm btn-info" onclick="viewRecord(' . $order->id . ')">View</button></td>';
-            $html .= '</tr>';
-        }
-
-        return response()->json([
-            'success' => true,
-            'html' => $html,
-            'pagination' => $orders->links()->toHtml()
-        ]);
+    if ($request->has('title') && $request->title != '') {
+        $search = $request->title;
+        $query->where(function ($q) use ($search) {
+            $q->where('tbl_orders.order_id', 'like', "%{$search}%")
+              ->orWhere('customers.name', 'like', "%{$search}%");
+        });
     }
+
+    $orders = $query->orderBy('tbl_orders.created_at', 'desc')->paginate(10);
+
+    $html = '';
+    foreach ($orders as $order) {
+        $html .= '<tr>';
+        $html .= '<td>' . ($order->order_code ?? 'N/A') . '</td>';
+        $html .= '<td>' . ($order->user_name ?? 'N/A') . '</td>';
+        $html .= '<td>' . ($order->package_title ?? 'N/A') . '</td>';
+        $html .= '<td>' . ($order->hotel_name ?? 'N/A') . '</td>';
+        $html .= '</tr>';
+    }
+
+    return response()->json([
+        'success' => true,
+        'html' => $html,
+        'pagination' => $orders->links()->toHtml()
+    ]);
+}
 
     public function orderDetails($id)
     {
         $order = DB::table('tbl_orders')
-            ->leftJoin('users', 'tbl_orders.user_id', '=', 'users.id')
+            ->leftJoin('customers', 'tbl_orders.user_id', '=', 'customers.id')
             ->leftJoin('order_details', 'tbl_orders.id', '=', 'order_details.order_id')
             ->leftJoin('packages', 'order_details.package_id', '=', 'packages.id')
             ->leftJoin('hotels', 'order_details.hotel_id', '=', 'hotels.id')
             ->select(
                 'tbl_orders.id',
                 'tbl_orders.order_code',
-                'users.name as user_name',
-                'users.email as user_email',
+                'customers.name as user_name',
+                'customers.email as user_email',
                 'tbl_orders.user_phone',
                 'packages.title as package_title',
                 'hotels.name as hotel_name',
@@ -198,4 +210,5 @@ class FakeController extends Controller
 
         return response()->json(['success' => true, 'html' => $html]);
     }
+    
 }

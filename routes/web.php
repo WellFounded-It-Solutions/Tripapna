@@ -160,12 +160,11 @@ Route::group(['middleware' => 'role:admin'], function () {
     Route::get('/administrator/order/details/{id}', [OrderController::class, 'details'])->name('administrator_order_details');
 
     Route::get('/administrator/fakeorder', [FakeController::class, 'index'])->name('administrator_fakeorder');
-    Route::get('/administrator/fakeorderlist', [FakeController::class, 'orderList'])->name('orderlist');
-    Route::get('/administrator/fakeorder/details/{id}', [FakeController::class, 'orderDetails'])->name('order.details');
+Route::get('/administrator/fakeorderlist', [FakeController::class, 'orderList'])->name('administrator_fakeorder_list');    Route::get('/administrator/fakeorder/details/{id}', [FakeController::class, 'orderDetails'])->name('order.details');
     Route::get('/administrator/fakeorder/new', [FakeController::class, 'create'])->name('fakeorder_new');
     Route::post('/administrator/fakeorder/store', [FakeController::class, 'store'])->name('fakeorder_store');
-Route::get('/administrator/fakeorder/import', [App\Http\Controllers\Admin\FakeController::class, 'importForm'])->name('fakeorder_import_form');
-Route::post('/administrator/fakeorder/import', [App\Http\Controllers\Admin\FakeController::class, 'import'])->name('fakeorder_import');
+Route::get('/administrator/fakeorder/import', [FakeController::class, 'importForm'])->name('fakeorder_import_form');
+Route::post('/administrator/fakeorder/import', [FakeController::class, 'import'])->name('fakeorder_import');
 
     Route::get('/administrator/walletManagement', [WalletManagementController::class, 'index'])->name('administrator_wallet');
     Route::get('/administrator/wallet/pay/{id}', [WalletManagementController::class, 'pay'])->name('administrator_wallet_pay');
@@ -480,6 +479,7 @@ Route::group(['middleware' => 'auth:customer'], function () {
     Route::post("/upadate-profie-image", [AuthController::class, 'upadate_profie_image'])->name('customer.image.upload');
 
     Route::post('/orderPlace', [UserOrderController::class, 'orderPlace'])->name('orderPlace');
+    Route::post('/createOrder', [UserOrderController::class, 'createOrder'])->name('createOrder');
     Route::get('/packages', [UserOrderController::class, 'myOrder'])->name('myOrder');
     // Route::post('getorderbyid', 'UserOrderController@getorderbyid');
     Route::get('/order-detail/{id}', [UserOrderController::class, 'orderDetails'])->name('orderDetails');

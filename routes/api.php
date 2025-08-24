@@ -7,6 +7,7 @@ use App\Http\Controllers\App_Controllers\SalesAuthController;
 use App\Http\Controllers\App_Controllers\WalletController;
 use App\Http\Controllers\App_Controllers\InviteController;
 use App\Http\Controllers\App_Controllers\OrderController;
+use App\Http\Controllers\App_Controllers\PaymentController;
 
 /*
 |--------------------------------------------------------------------------
@@ -36,6 +37,12 @@ Route::post('removeCart', [CartController::class, 'removeCart']);
 Route::post('viewCart', [CartController::class, 'viewCart']);
 Route::post('profileImage', [AuthController::class, 'profileImage']);
 Route::post("createOrder",[CartController::class,'createOrder']);
+
+
+
+Route::post('payment/create-order', [PaymentController::class, 'createOrder']);
+Route::post('payment/verify', [PaymentController::class, 'verifyPayment']);
+
 
 });
 Route::get('hotel_list', [HomeController::class, 'hotel_list']);
@@ -88,4 +95,5 @@ Route::post('saleslogin', [SalesAuthController::class, 'login']);   // Table use
 Route::post('saleslogout', [SalesAuthController::class, 'logout']);
 Route::post('salesUpdateProfile', [SalesAuthController::class, 'update_profile']);
 Route::post('updatePassword', [SalesAuthController::class, 'update_password']);
+
 

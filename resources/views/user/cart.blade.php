@@ -383,7 +383,7 @@
                                 <div id="coupon-message" class="mt-2"></div>
                                 <div class="pay-option">
                                     <input type="radio" id="pay_with_phonepay" name="pay-option" value="phone_pay">
-                                    <label for="pay_with_phonepay">Pay with PhonePay</label>
+                                    <label for="pay_with_phonepay">Pay with RazorPay</label>
                                 </div>
                             </div>
                         </div>
@@ -392,7 +392,7 @@
                                 <input type="checkbox" id="accept_terms" name="accept_terms" value="accept_terms">
                                 <label for="accept_terms">I agree with terms and conditions</label>
                             </p>
-                            <a onclick="orderPlace()" class="btn btn-primary" role="button">Proceed to Checkout</a>
+                            <a onclick="startPayment()" class="btn btn-primary" role="button">Proceed to Checkout</a>
                         </div>
                     </div>
                 </div>
@@ -412,11 +412,11 @@
             @endif
         </div>
     </div>
-
-    <script>
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    <script type="text/javascript">
         $(document).ready(function() {
             $('#coupon-form').on('submit', function(event) {
-                event.preventDefault();
+                // event.preventDefault();
                 const couponCode = $('#coupon-code').val().trim();
                 const messageDiv = $('#coupon-message');
 
@@ -447,7 +447,53 @@
                     }
                 });
             });
+       
         });
+      function startPayment() {
+        
+        console.log("Starting payment process...");
+         $.ajax({
+        url: "{{ route('createOrder') }}", 
+        type: "POST",
+        data: {
+            _token: "{{ csrf_token() }}",
+            amount : {{ collect($data)->sum(fn($item) => $item->amount * $item->qty) * (1 - session('applied_promo_code.discount_percentage', 0) / 100) }}
+        },
+        success: function (response) {
+            console.log("Order created:", response);
+            alert("Order created! ID: " + response.id);
+        },
+        error: function (xhr) {
+            console.error("Error:", xhr.responseText);
+            alert("Error creating order: " + xhr.responseText);
+        }
+    });
+        var options = {
+             key: env('RAZORPAY_SECRET'), // Replace with your Razorpay key ID
+             amount: ' . $order->5000 . ', 
+             currency: "' . $order->INR . '",
+             name: "Trip Apna Pvt Ltd",
+             description: "Buy Hotel Coupons and Packages",
+             image: "https://cdn.razorpay.com/logos/GhRQcyean79PqE_medium.png",
+             order_id: , // This is a sample Order ID. Replace with your actual Order ID.
+             prefill: {
+                 name: "Gaurav Kumar",
+                 email: "gaurav.kumar@example.com",
+                 contact: "+919876543210"
+             },
+             notes: {
+                 address: "Razorpay Corporate Office"
+             },
+             theme: {
+                 "color": "#3399cc"
+             },
+             callback_url: "' . $callback_url . '"
+         };
+        //  var rzp = new Razorpay(options);
+        rzp.open();
+    }
+    
+
 
         function orderPlace() {
             if (!document.getElementById("accept_terms").checked) {
