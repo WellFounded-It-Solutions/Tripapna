@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Models\Coupon;
 use App\Models\Hotel;
 use App\Models\HotelCategory;
+use App\Models\HolidayPackageS;
+
 use App\Models\HotelCoupon;
 use App\Models\Package;
 use Illuminate\Http\Request;
@@ -322,4 +324,10 @@ class HomeController extends Controller
 
         return response()->json($response, 200);
     }
+
+   public function getHolidayPackages()
+{
+    $holidays =  HolidayPackageS::where('status', 'Active')->get();
+    return response()->json($holidays);
+}
 }

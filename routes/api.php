@@ -62,7 +62,10 @@ Route::post('package_coupon', [OrderController::class, 'package_coupon']);
 // List
 Route::get('search', [HomeController::class, 'search']);
 Route::get('get-hotel-type', [HomeController::class, 'hotel_type']);
+
 Route::post('hotel_package', [HomeController::class, 'hotel_package']);
+Route::get('holiday_package', [HomeController::class, 'getHolidayPackages']);
+
 Route::post('packagesDetails', [HomeController::class, 'packagesDetails']);
 Route::post('getCouponDetails', [HomeController::class, 'getCouponDetails']);
 
