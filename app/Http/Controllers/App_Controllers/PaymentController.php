@@ -69,11 +69,11 @@ class PaymentController extends Controller
 
             // ✅ Store in DB (example)
             \DB::table('Transaction')->insert([
-                'order_id' => $razorpay_order_id,
-                'payment_id' => $razorpay_payment_id,
-                'signature' => $razorpay_signature,
+                'razorpay_order_id' => $razorpay_order_id,
+                'razorpay_payment_id' => $razorpay_payment_id,
+                'razorpay_payment_id' => $razorpay_signature,
+                'user_id' => auth()->user()->id,
                 'status' => 'success',
-                'created_at' => now(),
             ]);
 
             return response()->json([
@@ -83,12 +83,12 @@ class PaymentController extends Controller
             ]);
         } catch (Exception $e) {
             // ❌ Verification failed
-            \DB::table('Transaction')->insert([
-                'order_id' => $razorpay_order_id,
-                'payment_id' => $razorpay_payment_id,
-                'signature' => $razorpay_signature,
-                'status' => 'failed',
-                'created_at' => now(),
+                 \DB::table('Transaction')->insert([
+                'razorpay_order_id' => $razorpay_order_id,
+                'razorpay_payment_id' => $razorpay_payment_id,
+                'razorpay_payment_id' => $razorpay_signature,
+                'user_id' => auth()->user()->id,
+                'status' => 'success',
             ]);
 
             return response()->json([

@@ -36,12 +36,17 @@ Route::post('addtocart', [CartController::class, 'addtocart']);
 Route::post('removeCart', [CartController::class, 'removeCart']);
 Route::post('viewCart', [CartController::class, 'viewCart']);
 Route::post('profileImage', [AuthController::class, 'profileImage']);
-Route::post("createOrder",[CartController::class,'createOrder']);
+Route::post("createOrder",[CartController::class,'createOrderAfterTransaction']);
 
 
 Route::post('/payment/create-order', [PaymentController::class, 'createOrder']);
 Route::post('/payment/verify', [PaymentController::class, 'verifyPayment']);
-
+// Order API
+Route::post('orderPlace', [OrderController::class, 'orderPlace']);
+Route::get('myOrder', [OrderController::class, 'myOrder']);
+Route::post('getorderbyid', [OrderController::class, 'getorderbyid']);
+Route::post('orderDetails', [OrderController::class, 'orderDetails']);
+Route::post('voucherDetails', [OrderController::class, 'voucherDetails']);
 
 });
 Route::get('hotel_list', [HomeController::class, 'hotel_list']);
@@ -51,12 +56,7 @@ Route::get('getCoupon', [HomeController::class, 'getCoupon']);
 Route::post('applyCoupon', [CartController::class, 'applyCoupon'])->name('applyCoupon');   
 
 
-// Order API
-Route::post('orderPlace', [OrderController::class, 'orderPlace']);
-Route::get('myOrder', [OrderController::class, 'myOrder']);
-Route::post('getorderbyid', [OrderController::class, 'getorderbyid']);
-Route::post('orderDetails', [OrderController::class, 'orderDetails']);
-Route::post('voucherDetails', [OrderController::class, 'voucherDetails']);
+
 Route::post('package_coupon', [OrderController::class, 'package_coupon']);
 
 // List
