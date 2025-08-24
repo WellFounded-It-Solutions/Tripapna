@@ -39,9 +39,8 @@ Route::post('profileImage', [AuthController::class, 'profileImage']);
 Route::post("createOrder",[CartController::class,'createOrder']);
 
 
-
-Route::post('payment/create-order', [PaymentController::class, 'createOrder']);
-Route::post('payment/verify', [PaymentController::class, 'verifyPayment']);
+Route::post('/payment/create-order', [PaymentController::class, 'createOrder']);
+Route::post('/payment/verify', [PaymentController::class, 'verifyPayment']);
 
 
 });
@@ -95,5 +94,6 @@ Route::post('saleslogin', [SalesAuthController::class, 'login']);   // Table use
 Route::post('saleslogout', [SalesAuthController::class, 'logout']);
 Route::post('salesUpdateProfile', [SalesAuthController::class, 'update_profile']);
 Route::post('updatePassword', [SalesAuthController::class, 'update_password']);
+
 
 

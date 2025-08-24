@@ -1,8 +1,10 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\App_Controllers;
 
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+
 use Razorpay\Api\Api;
 use Exception;
 
@@ -31,7 +33,6 @@ class PaymentController extends Controller
                 'currency'        => 'INR',
                 'payment_capture' => 1, // auto capture
             ]);
-
             return response()->json([
                 'status' => true,
                 'order_id' => $order['id'],
@@ -67,7 +68,7 @@ class PaymentController extends Controller
             $api->utility->verifyPaymentSignature($attributes);
 
             // ✅ Store in DB (example)
-            \DB::table('payments')->insert([
+            \DB::table('Transaction')->insert([
                 'order_id' => $razorpay_order_id,
                 'payment_id' => $razorpay_payment_id,
                 'signature' => $razorpay_signature,
@@ -82,7 +83,7 @@ class PaymentController extends Controller
             ]);
         } catch (Exception $e) {
             // ❌ Verification failed
-            \DB::table('payments')->insert([
+            \DB::table('Transaction')->insert([
                 'order_id' => $razorpay_order_id,
                 'payment_id' => $razorpay_payment_id,
                 'signature' => $razorpay_signature,
