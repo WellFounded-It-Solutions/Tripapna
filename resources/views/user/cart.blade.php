@@ -414,9 +414,12 @@
     </div>
     <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
     <script type="text/javascript">
+          // Pass Razorpay key from backend to JavaScript
+        const RAZORPAY_KEY = "{{ env('RAZORPAY_KEY') }}";
+
         $(document).ready(function() {
             $('#coupon-form').on('submit', function(event) {
-                // event.preventDefault();
+                event.preventDefault();
                 const couponCode = $('#coupon-code').val().trim();
                 const messageDiv = $('#coupon-message');
 
@@ -447,86 +450,90 @@
                     }
                 });
             });
-       
         });
-      function startPayment() {
-        
-        console.log("Starting payment process...");
-         $.ajax({
-        url: "{{ route('createOrder') }}", 
-        type: "POST",
-        data: {
-            _token: "{{ csrf_token() }}",
-            amount : {{ collect($data)->sum(fn($item) => $item->amount * $item->qty) * (1 - session('applied_promo_code.discount_percentage', 0) / 100) }}
-        },
-        success: function (response) {
-            console.log("Order created:", response);
-            alert("Order created! ID: " + response.id);
-        },
-        error: function (xhr) {
-            console.error("Error:", xhr.responseText);
-            alert("Error creating order: " + xhr.responseText);
-        }
-    });
-        var options = {
-             key: env('RAZORPAY_SECRET'), // Replace with your Razorpay key ID
-             amount: ' . $order->5000 . ', 
-             currency: "' . $order->INR . '",
-             name: "Trip Apna Pvt Ltd",
-             description: "Buy Hotel Coupons and Packages",
-             image: "https://cdn.razorpay.com/logos/GhRQcyean79PqE_medium.png",
-             order_id: , // This is a sample Order ID. Replace with your actual Order ID.
-             prefill: {
-                 name: "Gaurav Kumar",
-                 email: "gaurav.kumar@example.com",
-                 contact: "+919876543210"
-             },
-             notes: {
-                 address: "Razorpay Corporate Office"
-             },
-             theme: {
-                 "color": "#3399cc"
-             },
-             callback_url: "' . $callback_url . '"
-         };
-        //  var rzp = new Razorpay(options);
-        rzp.open();
-    }
-    
 
+        function startPayment() {
+            console.log("Starting payment process...");
 
-        function orderPlace() {
-            if (!document.getElementById("accept_terms").checked) {
-                alert("Please accept terms and conditions");
-                return;
-            }
+            // Calculate total amount (in rupees)
+            const totalAmount = {{ collect($data)->sum(fn($item) => $item->amount * $item->qty) * (1 - session('applied_promo_code.discount_percentage', 0) / 100) }};
 
-            let payment_method = "";
-            if (document.getElementById("pay_with_phonepay").checked) {
-                payment_method = "phone_pay";
-            } else {
-                alert("Please select payment method");
-                return;
-            }
-
+            // Create Razorpay order
             $.ajax({
+                url: "{{ route('createOrder') }}",
                 type: "POST",
-                url: "{{ route('orderPlace') }}",
                 data: {
-                    "_token": "{{ csrf_token() }}",
-                    "payment_method": payment_method
+                    _token: "{{ csrf_token() }}",
+                    amount: Math.floor(Number(totalAmount))
                 },
                 success: function(response) {
-                    if (response.success) {
-                        alert("Your order is being created. You will be redirected soon.");
-                        window.location.href = "{{ route('myOrder') }}";
+                    if (response.status) {
+                        console.log("Order created:", response);
+
+                        // Razorpay options
+                        const options = {
+                            key: RAZORPAY_KEY,
+                            amount: response.amount, // Amount in paise
+                            currency: response.currency,
+                            name: "Trip Apna Pvt Ltd",
+                            description: "Buy Hotel Coupons and Packages",
+                            image: "https://cdn.razorpay.com/logos/GhRQcyean79PqE_medium.png",
+                            order_id: response.order_id,
+                            handler: function(paymentResponse) {
+                                // Handle successful payment
+                                $.ajax({
+                                    url: "{{ route('verifyPayment') }}",
+                                    type: "POST",
+                                    data: {
+                                        _token: "{{ csrf_token() }}",
+                                        razorpay_order_id: paymentResponse.razorpay_order_id,
+                                        razorpay_payment_id: paymentResponse.razorpay_payment_id,
+                                        razorpay_signature: paymentResponse.razorpay_signature
+                                    },
+                                    success: function(verifyResponse) {
+                                        if (verifyResponse.status) {
+                                            alert("Payment verified successfully!");
+                                            console.log(verifyResponse.data);
+                                            placeOrder(verifyResponse.data.order_id);
+                                        } else {
+                                            alert("Payment verification failed: " + verifyResponse.message);
+                                        }
+                                    },
+                                    error: function(xhr) {
+                                        alert("Error verifying payment: " + xhr.responseText);
+                                    }
+                                });
+                            },
+                            prefill: {
+                                name: "{{ auth()->user()->name ?? ""  }}",
+                                email: "{{ auth()->user()->email ?? "" }}",
+                                contact: "{{ auth()->user()->contact ?? "" }}"
+                            },
+                            notes: {
+                                address: "Razorpay Corporate Office"
+                            },
+                            theme: {
+                                color: "#3399cc"
+                            }
+                        };
+
+                        // Initialize and open Razorpay
+                        const rzp = new Razorpay(options);
+                        rzp.on('payment.failed', function(response) {
+                            alert("Payment failed: " + response.error.description);
+                        });
+                        rzp.open();
+                    } else {
+                        alert("Error creating order: " + response.message);
                     }
                 },
-                error: function(xhr, status, error) {
-                    alert("Error placing order: " + xhr.responseText);
+                error: function(xhr) {
+                    console.error("Error:", xhr.responseText);
+                    alert("Error creating order: " + xhr.responseText);
                 }
             });
         }
+
 
         function plus(e, id, amount) {
             var input = e.previousElementSibling;
@@ -572,6 +579,31 @@
             document.getElementById('cart-subtotal').innerText = totals;
             document.getElementById('cart-discount').innerText = discount;
             document.getElementById('cart-total').innerText = totals - discount;
+        }
+        function placeOrder(orderID) {
+            $.ajax({
+                type: "POST",
+                url: "{{ route('orderPlace') }}",
+                data: {
+                    "_token": "{{ csrf_token() }}",
+                    'transaction_id': orderID,
+                    'name': '{{ auth()->user()->name  ?? ""  }}',
+                    'email': '{{ auth()->user()->email ?? ""  }}',
+                    'mobile': '{{ auth()->user()->mobile ?? "" }}'
+                },
+                success: function(response) {
+                    if (response.status == 200) {
+                        alert("Order placed successfully!");
+                        window.location.href = "{{ route('myOrder') }}";
+                    } else {
+                        alert("Error placing order: " + response.message);
+                    }
+                },
+                error: function(xhr) {
+                    console.error("Error:", xhr.responseText);
+                    alert("Error placing order: " + xhr.responseText);
+                }
+            });
         }
     </script>
 @endsection

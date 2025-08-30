@@ -480,6 +480,8 @@ Route::group(['middleware' => 'auth:customer'], function () {
 
     Route::post('/orderPlace', [UserOrderController::class, 'orderPlace'])->name('orderPlace');
     Route::post('/createOrder', [UserOrderController::class, 'createOrder'])->name('createOrder');
+    Route::post('/verify', [UserOrderController::class, 'verifyPayment'])->name('verifyPayment');
+
     Route::get('/packages', [UserOrderController::class, 'myOrder'])->name('myOrder');
     // Route::post('getorderbyid', 'UserOrderController@getorderbyid');
     Route::get('/order-detail/{id}', [UserOrderController::class, 'orderDetails'])->name('orderDetails');

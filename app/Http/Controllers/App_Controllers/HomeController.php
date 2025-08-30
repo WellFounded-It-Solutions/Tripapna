@@ -325,7 +325,7 @@ class HomeController extends Controller
         return response()->json($response, 200);
     }
 
-   public function getHolidayPackages()
+   public function getHolidayPackages(Request $request)
 {
     $holidays =  HolidayPackageS::where('status', 'Active')->get();
     return response()->json($holidays);

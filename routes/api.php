@@ -49,6 +49,7 @@ Route::post('orderDetails', [OrderController::class, 'orderDetails']);
 Route::post('voucherDetails', [OrderController::class, 'voucherDetails']);
 
 });
+
 Route::get('hotel_list', [HomeController::class, 'hotel_list']);
 Route::get('getPackage', [HomeController::class, 'packages']);
 Route::get('getCoupon', [HomeController::class, 'getCoupon']);
@@ -64,7 +65,7 @@ Route::get('search', [HomeController::class, 'search']);
 Route::get('get-hotel-type', [HomeController::class, 'hotel_type']);
 
 Route::post('hotel_package', [HomeController::class, 'hotel_package']);
-Route::get('holiday_package', [HomeController::class, 'getHolidayPackages']);
+Route::get('holiday_packages', [HomeController::class, 'getHolidayPackages']);
 
 Route::post('packagesDetails', [HomeController::class, 'packagesDetails']);
 Route::post('getCouponDetails', [HomeController::class, 'getCouponDetails']);
